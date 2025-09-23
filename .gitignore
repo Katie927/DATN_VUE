@@ -1,0 +1,24 @@
+"" 
+# Node modules
+node_modules/
+
+# Build files
+dist/
+.cache/
+.output/
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Env files (chứa thông tin nhạy cảm)
+.env
+.env.local
+.env.*.local

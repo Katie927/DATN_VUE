@@ -1,0 +1,2457 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KiotViet - Danh mục</title>
+    <link rel="icon" type="image/x-icon" href="./assets/img/favicon.png" />
+    <link rel="icon" href="./assets/img/favicon.png" fetchpriority="high" />
+    <!-- Thêm link tới thư viện JsBarcode -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <script
+      src="https://kit.fontawesome.com/272317828a.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="./assets/js/select_number_of_records_product.js"></script>
+    <script src="./assets/js/to_top.js"></script>
+    <script src="./assets/js/creatId.js"></script>
+    <script src="./assets/js/search_input.js"></script>
+    <script src="./assets/js/toggle_list_display.js"></script>
+    <script src="./assets/js/btn_show_div.js"></script>
+    <script src="./assets/js/btn_show_div_id.js"></script>
+    <script src="./assets/js/btn_close.js"></script>
+    <script src="./assets/js/toast.js"></script>
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="stylesheet" href="./assets/css/product.css" />
+    <link rel="stylesheet" href="./assets/css/check_box.css" />
+    <link rel="stylesheet" href="./assets/css/add_product.css" />
+    <link rel="stylesheet" href="./assets/css/detail_product.css" />
+    <link rel="stylesheet" href="./assets/css/add_new_application_form.css" />
+    <link rel="stylesheet" href="./assets/css/product.css" />
+  </head>
+
+  <body>
+    <!-- main header -->
+    <header id="mainHeader"></header>
+    <script src="./assets/js/main_header.js"></script>
+
+    <!-- section product -->
+    <section class="product" id="sectionProduct">
+      <div class="container">
+        <div class="product-main-body">
+          <!-- body left -->
+          <div class="product-main-left">
+            <div class="em-left-header">
+              <h1 class="em-left-heading">Hàng hóa</h1>
+            </div>
+
+            <!-- product-type -->
+            <div class="em-left-content content-product-type">
+              <div class="em-left-content-title">
+                <h3 class="em-left-content-heading">Loại hàng</h3>
+                <div class="em-left-content-icon icon-product-type">
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAddproduct-type"
+                  ></i>
+                </div>
+              </div>
+              <div class="product-type-group-check">
+                <label class="container-check-box check-box-menu-type"
+                  >Hàng hóa
+                  <input
+                    id="containerCheckBoxCommodityProduct"
+                    type="checkbox"
+                    checked="checked"
+                  />
+                  <span class="checkmark"></span>
+                </label>
+
+                <label class="container-check-box check-box-menu-type"
+                  >Dịch vụ
+                  <input
+                    id="containerCheckBoxServiceProduct"
+                    type="checkbox"
+                    checked="checked"
+                  />
+                  <span class="checkmark"></span>
+                </label>
+
+                <label class="container-check-box check-box-menu-type"
+                  >Combo - Đóng gói
+                  <input
+                    id="containerCheckBoxComboPackaging"
+                    type="checkbox"
+                    checked="checked"
+                  />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <script src="./assets/js/check_tr_product_service_combo.js"></script>
+            </div>
+
+            <!-- product-group -->
+            <div class="em-left-content content-product-group">
+              <div class="em-left-content-title">
+                <h3 class="em-left-content-heading">Nhóm hàng</h3>
+                <div class="em-left-content-icon icon-product-group">
+                  <a
+                    href="#"
+                    class="add-product-group-icon btn-icon add-group-product fas fa-solid fa-plus-circle"
+                    title="Thêm nhóm hàng mới"
+                    id="addNewproduct-group"
+                  ></a>
+                  <script src="./assets/js/btn_show_div.js"></script>
+                  <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                      showDiv("addNewproduct-group", ".add-new-product-group");
+                    });
+                  </script>
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAddProductGroup"
+                  ></i>
+                </div>
+              </div>
+
+              <div class="product-group-list">
+                <div class="product-group-icon-input">
+                  <i
+                    class="product-group-search-icon fas fa-solid fa-search"
+                  ></i>
+                  <input
+                    type="search"
+                    id="productGroupListSearch"
+                    class="form-control hide-show-product-group"
+                    placeholder="Tìm kiếm nhóm hàng"
+                  />
+                </div>
+                <div id="productGroupListId" class="product-group-list-items">
+                  <ul class="form-items">
+                    <li class="form-item">
+                      <span class="item-name product-group-name">Sách</span>
+                      <i
+                        id="showEditproduct-group"
+                        class="fas fa-solid fa-pen"
+                      ></i>
+                    </li>
+
+                    <li class="form-item">
+                      <span class="item-name product-group-name">Kéo</span>
+                      <i class="fas fa-solid fa-pen"></i>
+                    </li>
+                  </ul>
+
+                  <script src="./assets/js/search_input.js"></script>
+                  <script src="./assets/js/toggle_list_display.js"></script>
+                  <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                      toggleListDisplay(
+                        "productGroupListSearch",
+                        "productGroupListId",
+                        ".product-group-name"
+                      );
+                    });
+                  </script>
+                </div>
+                <script src="./assets/js/search_input.js">
+                  document.addEventListener("DOMContentLoaded", function () {
+                    searchproduct - group("productGroupListSearch", "productGroupListId");
+                  });
+                </script>
+                
+              </div>
+            </div>
+            <script src="./assets/js/btn_toggle_rotate.js"></script>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                toggleButtonDivContent(
+                  "hideAddProductGroup",
+                  ".hide-show-product-group",
+                  ".icon-product-group"
+                );
+              });
+            </script>
+
+            <!-- inventory -->
+            <div class="em-left-content content-inventory">
+              <div class="em-left-content-title">
+                <h3 for="inventoryStatus" class="em-left-content-heading">
+                  Tồn kho
+                </h3>
+                <input id="inventoryStatus" type="text" />
+
+                <div class="em-left-content-icon icon-inventory">
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAddinventory"
+                  ></i>
+                </div>
+              </div>
+
+              <div
+                class="form-group left-content-group-radio inventory-group-radio"
+              >
+                <div class="form-wrap form-wrap-radio">
+                  <label for="inventoryActiveAll" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveInventory"
+                      id="inventoryActiveAll"
+                      class="form-control-radio"
+                      value="true"
+                      checked
+                    />
+                    <span class="span-radio-left-content">Tất cả</span>
+                  </label>
+                  <label for="inventoryActiveBelow" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveInventory"
+                      id="inventoryActiveBelow"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content"
+                      >Dưới định mức tồn</span
+                    >
+                  </label>
+                  <label for="inventoryActiveExceeded" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveInventory"
+                      id="inventoryActiveExceeded"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content"
+                      >Vượt định mức tồn</span
+                    >
+                  </label>
+                  <label for="inventoryActiveAvailable" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveInventory"
+                      id="inventoryActiveAvailable"
+                      class="form-control-radio"
+                      value="true"
+                      checked
+                    />
+                    <span class="span-radio-left-content"
+                      >Còn hàng trong kho</span
+                    >
+                  </label>
+                  <label for="inventoryActiveOutOf" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveInventory"
+                      id="inventoryActiveOutOf"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content"
+                      >Hết hàng trong kho</span
+                    >
+                  </label>
+                  <label
+                    for="inventoryActiveAnotherChoice"
+                    class="label-status"
+                  >
+                    <input
+                      type="radio"
+                      name="isActiveInventory"
+                      id="inventoryActiveAnotherChoice"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content">Lựa chọn khác</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- trademark -->
+            <div class="em-left-content content-trademark">
+              <div class="em-left-content-title">
+                <h3 class="em-left-content-heading">Thương hiệu</h3>
+                <div class="em-left-content-icon icon-trademark">
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAddTrademark"
+                  ></i>
+                </div>
+              </div>
+
+              <div class="trademark-list">
+                <input
+                  type="search"
+                  id="trademarkListSearch"
+                  class="hide-show-trademark"
+                  placeholder="Chọn thương hiệu"
+                />
+                <div id="trademarkListId" class="trademark-list-items">
+                  <ul class="form-items">
+                    <li class="form-item">
+                      <span class="item-name trademark-name">ĐHQG Hà Nội</span>
+                      <i id="showEdittrademark" class="fas fa-solid fa-pen"></i>
+                    </li>
+
+                    <li class="form-item">
+                      <span class="item-name trademark-name">NXB Giáo Dục</span>
+                      <i class="fas fa-solid fa-pen"></i>
+                    </li>
+                  </ul>
+
+                  <script src="./assets/js/search_input.js"></script>
+                  <script src="./assets/js/toggle_list_display.js"></script>
+                  <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                      toggleListDisplay(
+                        "trademarkListSearch",
+                        "trademarkListId",
+                        ".trademark-name"
+                      );
+                    });
+                  </script>
+                </div>
+                <script src="./assets/js/search_input.js">
+                  document.addEventListener("DOMContentLoaded", function () {
+                    searchtrademark("trademarkListSearch", "trademarkListId");
+                  });
+                </script>
+                
+              </div>
+            </div>
+            <script src="./assets/js/btn_toggle_rotate.js"></script>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                toggleButtonDivContent(
+                  "hideAddTrademark",
+                  ".hide-show-trademark",
+                  ".icon-trademark"
+                );
+              });
+            </script>
+
+            <!-- attribute -->
+            <div class="em-left-content content-attribute">
+              <div class="em-left-content-title">
+                <h3 class="em-left-content-heading">Thuộc tính</h3>
+                <div class="em-left-content-icon icon-attribute">
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAddattribute"
+                  ></i>
+                </div>
+              </div>
+
+              <div class="attribute-list">
+                <input
+                  type="search"
+                  id="attributeListSearch"
+                  class="hide-show-attribute"
+                  placeholder="Chọn thuộc tính"
+                />
+                <div id="attributeListId" class="attribute-list-items">
+                  <ul class="form-items">
+                    <li class="form-item">
+                      <span class="item-name attribute-name">KHUYẾN MÃI</span>
+                      <i id="showEditattribute" class="fas fa-solid fa-pen"></i>
+                    </li>
+
+                    <li class="form-item">
+                      <span class="item-name attribute-name">GIẢM GIÁ</span>
+                      <i class="fas fa-solid fa-pen"></i>
+                    </li>
+
+                    <li class="form-item">
+                      <span class="item-name attribute-name">BEST SALE</span>
+                      <i class="fas fa-solid fa-pen"></i>
+                    </li>
+                  </ul>
+
+                  <script src="./assets/js/search_input.js"></script>
+                  <script src="./assets/js/toggle_list_display.js"></script>
+                  <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                      toggleListDisplay(
+                        "attributeListSearch",
+                        "attributeListId",
+                        ".attribute-name"
+                      );
+                    });
+                  </script>
+                </div>
+                <script src="./assets/js/search_input.js">
+                  document.addEventListener("DOMContentLoaded", function () {
+                    searchattribute("attributeListSearch", "attributeListId");
+                  });
+                </script>
+                
+              </div>
+            </div>
+            <script src="./assets/js/btn_toggle_rotate.js"></script>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                toggleButtonDivContent(
+                  "hideAddattribute",
+                  ".hide-show-attribute",
+                  ".icon-attribute"
+                );
+              });
+            </script>
+
+            <!-- direct-sale -->
+            <div class="em-left-content content-direct-sale">
+              <div class="em-left-content-title">
+                <h3 for="directSaleStatus" class="em-left-content-heading">
+                  Bán trực tiếp
+                </h3>
+                <input id="directSaleStatus" type="text" />
+
+                <div class="em-left-content-icon icon-direct-sale">
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAdddirect-sale"
+                  ></i>
+                </div>
+              </div>
+
+              <div
+                class="form-group left-content-group-radio direct-sale-group-radio"
+              >
+                <div class="form-wrap form-wrap-radio">
+                  <label for="directSaleActiveAll" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveDirectSale"
+                      id="directSaleActiveAll"
+                      class="form-control-radio"
+                      value="true"
+                      checked
+                    />
+                    <span class="span-radio-left-content">Tất cả</span>
+                  </label>
+                  <label for="directSaleActive" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveDirectSale"
+                      id="directSaleActive"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content"
+                      >Được bán trực tiếp</span
+                    >
+                  </label>
+                  <label for="directSaleInactive" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveDirectSale"
+                      id="directSaleInactive"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content"
+                      >Không được bán trực tiếp</span
+                    >
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- estimated-OOS-date -->
+            <div class="em-left-content content-estimated-OOS-date">
+              <div class="em-left-content-title">
+                <h3
+                  for="estimatedOOSDateStatus"
+                  class="em-left-content-heading"
+                >
+                  Ngày dự kiến hết hàng
+                </h3>
+                <input id="estimatedOOSDateStatus" type="text" />
+
+                <div class="em-left-content-icon icon-estimated-OOS-date">
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAddestimated-OOS-date"
+                  ></i>
+                </div>
+              </div>
+
+              <div
+                class="form-group left-content-group-radio estimated-OOS-date-group-radio"
+              >
+                <div class="form-wrap form-wrap-radio">
+                  <label
+                    for="estimatedOSSDateSaleActiveAllTime"
+                    class="label-status"
+                  >
+                    <input
+                      type="radio"
+                      name="isActiveOOSDate"
+                      id="estimatedOSSDateSaleActiveAllTime"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content">Toàn thời gian</span>
+                  </label>
+                  <label
+                    for="estimatedOSSDateSaleActiveAnotherChoice"
+                    class="label-status"
+                  >
+                    <input
+                      type="radio"
+                      name="isActiveOOSDate"
+                      id="estimatedOSSDateSaleActiveAnotherChoice"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content">Lựa chọn khác</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- supplier -->
+            <div class="em-left-content content-supplier">
+              <div class="em-left-content-title">
+                <h3 class="em-left-content-heading">Nhà cung cấp</h3>
+                <div class="em-left-content-icon icon-supplier">
+                  <a
+                    href="#"
+                    class="add-supplier-icon btn-icon add-group-product fas fa-solid fa-plus-circle"
+                    title="Thêm nhà cung cấp mới"
+                    id="addNewSupplier"
+                  ></a>
+                  <script src="./assets/js/btn_show_div.js"></script>
+                  <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                      showDiv("addNewSupplier", ".add-new-supplier");
+                    });
+                  </script>
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAddsupplier"
+                  ></i>
+                </div>
+              </div>
+
+              <div class="supplier-list">
+                <input
+                  type="search"
+                  id="supplierListSearch"
+                  class="hide-show-supplier"
+                  placeholder="Chọn nhà cung cấp"
+                />
+                <div id="supplierListId" class="supplier-list-items">
+                  <ul class="form-items">
+                    <li class="form-item">
+                      <span class="item-name supplier-name">Hồng Đức</span>
+                      <i id="showEditSupplier" class="fas fa-solid fa-pen"></i>
+                    </li>
+
+                    <li class="form-item">
+                      <span class="item-name supplier-name"
+                        >NXB Khoa Học Kỹ Thuật</span
+                      >
+                      <i class="fas fa-solid fa-pen"></i>
+                    </li>
+                  </ul>
+
+                  <script src="./assets/js/search_input.js"></script>
+                  <script src="./assets/js/toggle_list_display.js"></script>
+                  <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                      toggleListDisplay(
+                        "supplierListSearch",
+                        "supplierListId",
+                        ".supplier-name"
+                      );
+                    });
+                  </script>
+                </div>
+                <script src="./assets/js/search_input.js">
+                  document.addEventListener("DOMContentLoaded", function () {
+                    searchsupplier("supplierListSearch", "supplierListId");
+                  });
+                </script>
+                <script src="./assets/js/search_supplier_table.js"></script>
+
+                
+              </div>
+            </div>
+            <script src="./assets/js/btn_toggle_rotate.js"></script>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                toggleButtonDivContent(
+                  "hideAddsupplier",
+                  ".hide-show-supplier",
+                  ".icon-supplier"
+                );
+              });
+            </script>
+
+            <!-- location -->
+            <div class="em-left-content content-location">
+              <div class="em-left-content-title">
+                <h3 class="em-left-content-heading">Vị trí</h3>
+                <div class="em-left-content-icon icon-location">
+                  <a
+                    href="#"
+                    class="btn-icon add-group-product fas fa-solid fa-plus-circle"
+                    title="Thêm vị trí mới"
+                    id="addNewlocation"
+                  ></a>
+                  <script src="./assets/js/btn_show_div.js"></script>
+                  <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                      showDiv("addNewlocation", ".add-new-location");
+                    });
+                  </script>
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAddLocation"
+                  ></i>
+                </div>
+              </div>
+
+              <div class="location-list">
+                <input
+                  type="search"
+                  id="locationListSearch"
+                  class="hide-show-location"
+                  placeholder="Chọn vị trí"
+                />
+                <div id="locationListId" class="location-list-items">
+                  <ul class="form-items">
+                    <li class="form-item">
+                      <span class="item-name location-name">Hà Nội</span>
+                      <i id="showEditlocation" class="fas fa-solid fa-pen"></i>
+                    </li>
+
+                    <li class="form-item">
+                      <span class="item-name location-name"
+                        >Tp. Hồ Chí Minh</span
+                      >
+                      <i class="fas fa-solid fa-pen"></i>
+                    </li>
+                  </ul>
+                </div>
+                <script src="./assets/js/search_input.js"></script>
+                <script src="./assets/js/toggle_list_display.js"></script>
+                <script>
+                  document.addEventListener("DOMContentLoaded", function () {
+                    toggleListDisplay(
+                      "locationListSearch",
+                      "locationListId",
+                      ".location-name"
+                    );
+                  });
+                </script>
+                <script src="./assets/js/search_input.js">
+                  document.addEventListener("DOMContentLoaded", function () {
+                    searchsupplier("locationListSearch", "locationListId");
+                  });
+                </script>
+
+                <script src="./assets/js/search_location_table.js"></script>
+
+                
+              </div>
+            </div>
+            <script src="./assets/js/btn_toggle_rotate.js"></script>
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                toggleButtonDivContent(
+                  "hideAddLocation",
+                  ".hide-show-location",
+                  ".icon-location"
+                );
+              });
+            </script>
+
+            <!-- sale-channel-link -->
+            <div class="em-left-content content-sale-channel-link">
+              <div class="em-left-content-title">
+                <h3 for="saleChannelLinkStatus" class="em-left-content-heading">
+                  Liên kết kênh bán
+                </h3>
+                <input id="saleChannelLinkStatus" type="text" />
+
+                <div class="em-left-content-icon icon-sale-channel-link">
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAddsale-channel-link"
+                  ></i>
+                </div>
+              </div>
+
+              <div
+                class="form-group left-content-group-radio sale-channel-link-group-radio"
+              >
+                <div class="form-wrap form-wrap-radio">
+                  <label
+                    for="directSaleChannelLinkActiveAll"
+                    class="label-status"
+                  >
+                    <input
+                      type="radio"
+                      name="isActiveSaleChannelLink"
+                      id="directSaleChannelLinkActiveAll"
+                      class="form-control-radio"
+                      value="true"
+                      checked
+                    />
+                    <span class="span-radio-left-content">Tất cả</span>
+                  </label>
+                  <label for="directSaleChannelLinkActive" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveSaleChannelLink"
+                      id="directSaleChannelLinkActive"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content"
+                      >Có liên kết kênh bán</span
+                    >
+                  </label>
+                  <label
+                    for="directSaleChannelLinkInactive"
+                    class="label-status"
+                  >
+                    <input
+                      type="radio"
+                      name="isActiveSaleChannelLink"
+                      id="directSaleChannelLinkInactive"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content"
+                      >Không có Liên kết kênh bán</span
+                    >
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- display-option -->
+            <div class="em-left-content content-display-option">
+              <div class="em-left-content-title">
+                <h3 for="displayOptionStatus" class="em-left-content-heading">
+                  Lựa chọn hiển thị
+                </h3>
+                <input id="displayOptionStatus" type="text" />
+
+                <div class="em-left-content-icon icon-display-option">
+                  <i
+                    href="#"
+                    class="show-hide-icon fas fa-solid fa-chevron-up"
+                    id="hideAdddisplay-option"
+                  ></i>
+                </div>
+              </div>
+
+              <div
+                class="form-group left-content-group-radio display-option-group-radio"
+              >
+                <div class="form-wrap form-wrap-radio">
+                  <label for="displayOptionActive" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveDisplayOption"
+                      id="displayOptionActive"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content"
+                      >Hàng đang kinh doanh</span
+                    >
+                  </label>
+                  <label for="displayOptionInactive" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveDisplayOption"
+                      id="displayOptionInactive"
+                      class="form-control-radio"
+                      value="false"
+                    />
+                    <span class="span-radio-left-content"
+                      >Hàng ngừng kinh doanh</span
+                    >
+                  </label>
+
+                  <label for="displayOptionActiveAll" class="label-status">
+                    <input
+                      type="radio"
+                      name="isActiveDisplayOption"
+                      id="displayOptionActiveAll"
+                      class="form-control-radio"
+                      value="true"
+                      checked
+                    />
+                    <span class="span-radio-left-content">Tất cả</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- aside -->
+            <aside class="em-left-pageside">
+              <label for="numberOfRecordsProduct">Số bản ghi:</label>
+              <select
+                class="number-of-records"
+                id="numberOfRecordsProduct"
+                name="Số bản ghi:"
+              >
+                <option value="10" selected>10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </aside>
+          </div>
+
+          <!-- body right -->
+          <div class="product-main-right">
+            <div class="product-right-header">
+              <!-- header filter search -->
+              <div class="header-filter-search">
+                <div
+                  class="input-group input-group-search-product-code"
+                  id="groupInputSearchProductCode"
+                >
+                  <i
+                    class="input-group-icon fas fa-solid fa-magnifying-glass"
+                  ></i>
+                  <input
+                    type="text"
+                    name=""
+                    id="searchCodeName"
+                    class="form-control"
+                    placeholder="Tìm theo mã, Tên hàng"
+                  />
+                  <i class="input-group-icon fas fa-solid fa-caret-down"></i>
+                  <script src="./assets/js/search_product_code_name.js"></script>
+                </div>
+
+                <div class="choosed-items">
+                  <div class="choosed-number">
+                    <span>Đã chọn</span>
+                    <div id="selectedCountProduct"></div>
+                  </div>
+                  <i
+                    class="btn-icon fas fa-solid fa-times"
+                    id="btnIconCloseProduct"
+                  ></i>
+                </div>
+              </div>
+
+              <!-- header filter buttons -->
+              <div class="header-filter-buttons">
+                <ul class="header-filter-button-items">
+                  <li
+                    class="header-filter-button-item"
+                    id="showBtnOperationProduct"
+                  >
+                    <button class="btn-success">
+                      <i class="btn-icon fas fa-solid fa-ellipsis-vertical"></i>
+                      <span>Thao tác</span>
+                      <span></span>
+                      <i class="btn-icon fas fa-solid fa-caret-down"></i>
+                    </button>
+                    <ul class="operation-list" id="operationProductList">
+                      <li>
+                        <button class="operation" id="btnOperationInboxProduct">
+                          <i class="btn-icon fas fa-solid fa-inbox"></i>
+                          <span>Đặt nhập hàng</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          class="operation"
+                          id="btnOperationFlatbedProduct"
+                        >
+                          <i class="btn-icon fas fa-solid fa-cart-flatbed"></i>
+                          <span>Nhập hàng</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          class="operation"
+                          id="btnOperationChangeGroupProduct"
+                        >
+                          <i
+                            class="btn-icon fas fa-solid fa-square-up-right"
+                          ></i>
+                          <span>Chuyển nhóm hàng</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          class="operation"
+                          id="btnOperationBarcodeProduct"
+                        >
+                          <i class="btn-icon fas fa-solid fa-barcode"></i>
+                          <span>In tem mã</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button class="operation" id="btnOperationLockProduct">
+                          <i class="btn-icon fas fa-solid fa-lock"></i>
+                          <span>Ngừng kinh doanh</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          class="operation"
+                          id="btnOperationFileExportProduct"
+                        >
+                          <i class="btn-icon fas fa-solid fa-file-export"></i>
+                          <span>Xuất file</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          class="operation"
+                          id="btnOperationRemoveProduct"
+                        >
+                          <i class="btn-icon fa fa-regular fa-trash-can"></i>
+                          <span>Xóa</span>
+                        </button>
+                        <!-- remove-row-table -->
+                        <div class="remove-row-table remove-box">
+                          <div class="mask mask-remove">
+                            <div
+                              class="remove-row-table-container remove-container"
+                            >
+                              <div class="add-remove-title">
+                                <span
+                                  id="titleRemoveProductTable"
+                                  class="remove-remove-title"
+                                ></span>
+                                <i
+                                  id="closeRemoveTable"
+                                  class="form-close-icon fas fa-solid fa-close"
+                                ></i>
+                                <script src="./assets/js/btn_close.js"></script>
+                                <script>
+                                  document.addEventListener(
+                                    "DOMContentLoaded",
+                                    function () {
+                                      closeButton(
+                                        "closeRemoveTable",
+                                        ".remove-row-table"
+                                      );
+                                    }
+                                  );
+                                </script>
+                              </div>
+
+                              <div class="add-remove-body">
+                                <div class="form-group">
+                                  <p>
+                                    Hệ thống sẽ xóa hoàn toàn
+                                    <span id="contentRemoveProductTable"></span>
+                                    đã chọn. Bạn có chắc chắn muốn xóa?
+                                  </p>
+                                </div>
+
+                                <!-- add btn bottom -->
+                                <div class="add-btn-bottom">
+                                  <button
+                                    id="removeRowTableProduct"
+                                    class="btn btn-red btn-red-bottom"
+                                  >
+                                    <i
+                                      class="btn-success-icon fas fa-solid fa-check"
+                                    ></i>
+                                    <span>Đồng ý</span>
+                                  </button>
+                                  <button
+                                    id="cancelRemoveTable"
+                                    class="btn btn-default btn-default-bottom"
+                                  >
+                                    <i
+                                      class="btn-success-icon fas fa-solid fa-ban"
+                                    ></i>
+                                    <span>Bỏ qua</span>
+                                    <script src="./assets/js/btn_close.js"></script>
+                                    <script>
+                                      document.addEventListener(
+                                        "DOMContentLoaded",
+                                        function () {
+                                          closeButton(
+                                            "cancelRemoveTable",
+                                            ".remove-row-table"
+                                          );
+                                        }
+                                      );
+                                    </script>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </li>
+
+                  <li
+                    class="header-filter-button-item"
+                    id="addMoreProductButton"
+                  >
+                    <button class="btn-success">
+                      <i class="btn-icon fas fa-solid fa-plus"></i>
+                      <span>Thêm mới</span>
+                      <span></span>
+                      <i class="btn-icon fas fa-solid fa-caret-down"></i>
+                    </button>
+                    <ul class="btn-add-product-list" id="btnAddProductList">
+                      <li>
+                        <button
+                          class="operation"
+                          id="addCommodityProductButton"
+                          data-action=""
+                        >
+                          <i class="btn-icon fas fa-solid fa-plus"></i>
+                          <span>Thêm hàng hóa</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          class="operation"
+                          id="addServiceProductButton"
+                          data-action=""
+                        >
+                          <i class="btn-icon fas fa-solid fa-plus"></i>
+                          <span>Thêm dịch vụ</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          class="operation"
+                          id="addComboProductButton"
+                          data-action=""
+                        >
+                          <i class="btn-icon fas fa-solid fa-plus"></i>
+                          <span>Thêm Combo-đóng gói</span>
+                        </button>
+                      </li>
+                    </ul>
+                    <script src="./assets/js/btn_focus_show.js"></script>
+                    <script>
+                      document.addEventListener(
+                        "DOMContentLoaded",
+                        function () {
+                          toggleDisplay(
+                            "addCommodityProductButton",
+                            ".add-product",
+                            "productCode"
+                          );
+                          toggleDisplay(
+                            "addServiceProductButton",
+                            ".add-product",
+                            "productCode"
+                          );
+                          toggleDisplay(
+                            "addComboProductButton",
+                            ".add-product",
+                            "productCode"
+                          );
+                        }
+                      );
+                    </script>
+                  </li>
+
+                  <li class="header-filter-button-item">
+                    <button class="btn-success" id="" data-action="importFile">
+                      <i class="btn-icon fas fa-solid fa-file-import"></i>
+                      <span>Import</span>
+                    </button>
+                  </li>
+
+                  <li class="header-filter-button-item">
+                    <button class="btn-success" id="" data-action="exportFile">
+                      <i class="btn-icon fas fa-solid fa-file-export"></i>
+                      <span>Xuất file</span>
+                    </button>
+                  </li>
+
+                  <li class="header-filter-button-item">
+                    <button class="btn-success k-link">
+                      <i class="btn-icon fas fa-solid fa-list"></i>
+                      <span></span>
+                      <i class="btn-icon fas fa-solid fa-caret-down"></i>
+                    </button>
+                    <ul class="">
+                      <li class="">
+                        <div
+                          class="animation-container animation-container-product"
+                          id="animationContainerProduct"
+                        >
+                          <label class="container-check-box check-box-menu"
+                            >Hình ảnh
+                            <input
+                              id="containerCheckBoxCellImgProduct"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Mã hàng
+                            <input
+                              id="containerCheckBoxProductCode"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Mã vạch
+                            <input
+                              id="containerCheckBoxBarcode"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Tên hàng
+                            <input
+                              id="containerCheckBoxProductName"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Nhóm hàng
+                            <input
+                              id="containerCheckBoxProductGroup"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Loại hàng
+                            <input
+                              id="containerCheckBoxProductType"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Liên kết bán hàng
+                            <input
+                              id="containerCheckBoxSalesChannelLink"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Giá bán
+                            <input
+                              id="containerCheckBoxSellingPrice"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Giá vốn
+                            <input
+                              id="containerCheckBoxCostPrice"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Thương hiệu
+                            <input
+                              id="containerCheckBoxTrademark"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Tồn kho
+                            <input
+                              id="containerCheckBoxInventory"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Vị trí
+                            <input
+                              id="containerCheckBoxLocation"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Khách đặt
+                            <input
+                              id="containerCheckBoxGuestBooked"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Dự kiến hết hàng
+                            <input
+                              id="containerCheckBoxEstimatedOOSDate"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Định mức tồn ít nhất
+                            <input
+                              id="containerCheckBoxMinInventory"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Định mức tồn nhiều nhất
+                            <input
+                              id="containerCheckBoxMaxInventory"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+
+                          <label class="container-check-box check-box-menu"
+                            >Trạng thái
+                            <input
+                              id="containerCheckBoxProductStatus"
+                              type="checkbox"
+                              checked="checked"
+                            />
+                            <span class="checkmark"></span>
+                          </label>
+                        </div>
+                      </li>
+                    </ul>
+                    <script src="./assets/js/hide_show_table.js"></script>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- table products -->
+            <div class="table-container">
+              <table class="product-table-list">
+                <thead class="table-header">
+                  <tr class="table-row-header">
+                    <th id="cellCheckAllProduct">
+                      <label class="container-check-box">
+                        <input
+                          class="check-all"
+                          id="checkAllProduct"
+                          type="checkbox"
+                        />
+                        <span class="checkmark"></span>
+                      </label>
+                    </th>
+                    <th class="cell-img" for="containerCheckBoxCellImgProduct">
+                      <a href="#" class="k-link"></a>
+                    </th>
+                    <th class="product-code" for="containerCheckBoxProductCode">
+                      Mã hàng
+                    </th>
+                    <th class="barcode" for="containerCheckBoxBarcode">
+                      Mã vạch
+                    </th>
+                    <th class="product-name" for="containerCheckBoxProductName">
+                      Tên hàng
+                    </th>
+                    <th
+                      class="product-group"
+                      for="containerCheckBoxProductGroup"
+                    >
+                      Nhóm hàng
+                    </th>
+                    <th class="product-type" for="containerCheckBoxProductType">
+                      Loại hàng
+                    </th>
+                    <th
+                      class="sales-channel-link"
+                      for="containerCheckBoxSalesChannelLink"
+                    >
+                      Liên kết bán hàng
+                    </th>
+                    <th
+                      class="selling-price"
+                      for="containerCheckBoxSellingPrice"
+                    >
+                      Giá bán
+                    </th>
+                    <th class="cost-price" for="containerCheckBoxCostPrice">
+                      Giá vốn
+                    </th>
+                    <th class="trademark" for="containerCheckBoxTrademark">
+                      Thương hiệu
+                    </th>
+                    <th class="inventory" for="containerCheckBoxInventory">
+                      Tồn kho
+                    </th>
+                    <th class="location" for="containerCheckBoxLocation">
+                      Vị trí
+                    </th>
+                    <th class="guest-booked" for="containerCheckBoxGuestBooked">
+                      Khách đặt
+                    </th>
+                    <th
+                      class="estimated-OOS-date"
+                      for="containerCheckBoxEstimatedOOSDate"
+                    >
+                      Dự kiến hết hàng
+                    </th>
+                    <th
+                      class="min-inventory"
+                      for="containerCheckBoxMinInventory"
+                    >
+                      Định mức tồn ít nhất
+                    </th>
+                    <th
+                      class="max-inventory"
+                      for="containerCheckBoxMaxInventory"
+                    >
+                      Định mức tồn nhiều nhất
+                    </th>
+                    <th
+                      id="productStatus"
+                      class="product-status"
+                      for="containerCheckBoxProductStatus"
+                    >
+                      Trạng thái
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="productListId" class="table-body"></tbody>
+                <script src="./assets/js/btn_show_div.js"></script>
+                <script src="./assets/js/creat_product.js"></script>
+                <script src="./assets/js/check_HTML_tags.js"></script>
+                <script src="./assets/js/show_list_product.js"></script>
+                <script src="./assets/js/toggle_product_detail.js"></script>
+              </table>
+              <script src="./assets/js/cell_check_product.js"></script>
+            </div>
+
+            <!-- add-remove-product -->
+            <div class="add-remove-product remove-box">
+              <div class="mask mask-remove">
+                <div class="remove-product-container remove-container">
+                  <div class="add-remove-title">
+                    <span id="titleRemoveProduct" class="remove-title"></span>
+                    <i
+                      id="closeRemoveProduct"
+                      class="close-icon fas fa-solid fa-close"
+                    ></i>
+                  </div>
+                  <div class="add-remove-body">
+                    <div class="form-group">
+                      <p>
+                        Hệ thống sẽ <b>xóa hoàn toàn</b>
+                        <span id="contentRemoveProduct"></span> này. Bạn có chắc
+                        chắn muốn xóa?
+                      </p>
+                    </div>
+
+                    <!-- add btn bottom -->
+                    <div class="add-btn-bottom comfirmation-remove-product">
+                      <button
+                        class="btn btn-success btn-success-bottom"
+                        id="acceptProductRemove"
+                      >
+                        <i class="btn-success-icon fas fa-solid fa-check"></i>
+                        <span>Đồng ý</span>
+                      </button>
+                      <button
+                        id="cancelRemoveProduct"
+                        class="btn btn-default btn-default-bottom"
+                      >
+                        <i class="btn-success-icon fas fa-solid fa-ban"></i>
+                        <span>Bỏ qua</span>
+                      </button>
+                      <script src="./assets/js/btn_close.js"></script>
+                      <script>
+                        document.addEventListener(
+                          "DOMContentLoaded",
+                          function () {
+                            closeButton(
+                              "closeRemoveProduct",
+                              ".add-remove-product"
+                            );
+
+                            closeButton(
+                              "cancelRemoveProduct",
+                              ".add-remove-product"
+                            );
+                          }
+                        );
+                      </script>
+                      <script src="./assets/js/btn_show_div.js"></script>
+                      <script src="./assets/js/btn_close.js"></script>
+                      <script src="./assets/js/remove_product_commodity.js"></script>
+                      <script src="./assets/js/remove_product_service.js"></script>
+                      <script src="./assets/js/remove_product_combo.js"></script>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section add product -->
+    <section class="add-product" id="addProduct">
+      <div class="mask mask-1"></div>
+
+      <div id="containerAddProduct">
+        <!-- add product header -->
+        <div class="add-product-head header">
+          <div class="add-product-head-title header-title">
+            <span
+              id="titleAddProduct"
+              class="add-product-title-heading span-heading"></span>
+            <i
+              class="add-product-icon fas fa-solid fa-close"
+              id="closeAddProduct"
+            ></i>
+          </div>
+        </div>
+
+        <!-- add product container -->
+        <div class="add-product-container">
+          <div class="active-info-setting-product">
+            <a href="#" class="active-info-product">Thông tin</a>
+            <a href="#" class="active-detail-product">Mô tả chi tiết</a>
+            <a href="#" class="active-ingredient-product">Thành phần</a>
+            <script src="./assets/js/info_detail_ingredient.js"></script>
+          </div>
+
+          <!-- form content -->
+          <div
+            class="tab-content tab-content-form-product"
+            id="tabContentFormProduct"
+          >
+            <div class="form-wrapper">
+              <!-- left content -->
+              <div
+                class="info-form-image-add-product left-content-info-product"
+              >
+                <!-- Initialization information -->
+                <div class="information-group information-group-form-product">
+                  <div class="form-group form-group-product">
+                    <label class="form-label"
+                      >Mã hàng
+                      <i
+                        class="parameter-type-icon fas fa-solid fa-circle-info"
+                        title="Mã hàng là thông tin duy nhất"
+                      ></i>
+                    </label>
+
+                    <div class="form-wrap form-wrap-product">
+                      <input
+                        id="productCode"
+                        class="form-control form-control-form-group-product"
+                        type="text"
+                        placeholder="Mã hàng tự động"
+                        maxlength="16"
+                      />
+                      <script src="./assets/js/pointer_focus.js"></script>
+                      <script>
+                        document.addEventListener(
+                          "DOMContentLoaded",
+                          function () {
+                            // Gọi hàm focusOnInput với id của phần tử input cần focus
+                            focusOnInput("productCode");
+                          }
+                        );
+                      </script>
+                    </div>
+                  </div>
+
+                  <div class="form-group form-group-product">
+                    <label class="form-label"
+                      >Mã vạch
+                      <i
+                        class="parameter-type-icon fas fa-solid fa-circle-info"
+                        title="Mã vạch của hàng hóa thường được tạo ra bởi nhà sản xuất"
+                      ></i>
+                    </label>
+
+                    <div class="form-wrap form-wrap-product">
+                      <input
+                        id="productBarcode"
+                        class="form-control form-control-form-group-product"
+                        type="number"
+                        maxlength="16"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-group form-group-product">
+                    <label class="form-label"
+                      >Tên hàng
+                      <i
+                        class="parameter-type-icon fas fa-solid fa-circle-info"
+                        title="Tên hàng là tên của sản phẩm"
+                      ></i>
+                    </label>
+
+                    <div class="form-wrap form-wrap-product">
+                      <input
+                        id="productName"
+                        class="form-control form-control-form-group-product"
+                        type="text"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="form-group form-group-product">
+                    <label class="form-label"
+                      >Nhóm hàng
+                      <i
+                        class="parameter-type-icon fas fa-solid fa-circle-info"
+                        title="Lựa chọn nhóm hàng cho sản phẩm"
+                      ></i>
+                    </label>
+
+                    <div class="form-wrap form-wrap-product">
+                      <input
+                        id="productGroup"
+                        class="form-control form-control-form-group-product"
+                        type="text"
+                        placeholder="---Lựa chọn---"
+                      />
+                      <div class="group-icon-add-new">
+                        <i
+                          href="#"
+                          class="show-hide-icon fas fa-solid fa-sort-down"
+                          id="hideAddProductGroupForm"
+                        ></i>
+                        <a
+                          href="#"
+                          class="add-product-group-icon btn-icon add-group-product fas fa-solid fa-plus"
+                          title="Thêm nhóm hàng mới"
+                          id="addProductGroupForm"
+                        ></a>
+                        <script src="./assets/js/btn_show_div.js"></script>
+                        <script>
+                          document.addEventListener(
+                            "DOMContentLoaded",
+                            function () {
+                              showDiv(
+                                "addProductGroupForm",
+                                ".add-new-department"
+                              );
+                            }
+                          );
+                        </script>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group form-group-product">
+                    <label class="form-label"
+                      >Thương hiệu
+                      <i
+                        class="parameter-type-icon fas fa-solid fa-circle-info"
+                        title="Thương hiệu, nhãn hiệu của sản phẩm"
+                      ></i>
+                    </label>
+
+                    <div class="form-wrap form-wrap-product">
+                      <input
+                        id="productTrademark"
+                        class="form-control form-control-form-group-product"
+                        type="text"
+                        placeholder="---Chọn thương hiệu---"
+                      />
+                      <div class="group-icon-add-new">
+                        <i
+                          href="#"
+                          class="show-hide-icon fas fa-solid fa-sort-down"
+                          id="hideAddProductTrademarkForm"
+                        ></i>
+                        <a
+                          href="#"
+                          class="add-trademark-icon btn-icon add-group-product fas fa-solid fa-plus"
+                          title="Thêm thương hiệu mới"
+                          id="addProductTrademarkForm"
+                        ></a>
+                        <script src="./assets/js/btn_show_div.js"></script>
+                        <script>
+                          document.addEventListener(
+                            "DOMContentLoaded",
+                            function () {
+                              showDiv(
+                                "addProductTrademarkForm",
+                                ".add-new-position"
+                              );
+                            }
+                          );
+                        </script>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group form-group-product">
+                    <label class="form-label"
+                      >Vị trí
+                      <i
+                        class="parameter-type-icon fas fa-solid fa-circle-info"
+                        title="Sử dụng để ghi lại vị trí mà hàng hóa được cất giữ hoặc trưng bày. Ví dụ: kệ số 1, số 2..."
+                      ></i>
+                    </label>
+
+                    <div class="form-wrap form-wrap-product">
+                      <input
+                        id="productLocation"
+                        class="form-control form-control-form-group-product"
+                        type="text"
+                        placeholder=""
+                      />
+                      <div class="group-icon-add-new">
+                        <i
+                          href="#"
+                          class="show-hide-icon fas fa-solid fa-pen"
+                          id="hideAddAccountFormproduct"
+                        ></i>
+                        <a
+                          href="#"
+                          class="add-account-icon btn-icon add-group-product fas fa-solid fa-plus"
+                          title="Thêm vị trí mới"
+                          id="addNewAccountFormAddProduct"
+                        ></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-image-group">
+                  <div class="form-image-product">
+                    <div class="wrap-img wrap-img-form-product">
+                      <label for="productImg1" class="custom-upload-btn">
+                        <img
+                          id="previewImg1"
+                          src="data:image/png;base64,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"
+                          alt="Preview Image"
+                        />
+                      </label>
+                    </div>
+
+                    <div class="dropzone">
+                      <div
+                        class="upload-button"
+                        id="uploadBtn1"
+                        data-preview-id="previewImg1"
+                      >
+                        <input
+                          type="file"
+                          id="productImg1"
+                          accept="image/*"
+                          onchange="previewImage(event)"
+                        />
+                        <div class="upload-status-total">
+                          <em>drop files here to upload*</em>
+                          <strong class="upload-status"></strong>
+                          <span id="imagePath1" class="file-name"></span
+                          ><strong>100%</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-image-product">
+                    <div class="wrap-img wrap-img-form-product">
+                      <label for="productImg2" class="custom-upload-btn">
+                        <img
+                          id="previewImg2"
+                          src="data:image/png;base64,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"
+                          alt="Preview Image"
+                        />
+                      </label>
+                    </div>
+
+                    <div class="dropzone">
+                      <div
+                        class="upload-button"
+                        id="uploadBtn2"
+                        data-preview-id="previewImg2"
+                      >
+                        <input
+                          type="file"
+                          id="productImg2"
+                          accept="image/*"
+                          onchange="previewImage(event)"
+                        />
+
+                        <div class="upload-status-total">
+                          <em>drop files here to upload*</em>
+                          <strong class="upload-status"></strong>
+                          <span id="imagePath2" class="file-name"></span
+                          ><strong>100%</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-image-product">
+                    <div class="wrap-img wrap-img-form-product">
+                      <label for="productImg3" class="custom-upload-btn">
+                        <img
+                          id="previewImg3"
+                          src="data:image/png;base64,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"
+                          alt="Preview Image"
+                        />
+                      </label>
+                    </div>
+
+                    <div class="dropzone">
+                      <div
+                        class="upload-button"
+                        id="uploadBtn3"
+                        data-preview-id="previewImg3"
+                      >
+                        <input
+                          type="file"
+                          id="productImg3"
+                          accept="image/*"
+                          onchange="previewImage(event)"
+                        />
+
+                        <div class="upload-status-total">
+                          <em>drop files here to upload*</em>
+                          <strong class="upload-status"></strong>
+                          <span id="imagePath3" class="file-name"></span
+                          ><strong>100%</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-image-product">
+                    <div class="wrap-img wrap-img-form-product">
+                      <label for="productImg4" class="custom-upload-btn">
+                        <img
+                          id="previewImg4"
+                          src="data:image/png;base64,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"
+                          alt="Preview Image"
+                        />
+                      </label>
+                    </div>
+
+                    <div class="dropzone">
+                      <div
+                        class="upload-button"
+                        id="uploadBtn4"
+                        data-preview-id="previewImg4"
+                      >
+                        <input
+                          type="file"
+                          id="productImg4"
+                          accept="image/*"
+                          onchange="previewImage(event)"
+                        />
+
+                        <div class="upload-status-total">
+                          <em>drop files here to upload*</em>
+                          <strong class="upload-status"></strong>
+                          <span id="imagePath" class="file-name"></span
+                          ><strong>100%</strong>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-image-product">
+                    <div class="wrap-img wrap-img-form-product">
+                      <label for="productImg5" class="custom-upload-btn">
+                        <img
+                          id="previewImg5"
+                          src="data:image/png;base64,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"
+                          alt="Preview Image"
+                        />
+                      </label>
+                    </div>
+
+                    <div class="dropzone">
+                      <div
+                        class="upload-button"
+                        id="uploadBtn5"
+                        data-preview-id="previewImg5"
+                      >
+                        <input
+                          type="file"
+                          id="productImg5"
+                          accept="image/*"
+                          onchange="previewImage(event)"
+                        />
+
+                        <div class="upload-status-total">
+                          <em>drop files here to upload*</em>
+                          <strong class="upload-status"></strong>
+                          <span id="imagePath5" class="file-name"></span
+                          ><strong>100%</strong>
+                        </div>
+                        <!-- uploadImage function() -->
+                        <script src="./assets/js/img_upload_product.js"></script>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- right content -->
+              <div
+                class="info-form-price-add-product right-content-info-product"
+              >
+                <div class="information-group information-group-form-product">
+                  <div class="form-group form-price-add-product">
+                    <label class="form-label"
+                      >Giá vốn
+                      <i
+                        class="parameter-type-icon fas fa-solid fa-circle-info"
+                        title="Giá vốn dùng để tính lợi nhuận cho sản phẩm (sẽ tự động thay đổi khi thay đổi phương pháp tính giá vốn)"
+                      ></i>
+                    </label>
+
+                    <div class="form-wrap form-wrap-product">
+                      <input
+                        id="costPrice"
+                        type="text"
+                        class="form-control form-control-form-price-add-product"
+                        value="0"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group form-price-add-product">
+                    <label class="form-label">Giá bán</label>
+                    <div class="form-wrap form-wrap-product">
+                      <input
+                        id="sellingPrice"
+                        type="text"
+                        class="form-control form-control-form-price-add-product"
+                        value="0"
+                      />
+                      <i
+                        id="tagsIconProduct"
+                        class="parameter-type-icon fas fa-solid fa-tags"
+                      ></i>
+                    </div>
+                  </div>
+
+                  <div class="form-group form-price-add-product">
+                    <label class="form-label"
+                      >Tồn kho
+                      <i
+                        class="parameter-type-icon fas fa-solid fa-circle-info"
+                        title="Số lượng tồn kho của sản phẩm (sẽ tự động tạo ra phiếu kiểm kho cho sản phẩm)"
+                      ></i>
+                    </label>
+
+                    <div class="form-wrap form-wrap-product">
+                      <input
+                        id="productInventory"
+                        type="text"
+                        class="form-control form-control-form-price-add-product"
+                        value="0"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group form-price-add-product">
+                    <label for="productWeight" class="form-label"
+                      >Trọng lượng
+                      <i
+                        class="parameter-type-icon fas fa-solid fa-circle-info"
+                        title="Sử dụng để tính trọng lượng khi giao hàng"
+                      ></i>
+                    </label>
+
+                    <div
+                      class="form-wrap form-wrap-product form-wrap-product-weight"
+                    >
+                      <input id="productWeight" type="text" />
+                      <input
+                        id="productWeightNumber"
+                        type="text"
+                        class="form-control form-control-form-price-add-product"
+                      />
+                      <select
+                        id="productWeightType"
+                        class="product-weight-type form-select"
+                        name="product-weight-type"
+                        aria-placeholder="gram"
+                      >
+                        <option value=" gram">gram</option>
+                        <option value=" kg">kg</option>
+                      </select>
+                    </div>
+                  </div>
+                  <label class="container-check-box check-box-menu-add-product"
+                    >Bán trực tiếp
+                    <i
+                      class="parameter-type-icon fas fa-solid fa-circle-info"
+                      title="Sản phẩm sẽ xuất hiện trên màn hình bán hàng"
+                    ></i>
+                    <input
+                      id="productDirectSale"
+                      type="checkbox"
+                      checked="checked"
+                    />
+                    <span class="checkmark checkmark-direct-add-product"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- product information below-->
+            <div
+              class="info-form-attribute-add-product below-content-info-product"
+            >
+              <div class="information-group information-group-form-product">
+                <!-- attribute form -->
+                <div class="form-group form-attribute-add-product">
+                  <h3 id="hideAddFormAttribute" class="form-title form-title-attribute">
+                    <span class="form-span form-span-attribute"
+                      >Thuộc tính</span
+                    >
+                    <i
+                      href="#"
+                      class="show-hide-icon fas fa-solid fa-chevron-down"
+                    ></i>
+                  </h3>
+
+                  <div class="form-wrapper form-wrapper-attribute">
+                    <div class="form-wrap form-wrap-product-below">
+                      <div class="form-input-icon-attribute">
+                        <input
+                          id="productProperties"
+                          class="form-control form-control-attribute-add-product"
+                          type="text"
+                          placeholder="Chọn thuộc tính"
+                        />
+                        <i
+                          href="#"
+                          class="show-hide-icon form-icon-attribute fas fa-solid fa-sort-down"
+                          id="hideAddProductAttributeForm"
+                        ></i>
+                        <script src="./assets/js/show_div_toggle.js"></script>
+                    <script>
+                      document.addEventListener("DOMContentLoaded", function () {
+                        showDivToggle("hideAddFormAttribute", ".form-wrapper-attribute");
+                      });
+                    </script>
+                      </div>
+                      <div class="form-input-icon-attribute">
+                        <input
+                          id="productPropertiesValue"
+                          class="form-control form-control-attribute-add-product"
+                          type="text"
+                          placeholder="Nhập giá trị và enter"
+                        />
+                      </div>
+                      <i class="form-trash-icon fas fa-solid fa-trash-can"></i>
+                    </div>
+
+                    <!-- btn attribute form -->
+                    <div class="add-attribute-form">
+                      <button
+                        id="addAttributeForm"
+                        class="btn btn-white btn-attribute-unit-form"
+                      >
+                        <i
+                          class="btn-success-icon fas fa-solid fa-plus"
+                          aria-hidden="true"
+                        ></i>
+                        <span>Thêm thuộc tính</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- unit form -->
+                <div class="form-group form-unit-add-product">
+                  <h3 id="hideAddFormUnit" class="form-title form-title-unit">
+                    <span class="form-span form-span-unit">Đơn vị tính</span>
+                    <i
+                      href="#"
+                      class="show-hide-icon fas fa-solid fa-chevron-down"
+                    ></i>
+                    <script src="./assets/js/show_div_toggle.js"></script>
+                    <script>
+                      document.addEventListener("DOMContentLoaded", function () {
+                        showDivToggle("hideAddFormUnit", ".form-wrapper-unit");
+                      });
+                    </script>
+                  </h3>
+                  <div class="form-wrapper form-wrapper-unit">
+                    <label class="form-label form-label-wrapper-unit">
+                      <span class="form-span form-span-unit"
+                        >Đơn vị cơ bản
+                        <i
+                          class="parameter-type-icon fas fa-solid fa-circle-info"
+                          title="Đơn vị của hàng hóa như: Hộp, lốc, thùng..."
+                        ></i>
+                      </span>
+                    </label>
+                    <div class="form-wrap form-wrap-product-below">
+                      <input
+                        id="productCalculationUnit"
+                        class="form-control form-control-attribute-add-product"
+                        type="text"
+                      />
+                      <label
+                        id="productDirectSaleUnitStandardLabel"
+                        for="productDirectSaleUnitStandard"
+                        class="container-check-box check-box-menu-add-product"
+                        >Bán trực tiếp
+                        <i
+                          class="parameter-type-icon fas fa-solid fa-circle-info"
+                          title="Sản phẩm sẽ xuất hiện trên màn hình bán hàng"
+                        ></i>
+                        <input
+                          id="productDirectSaleUnitStandard"
+                          type="checkbox"
+                          checked="checked"
+                        />
+                        <span
+                          id="checkmarkDirectSaleStandard"
+                          class="checkmark checkmark-direct-add-product"
+                        ></span>
+                      </label>
+                    </div>
+
+                    <table class="form-table form-table-product-below">
+                      <tbody>
+                        <tr>
+                          <th class="cell-name-unit">
+                            <span>Tên đơn vị</span>
+                          </th>
+                          <th class="cell-exchange-unit">
+                            <span>Giá trị quy đổi</span>
+                          </th>
+                          <th class="selling-price-unit">
+                            <span>Giá bán</span>
+                          </th>
+                          <th class="product-code-unit">
+                            <span>Mã hàng</span>
+                          </th>
+                          <th class="product-barcode-unit">
+                            <span>Mã vạch</span>
+                          </th>
+                          <th class="product-direct-remove-unit"></th>
+                        </tr>
+                        <tr>
+                          <td class="cell-name-unit">
+                            <input
+                              type="text"
+                              id="unitSuggestName"
+                              class="form-control form-control-form-unit-add-product"
+                            />
+                          </td>
+                          <td class="cell-exchange-unit">
+                            <input
+                              type="number"
+                              id="unitExchange"
+                              placeholder="1"
+                              class="form-control form-control-form-unit-add-product"
+                            />
+                          </td>
+                          <td class="selling-price-unit">
+                            <input
+                              type="number"
+                              id="unitSellingPrice"
+                              placeholder="0"
+                              class="form-control form-control-form-unit-add-product"
+                            />
+                            <i
+                              id="tagsIconProductUnit"
+                              class="parameter-type-icon fas fa-solid fa-tags"
+                            ></i>
+                          </td>
+                          <td class="product-code-unit">
+                            <input
+                              type="number"
+                              id="unitProductCode"
+                              placeholder="Mã hàng tự động"
+                              class="form-control form-control-form-unit-add-product"
+                            />
+                          </td>
+                          <td class="product-barcode-unit">
+                            <input
+                              type="number"
+                              id="unitProductBarcode"
+                              class="form-control form-control-form-unit-add-product"
+                            />
+                          </td>
+                          <td class="product-direct-remove-unit">
+                            <div class="form-wrap form-wrap-product-below">
+                              <label
+                                id="productDirectSaleUnitSetLabel"
+                                for="productDirectSaleUnit"
+                                class="container-check-box check-box-menu-add-product"
+                                >Bán trực tiếp
+                                <i
+                                  class="parameter-type-icon fas fa-solid fa-circle-info"
+                                  title="Sản phẩm sẽ xuất hiện trên màn hình bán hàng"
+                                ></i>
+                                <input
+                                  id="productDirectSaleUnit"
+                                  type="checkbox"
+                                  checked="checked"
+                                />
+                                <span
+                                  id="checkmarkDirectSaleUnit"
+                                  class="checkmark checkmark-direct-add-product"
+                                ></span>
+                              </label>
+                              <i
+                                class="form-trash-iconfas fa-solid fa-trash-can"
+                              ></i>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <!-- btn unit form-->
+                    <div class="add-unit-form">
+                      <button
+                        id="addUnitForm"
+                        class="btn btn-white btn-attribute-unit-form"
+                      >
+                        <i
+                          class="btn-success-icon fas fa-solid fa-plus"
+                          aria-hidden="true"
+                        ></i>
+                        <span>Thêm đơn vị</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- detail product -->
+          <div class="detail-product" id="detailProduct">
+            <!-- detail product container -->
+            <div class="detail-product-container">
+              <div class="detail-group detail-group-form-product">
+                <!-- detail inventory levels -->
+                <div class="form-group form-detail-inventory-add-product">
+                  <h3 class="form-title form-title-inventory">
+                    <span class="form-span form-span-inventory"
+                      >Định mức tồn</span
+                    >
+                  </h3>
+                  <div class="form-wrapper form-wrapper-detail-inventory">
+                    <div class="form-wrap form-wrap-product-detail-inventory">
+                      <label
+                        class="form-label form-label-wrap-detail-inventory"
+                        for="minInventory"
+                        >Ít nhất
+                        <i
+                          class="inventory-icon fas fa-solid fa-circle-info"
+                          title="Hệ thống sẽ dựa vào thông tin này để cảnh báo hàng dưới định mức tồn nếu tồn kho < Tồn ít nhất"
+                        ></i>
+                      </label>
+                      <div class="form-label-icon form-label-icon-inventory">
+                        <input
+                          id="minInventory"
+                          type="text"
+                          class="form-control form-control-inventory-levels-detail"
+                          placeholder="0"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="form-wrap form-wrap-product-detail-inventory">
+                      <label
+                        class="form-label form-label-wrap-detail-inventory"
+                        for="maxInventory"
+                        >Nhiều nhất
+                        <i
+                          class="inventory-icon fas fa-solid fa-circle-info"
+                          title="Hệ thống sẽ dựa vào thông tin này để cảnh báo hàng vượt định mức tồn nếu tồn kho > Tồn nhiều nhất"
+                        ></i>
+                      </label>
+
+                      <div class="form-label-icon form-label-icon-inventory">
+                        <input
+                          id="maxInventory"
+                          type="text"
+                          class="form-control form-control-inventory-levels-detail"
+                          placeholder="999,999,999"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- detail description -->
+                <div class="form-group form-detail-description-add-product">
+                  <h3 class="form-title form-title-description">
+                    <span class="form-span form-span-description">Mô tả</span>
+                  </h3>
+                  <div class="form-wrapper form-wrapper-detail-description">
+                    <div class="form-wrap form-wrap-product-detail-description">
+                      <div class="form-label-icon form-label-icon-description">
+                        <textarea
+                          id="productDesc"
+                          class="product-desc form-input"
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- detail notes -->
+                <div class="form-group form-detail-notes-add-product">
+                  <h3 class="form-title form-title-notes">
+                    <span class="form-span form-span-notes"
+                      >Mẫu ghi chú (hóa đơn, đặt hàng)</span
+                    >
+                  </h3>
+                  <div class="form-wrapper form-wrapper-detail-notes">
+                    <div class="form-wrap form-wrap-product-detail-notes">
+                      <div class="form-label-icon form-label-icon-notes">
+                        <textarea
+                          id="noteFormInvoiceOrder"
+                          class="note-form form-input"
+                        ></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ingredient product -->
+        <div class="ingredient-product" id="ingredientProduct">
+          <div class="ingredient-product-container">
+            <div class="ingredient-group ingredient-group-form-product">
+              <div class="form-group form-ingredient-add-product">
+                <div class="form-wrapper form-wrapper-ingredient">
+                  <div class="form-wrap form-wrap-product-ingredient">
+                    <label
+                      class="form-label form-label-wrap-ingredient"
+                      for="commodityComponents"
+                    >
+                      Hàng hóa thành phần
+                      <i
+                        class="ingredient-icon fas fa-solid fa-circle-info"
+                        title="Hàng hóa dược tạo thành từ nhiều hàng hóa hoặc dịch vụ khác"
+                      ></i>
+                    </label>
+                    <div class="form-group form-group-product-ingredient">
+                      <div class="form-label-icon form-label-icon-ingredient">
+                        <i
+                          class="ingredient-search-icon fas fa-solid fa-search"
+                        ></i>
+                        <input
+                          id="commodityComponents"
+                          type="search"
+                          placeholder="Thêm hàng hóa thành phần"
+                          class="form-control form-control-ingredient"
+                        />
+                      </div>
+                      <span class="desc-italic"
+                        ><i
+                          >Hàng hóa này chưa có định lượng nguyên liệu.</i
+                        ></span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- add product bottom -->
+        <div class="add-product-bottom">
+          <button
+            id="btnSaveApplicationProduct"
+            class="btn btn-success btn-success-bottom"
+          >
+            <i class="btn-success-icon fas fa-solid fa-floppy-disk"></i>
+            <span>Lưu</span>
+          </button>
+          <button
+            id="btnSaveApplicationProductMore"
+            class="btn btn-success btn-success-bottom"
+          >
+            <i class="btn-success-icon fas fa-solid fa-floppy-disk"></i>
+            <span>Lưu & Thêm mới</span>
+          </button>
+          <button
+            id="btnSaveApplicationProductCopy"
+            class="btn btn-success btn-success-bottom"
+          >
+            <i class="btn-success-icon fas fa-solid fa-floppy-disk"></i>
+            <span>Lưu & Sao chép</span>
+          </button>
+          <button
+            class="btn btn-default btn-default-bottom"
+            id="cancelAddProduct"
+          >
+            <i class="btn-success-icon fas fa-solid fa-ban"></i>
+            <span>Bỏ qua</span>
+          </button>
+        </div>
+      </div>
+    </section>
+    <!-- <script src="./assets/js/add_product_form_popup.js"></script> -->
+
+    <script src="./assets/js/toast.js"></script>
+    <script src="./assets/js/format_number_input.js"></script>
+    <script src="./assets/js/creat_product.js"></script>
+    <script src="./assets/js/validation_product.js"></script>
+    <script src="./assets/js/validation_is_exists.js"></script>
+    <script src="./assets/js/validation_is_exists_add_product.js"></script>
+    <script src="./assets/js/validation_is_exists_edit_product.js"></script>
+    <script src="./assets/js/btn_close_id.js"></script>
+    <script src="./assets/js/add_local_storage_product_commodity.js"></script>
+    <script src="./assets/js/add_local_storage_product_service.js"></script>
+    <script src="./assets/js/add_local_storage_product_combo.js"></script>
+    <script src="./assets/js/edit_product_clear_data.js"></script>
+    <script src="./assets/js/edit_product_commodity.js"></script>
+    <script src="./assets/js/edit_product_service.js"></script>
+    <script src="./assets/js/edit_product_combo.js"></script>
+    <script src="./assets/js/img_product_zoom.js"></script>
+    <script src="./assets/js/show_operation_more_product.js"></script>
+
+    <!-- <script src="./assets/js/sort_content_table_product.js"></script> -->
+    <script src="./assets/js/to_top.js"></script>
+    <script src="./assets/js/select_number_of_records_product.js"></script>
+
+    <div id="toast"></div>
+    <script src="./assets/js/toast.js"></script>
+
+    <!-- <canvas id="barcodeContainerShowPrint">
+      <i class="form-close-icon fas fa-solid fa-close" id="closePrintBarcode"></i>
+    </canvas>
+    <canvas id="barcodeCanvas"></canvas>
+    <canvas id="barcodeRandom"></canvas>
+    <script src="./assets/js/btn_close_id.js"></script>
+    <script src="./assets/js/barcode.js"></script>
+    <script src="./assets/js/barcode_show_print.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        closeButtonId("closePrintBarcode", "barcodeContainerShowPrint");
+      });
+    </script>
+    <script type="text/javascript">
+      function tagClick(domElement) {
+        alert(
+          "The <" +
+            domElement.localName +
+            " class=" +
+            domElement.className +
+            " id=" +
+            domElement.id +
+            "> says it's Hammer Time!"
+        );
+      }
+    </script> -->
+  </body>
+</html>
+
+<style>
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    font-family: Arial, sans-serif;
+}
+
+.pagination-link {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination-link:hover {
+    background-color: #f0f0f0;
+}
+
+.pagination-link.active {
+    background-color: green;
+    color: white;
+    cursor: default;
+    pointer-events: none;
+}
+
+.pagination-link.disabled {
+    color: #ccc;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.pagination-info {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+</style>

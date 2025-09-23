@@ -1,0 +1,26 @@
+<div class="custom-thumb-transform filter" id="Listthumb">
+    <div data-filter="Images" class="left-info-thumb Images info-thumb item image-gallery selected" id="ThumbImgColor_185" thumbcolorid="185" data-tab-modal="0">
+        <div class="img-thumb" data-color-add="92383" data-slide="0">
+            <img src="https://cdn.hoanghamobile.com/i/productlist/dst/Uploads/2025/01/23/galaxy-s25-ultra-titan-silver-blue-1-8225f9e1f4.png;trim.threshold=80;trim.percentpadding=0.5;mode=pad;paddingWidth=0;" title="Samsung Galaxy S25 Ultra - 12GB/256GB Xanh Dương" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Xanh Dương" data-slide="0">
+        </div>
+        <p>Xanh Dương</p>
+    </div>
+    <div data-filter="Images" class="left-info-thumb Images info-thumb item image-gallery" id="ThumbImgColor_176" thumbcolorid="176" data-tab-modal="6">
+        <div class="img-thumb" data-color-add="92384" data-slide="1">
+            <img src="https://cdn.hoanghamobile.com/i/productlist/dst/Uploads/2025/01/23/galaxy-s25-ultra-titan-white-silver-1-e9f4db0fc4.png;trim.threshold=80;trim.percentpadding=0.5;mode=pad;paddingWidth=0;" title="Samsung Galaxy S25 Ultra - 12GB/256GB Bạc" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Bạc" data-slide="1">
+        </div>
+        <p>Bạc</p>
+    </div>
+    <div data-filter="Images" class="left-info-thumb Images info-thumb item image-gallery" id="ThumbImgColor_203" thumbcolorid="203" data-tab-modal="12">
+        <div class="img-thumb" data-color-add="92386" data-slide="2">
+            <img src="https://cdn.hoanghamobile.com/i/productlist/dst/Uploads/2025/01/23/xam.png;trim.threshold=80;trim.percentpadding=0.5;mode=pad;paddingWidth=0;" title="Samsung Galaxy S25 Ultra - 12GB/256GB Xám" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Xám" data-slide="2">
+        </div>
+        <p>Xám</p>
+    </div>
+    <div data-filter="Images" class="left-info-thumb Images info-thumb item image-gallery" id="ThumbImgColor_422" thumbcolorid="422" data-tab-modal="18">
+        <div class="img-thumb" data-color-add="92387" data-slide="3">
+            <img src="https://cdn.hoanghamobile.com/i/productlist/dst/Uploads/2025/01/23/galaxy-s25-ultra-titan-black-1-5ffaab118c.png;trim.threshold=80;trim.percentpadding=0.5;mode=pad;paddingWidth=0;" title="Samsung Galaxy S25 Ultra - 12GB/256GB Đen" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Đen" data-slide="3">
+        </div>
+        <p>Đen</p>
+    </div>
+</div>

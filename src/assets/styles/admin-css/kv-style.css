@@ -1,0 +1,348 @@
+
+.kv-container{
+    /* width: 100%; */
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.kv-navbar-main {
+    background-color: rgb(0, 112, 244);
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    z-index: 1;
+}
+
+.kv-navbar-container {
+    position: relative;
+}
+
+
+.kv-header-logo {
+  margin-right: 10px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+/* // nav  */
+.kv-navbar-top {
+  color: #15171a;
+  font-size: 12px;
+}
+
+.kv-navbar-top i {
+  font-size: 16px;
+}
+
+.kv-navbar-top .kv-navbar-item:nth-child(1) i {
+  color: #0070f4;
+}
+
+.kv-navbar-top .kv-navbar-item:nth-child(2) i {
+  color: #0070f4;
+}
+
+.kv-navbar-top .kv-navbar-item:nth-child(3) i {
+  color: #0070f4;
+}
+
+.kv-navbar-top .kv-navbar-item:nth-child(1) i:last-child,
+.kv-navbar-top .kv-navbar-item:nth-child(2) i:last-child,
+.kv-navbar-top .kv-navbar-item:nth-child(3) i:last-child {
+  font-size: 6px;
+  padding-bottom: 14px;
+}
+
+.kv-navbar-item img {
+  height: 18px;
+}
+
+.kv-navbar-top .kv-navbar-item {
+  padding: 7px 10px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.kv-navbar-item:hover {
+  background-color: #d5d5d5;
+  cursor: pointer;
+}
+
+.kv-navbar-item p {
+  margin-left: 10px;
+  line-height: 20px;
+}
+
+.kv-header-top .kv-navbar-item:last-child p {
+  margin-right: 10px;
+  margin-left: 0;
+}
+
+.kv-navbar-top .kv-navbar-item:nth-child(7) {
+  padding: 0;
+}
+
+.kv-navbar-top .kv-navbar-item:nth-child(8) {
+  padding: 0;
+}
+
+
+/* kv-dropdown-list */
+.kv-dropdown-list {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: start;
+  position: absolute;
+  top: 34px;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  padding: 8px 0;
+  z-index: 2;
+}
+
+
+/* // nav  */
+.kv-navbar-top {
+    color: #15171a;
+    font-size: 12px;
+  }
+  
+  .kv-navbar-top i {
+    font-size: 16px;
+  }
+  
+  .kv-navbar-top .kv-navbar-item:nth-child(1) i {
+    color: #0070f4;
+  }
+  
+  .kv-navbar-top .kv-navbar-item:nth-child(2) i {
+    color: #0070f4;
+  }
+  
+  .kv-navbar-top .kv-navbar-item:nth-child(3) i {
+    color: #0070f4;
+  }
+  
+  .kv-navbar-top .kv-navbar-item:nth-child(1) i:last-child,
+  .kv-navbar-top .kv-navbar-item:nth-child(2) i:last-child,
+  .kv-navbar-top .kv-navbar-item:nth-child(3) i:last-child {
+    font-size: 6px;
+    padding-bottom: 14px;
+  }
+  
+  .kv-navbar-item img {
+    height: 18px;
+  }
+  
+  .kv-navbar-top .kv-navbar-item {
+    padding: 7px 10px;
+    border-radius: 5px;
+    position: relative;
+  }
+  
+  .kv-navbar-item:hover {
+    background-color: #d5d5d5;
+    cursor: pointer;
+  }
+  
+  .kv-navbar-item p {
+    margin-left: 10px;
+    line-height: 20px;
+  }
+  
+  .kv-header-top .kv-navbar-item:last-child p {
+    margin-right: 10px;
+    margin-left: 0;
+  }
+  
+  .kv-navbar-top .kv-navbar-item:nth-child(7) {
+    padding: 0;
+  }
+  
+  .kv-navbar-top .kv-navbar-item:nth-child(8) {
+    padding: 0;
+  }
+
+  
+  /* kv-dropdown-list */
+  .kv-dropdown-list {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: start;
+    justify-content: start;
+    position: absolute;
+    top: 34px;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    padding: 8px 0;
+    z-index: 2;
+  }
+
+  
+  .kv-navbar-item:hover .theme-colors {
+    display: inline-flex;
+    cursor: pointer;
+  }
+  
+  .kv-dropdown-list li a {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    width: max-content;
+    text-decoration: none;
+    padding: 8px 24px;
+    min-width: 240px;
+    z-index: 2;
+    display: none;
+  }
+  
+  .kv-dropdown-list li a:hover {
+    background-color: #f0f1f3;
+    cursor: pointer;
+  }
+  
+  .kv-dropdown-list li a i {
+    font-size: 18px;
+  }
+  
+  .kv-dropdown-list li a img {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .kv-dropdown-list li a span {
+    font-size: 13px;
+    line-height: 22px;
+    color: #15171a;
+    margin-left: 10px;
+  }
+  
+  .kv-navbar-item:hover .kv-dropdown-list li a {
+    display: inline-flex;
+    cursor: pointer;
+  }
+  
+  .kv-navbar-item:hover .kv-dropdown-list li a i {
+    /* color: #008fca; */
+    color: #fff;
+    cursor: pointer;
+  }
+  /* section navbar main */
+  .kv-navbar-main {
+    background-color: #009981;
+    color: #fff;
+    font-size: 14px;
+    z-index: 1;
+  }
+  
+  .kv-navbar-main ul,
+  .kv-navbar-main li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+  }
+  
+  .kv-navbar-container {
+    position: relative;
+  }
+  
+  .kv-navbar-main .kv-navbar-container .kv-navbar-items > li:last-child {
+    position: absolute;
+    right: 30px;
+    background-color: #007463;
+    z-index: 1;
+  }
+  
+  .kv-navbar-main li:last-child:hover {
+    background-color: #007463;
+    cursor: pointer;
+    z-index: 1;
+  }
+  
+  .kv-navbar-main li:hover {
+    background-color: #007463;
+    cursor: pointer;
+  }
+  
+  .kv-navbar-main i {
+    line-height: 16px;
+  }
+  
+  .kv-navbar-main p {
+    line-height: 30px;
+  }
+  
+  .kv-navbar-main .kv-navbar-item {
+    padding: 7px 18px;
+    position: relative;
+  }
+  
+  .kv-dropdown-list.scope {
+  width: max-content;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: start;
+    justify-content: start;
+    position: absolute;
+    top: 44px;
+    left: 0;
+    background-color: #009981;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    display: none;
+    z-index: 3;
+  }
+  
+  .kv-dropdown-list.scope > a {
+    margin-bottom: 1px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: start;
+    width: max-content;
+    text-decoration: none;
+    padding: 12px 24px;
+    min-width: 280px;
+    background-color: #009981;
+    color: #fff;
+    z-index: 3;
+  }
+  
+  .kv-dropdown-list.scope > li a:hover {
+    background-color: #007c69;
+    cursor: pointer;
+  }
+  
+  .kv-dropdown-list.scope > li a i {
+    font-size: 18px;
+    color: #fff;
+  }
+  
+  .kv-dropdown-list.scope > li a img {
+  }
+  
+  .kv-dropdown-list.scope > li a span {
+    font-size: 14px;
+    line-height: 22px;
+    color: #fff;
+    margin-left: 16px;
+  }
+  
+  .kv-navbar-item:hover .kv-dropdown-list.scope {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+  }
+  

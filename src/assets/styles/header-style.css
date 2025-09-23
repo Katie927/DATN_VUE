@@ -1,0 +1,300 @@
+
+body{
+    font-family: sans-serif;
+}
+
+header{
+    background: white;
+    z-index: 9999;
+    margin: auto;
+    position: fixed;
+    padding-bottom: 12px;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    transition: transform 0.3s ease;
+    background-color: #f3f3f3;
+}
+
+.hidden {
+    transform: translateY(-100%);
+    /* display: none; */
+}
+
+a, a:link, a:visited, a:hover {
+    text-decoration: none !important;
+}
+
+/* top-heading */
+header .top-heading{
+    margin-bottom: 10px;
+}
+
+header .top-heading .slide-deal-header{
+    height: 40px;
+    background-color: #FFDADE;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+header .top-heading .slide-deal-header .slide-deal-item{
+    align-items: center;
+    position: inherit;
+    justify-content: center;
+}
+
+header .top-heading .slide-deal-header .slide-deal-item .deal-header span{
+    font-weight: 600;
+    color: #FD475A;
+}
+
+.icon-ChangeSolidOff::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-color: #FD475A; /* Đổi màu icon */
+    -webkit-mask-image: url(@/assets/icon/refresh-ccw.svg);
+    mask-image: url(@/assets/icon/refresh-ccw.svg);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    margin: 1px 13px 0 0;
+}
+
+header .top-heading .slick-prev{
+    color: #00342C;
+    left: calc((100% - 1200px) / 2);
+    opacity: 1;
+    z-index: 999;
+    position: absolute;
+    background: transparent;
+    box-shadow: none;
+    width: 30%;
+    height: 100%;
+    border: none;
+    left: 0;
+}
+
+header .top-heading .slick-next{
+    top: 0;
+    color: #00342C;
+    right: calc((100% - 1200px) / 2);
+    opacity: 1;
+    z-index: 999;
+    position: absolute;
+    background: transparent;
+    box-shadow: none;
+    width: 30%;
+    height: 100%;
+    border: none;
+    right: 0;
+}
+
+
+/* header .w-container{
+    margin-top: 10px;
+} */
+
+.logo-search-user{
+    display: flex;
+}
+
+header .logo-search-user .logo{
+    width: 230px;
+    margin-right: 12px;
+    padding-top: 3px;
+}
+
+header .logo-search-user .search{
+    flex-grow: 6;
+}
+
+header .logo-search-user .search .search-box{
+    margin-right: 10px;
+}
+
+header .logo-search-user .search .search-box .search-bg{
+    background: #fff;
+    border: 1px solid #EBEBEB;
+    display: flex;
+    line-height: 42px;
+    position: relative;
+    border-radius: 10px;
+    padding: 0 0 0 5px;
+}
+
+header .logo-search-user .search .search-box .search-bg input{
+    flex-grow: 5;
+    border: none;
+    padding: 5px 10px 5px 15px;
+    margin: 8px 0;
+    color: #191919;
+    font-size: 13px;
+    outline: none;
+    border-right: 1px solid #EBEBEB;
+}
+
+header .logo-search-user .search .search-box .search-bg input::placeholder{
+    color: rgba(0, 0, 0, 0.24);
+}
+
+
+header .logo-search-user .search .search-box .search-bg button{
+    width: 104px;
+    border: none;
+    color: #009981;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    background: #fff;
+    border-radius: 0 10px 10px 0;
+    position: absolute;
+    right: 0;
+}
+
+header .logo-search-user .search .search-box .search-bg button:hover{
+    background-color: #EEFFF7;
+}
+
+header .logo-search-user .search .search-box .search-bg button::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10%;
+    height: 80%;
+    width: 1px;
+    background-color: #EBEBEB;
+}
+
+header .logo-search-user .search .search-box .search-bg button, 
+header .logo-search-user .search .search-box .search-bg button * {
+    line-height: 40px;
+    height: 40px;
+}
+
+
+header .logo-search-user .search .search-box .search-bg button i{
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+header .logo-search-user .search .search-sugget{
+    font-size: 12px;
+    display: flex;
+    padding-top: 10px;
+}
+
+header .logo-search-user .search .search-sugget a:hover{
+    color: #009981;
+}
+
+strong{
+    font-weight: bold;
+}
+
+header .logo-search-user .search .search-sugget strong{
+    color: #009981;
+}
+
+header .logo-search-user .search .search-sugget a{
+    margin-left: 13px;
+    color: #757575;
+}
+
+header .logo-search-user .quick-for-user .shop-location span,
+header .logo-search-user .quick-for-user .member-login span {
+    font-size: 13px;
+}
+
+header .logo-search-user .quick-for-user .shop-location:hover,
+header .logo-search-user .quick-for-user .member-login:hover{
+    background-color: #EEFFF7;
+}
+
+
+.icon-SearchSolidOff::before {
+    content: "";
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    background-color: #009981; /* Đổi màu icon */
+    -webkit-mask-image: url(@/assets/icon/search.svg);
+    mask-image: url(@/assets/icon/search.svg);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+header .logo-search-user .quick-for-user{
+    flex-grow: 1;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.icon-location::before,
+.icon-UserSolidOff::before,
+.icon-CartSolidOff::before{
+    content: "";
+    display: inline-block;
+    background-color: #009981;
+    width: 17px;
+    height: 17px;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+header .logo-search-user .quick-for-user .shop-location,
+header .logo-search-user .quick-for-user .member-login,
+header .logo-search-user .quick-for-user .cart{
+    display: flex;
+    height: 42px;
+    color: #009981;
+    border: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    gap: 8px;
+    border-radius: 10px;
+}
+
+.icon-location::before{
+    -webkit-mask-image: url(@/assets/icon/map-pin.svg);
+    mask-image: url(@/assets/icon/map-pin.svg);
+}
+
+.icon-UserSolidOff::before{
+    -webkit-mask-image: url(@/assets/icon/user.svg);
+    mask-image: url(@/assets/icon/user.svg);
+}
+
+.icon-CartSolidOff::before{
+    background-color: #191919;
+    -webkit-mask-image: url(@/assets/icon/shopping-bag.svg);
+    mask-image: url(@/assets/icon/shopping-bag.svg);
+    width: 24px;
+    height: 24px;
+}
+.icon-CartSolidOff:hover::before{
+    background-color: #009981;
+}
+
+header .logo-search-user .quick-for-user a.cart .cart-counter {
+    background: #FD475A;
+    border-radius: 20px;
+    width: 24px;
+    height: 24px;
+    color: #fff;
+    margin-top: -4px;
+    line-height: 24px;
+    text-align: center;
+    font-size: 11px;
+}

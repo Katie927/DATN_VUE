@@ -1,0 +1,153 @@
+
+body{
+    background: #F4F4F4;
+    /* background: url(/src/assets/img/nen2.jpg); */
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+}
+
+.w-container{
+    width: 1200px;
+    min-width: 1200px;
+    margin: 0 auto;
+    /* background-color: #F4F4F4; */
+}
+
+.wrapper{
+    display: flex;
+    margin: 0;
+}
+
+/* .right-content{
+
+} */
+
+/* side bar */
+
+.nav-full{
+    /* height: calc(100vh - 12px); */
+    height: 100%;
+    overflow-y: auto;
+    width: 230px;
+    margin-right: 12px;
+    background: #fff;
+    border-radius: 10px;
+    padding: 0 0 12px 0;
+    position: sticky;
+    top: 12px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: top 0.3sease;
+}
+
+.nav-full nav{
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 0;
+}
+
+.nav-full nav h2 {
+    font-size: 13px;
+    padding: 0 20px 12px 20px;
+    margin: 0;
+}
+
+.nav-full nav ul{
+    list-style: none;
+    padding: 0;
+    margin: 0 12px;
+}
+
+.nav-full nav ul li > a:hover {
+    background: rgba(219, 249, 235, 1);
+    font-weight: 700;
+    color: rgba(0, 153, 129, 1);
+}
+
+.nav-full nav ul li > a {
+    display: flex;
+    padding: 12px 14px;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.nav-full nav ul li > a label {
+    width: 30px;
+    height: 34px;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-full nav ul li > a img {
+    margin: auto 0;
+}
+
+.isActive{
+    background: rgba(219, 249, 235, 1);
+    font-weight: 700;
+    color: rgba(0, 153, 129, 1);
+}
+
+
+.nav-full nav ul li > a i {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    line-height: 30px;
+    border-radius: 30px;
+    text-align: center;
+    margin-right: 5px;
+}
+
+.nav-full nav ul li > a span {
+    padding: 6px 0;
+    font-size: 13px;
+    color: rgba(117, 117, 117, 1);
+}
+
+.icon-MenuSolidOff::before,
+.icon-BoxSolidOff::before,
+.icon-MoonSolidOff::before,
+.icon-ShieldSolidOff::before,
+.icon-LogOutSolidOff::before {
+    content: "";
+    display: inline-block;
+    margin-top: 7px;
+    width: 17px;
+    height: 17px;
+    background-color: #FD475A; /* Đổi màu icon */
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+.icon-MenuSolidOff::before{
+    -webkit-mask-image: url(@/assets/icon/layers.svg);
+    mask-image: url(@/assets/icon/layers.svg);
+}
+.icon-BoxSolidOff::before{
+    -webkit-mask-image: url(@/assets/icon/box.svg);
+    mask-image: url(@/assets/icon/box.svg);
+}
+.icon-MoonSolidOff::before{
+    -webkit-mask-image: url(@/assets/icon/moon.svg);
+    mask-image: url(@/assets/icon/moon.svg);
+}
+.icon-ShieldSolidOff::before{
+    -webkit-mask-image: url(@/assets/icon/shield.svg);
+    mask-image: url(@/assets/icon/shield.svg);
+}
+.icon-LogOutSolidOff::before{
+    -webkit-mask-image: url(@/assets/icon/log-out.svg);
+    mask-image: url(@/assets/icon/log-out.svg);
+}
+
+
+/* scroll-bar nghịch */

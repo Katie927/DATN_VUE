@@ -1,0 +1,61 @@
+/* right-content */
+
+.right-content{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 958px;
+    margin-bottom: 12px;
+}
+
+.right-content .title {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.member-info-wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.member-info-wrapper .member-infomation {
+    width: 70%;
+    border-radius: 5px;
+    background: #fff;
+    padding: 12px;
+}
+
+.account-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.account-form .form-controls {
+    display: flex;
+    /* justify-content: space-between; */
+    flex-direction: column;
+    gap: 6px;
+}
+
+.account-form .form-controls input[type=text], .account-form .form-controls input[type=tel], .account-form .form-controls input[type=password] {
+    width: 95%;
+    padding: 8px;
+    border: 1px solid rgba(201, 201, 201, 1);
+    border-radius: 5px;
+}
+
+.account-form .form-controls button {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid rgba(201, 201, 201, 1);
+    border-radius: 5px;
+    background: #009981;
+    color: #fff;
+    display: flex
+;
+    justify-content: center;
+    margin: auto;
+}
