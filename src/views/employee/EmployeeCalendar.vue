@@ -33,14 +33,14 @@
         <ul class="menu-list">
           <li class="menu-item" :class="{ active: activeTab === 'calendar' }">
             <a href="#" class="menu-link" @click="activeTab = 'calendar'">
-              <i class="icon-calendar"></i>
+              <i class="icon-calendar">📅</i>
               <span>Lịch làm việc</span>
             </a>
           </li>
 
           <li class="menu-item" :class="{ active: activeTab === 'tasks' }">
             <a href="#" class="menu-link" @click="activeTab = 'tasks'">
-              <i class="icon-tasks"></i>
+              <i class="icon-tasks">📋</i>
               <span>Công việc</span>
             </a>
           </li>
@@ -54,13 +54,13 @@
       <header class="header">
         <div class="header-left">
           <button class="sidebar-toggle" @click="toggleSidebar">
-            <i class="icon-menu"></i>
+            <i class="icon-menu">☰</i>
           </button>
         </div>
 
         <div class="header-center">
           <div class="announcement">
-            <i class="icon-flag"></i>
+            <i class="icon-flag">🚩</i>
             <marquee>
               Thông báo, kể từ ngày 1/10/2025 đối với các Yêu cầu cập nhật thời gian làm việc, ACE
               ngoài việc điền lí do thì cần bổ sung thêm ảnh làm evidence. Điều này làm giảm thời
@@ -77,12 +77,12 @@
           </div>
 
           <button class="header-btn" @click="showSettings = true">
-            <i class="icon-settings"></i>
+            <i class="icon-settings">⚙️</i>
           </button>
 
           <div class="notification-dropdown" :class="{ active: showNotifications }">
             <button class="header-btn" @click="toggleNotifications">
-              <i class="icon-bell"></i>
+              <i class="icon-bell">🔔</i>
               <span class="notification-badge" v-if="notificationCount > 0">{{
                 notificationCount
               }}</span>
@@ -113,7 +113,7 @@
                     <div class="notification-time">{{ notification.time }}</div>
                   </div>
                   <button class="notification-delete" @click="deleteNotification(notification.id)">
-                    <i class="icon-trash"></i>
+                    <i class="icon-trash">🗑️</i>
                   </button>
                 </div>
               </div>
@@ -150,7 +150,7 @@
           :class="{ active: activeTab === 'calendar' }"
           @click="activeTab = 'calendar'"
         >
-          <i class="icon-calendar"></i>
+          <i class="icon-calendar">📅</i>
           Lịch làm việc
         </button>
         <button
@@ -158,7 +158,7 @@
           :class="{ active: activeTab === 'tasks' }"
           @click="activeTab = 'tasks'"
         >
-          <i class="icon-tasks"></i>
+          <i class="icon-tasks">📋</i>
           Công việc
         </button>
       </div>
@@ -169,39 +169,24 @@
           <div class="calendar-header">
             <h1>{{ currentMonthName }} {{ currentYear }}</h1>
             <div class="calendar-controls">
-              <!-- Updated check-in/out buttons with WiFi requirement -->
-              <button
-                v-if="canCheckIn && isConnectedToCompanyWifi"
-                class="btn btn-success"
-                @click="checkIn"
-              >
-                <i class="icon-sign-in"></i>
+              <button v-if="canCheckIn" class="btn btn-success" @click="checkIn">
+                <i class="icon-sign-in">✅</i>
                 Check-in
               </button>
-              <button
-                v-if="canCheckOut && isConnectedToCompanyWifi"
-                class="btn btn-danger"
-                @click="checkOut"
-              >
-                <i class="icon-sign-out"></i>
+              <button v-if="canCheckOut" class="btn btn-danger" @click="checkOut">
+                <i class="icon-sign-out">❌</i>
                 Check-out
               </button>
-              <span
-                v-if="!isConnectedToCompanyWifi && (canCheckIn || canCheckOut)"
-                class="wifi-warning"
-              >
-                Cần kết nối WiFi công ty để check-in/out
-              </span>
               <button class="btn btn-primary" @click="goToToday">
-                <i class="icon-calendar"></i>
+                <i class="icon-calendar">📅</i>
                 Hôm nay
               </button>
               <div class="btn-group">
                 <button class="btn btn-primary" @click="previousMonth">
-                  <i class="icon-chevron-left"></i>
+                  <i class="icon-chevron-left">◀</i>
                 </button>
                 <button class="btn btn-primary" @click="nextMonth">
-                  <i class="icon-chevron-right"></i>
+                  <i class="icon-chevron-right">▶</i>
                 </button>
               </div>
             </div>
@@ -221,11 +206,35 @@
                       <div class="day-number">{{ day.day }}</div>
                     </div>
 
-                    <div v-if="day.holiday" class="holiday-badge">
-                      {{ day.holiday }}
+                    <!-- Fixed check-in/check-out and holiday display at top of cell -->
+                    <div class="day-top-section">
+                      <!-- Holiday display takes priority over check-in/check-out -->
+                      <div v-if="day.holiday" class="holiday-badge">
+                        {{ day.holiday }}
+                      </div>
+                      <!-- Check-in/Check-out buttons only show for today and when no holiday -->
+                      <div v-else-if="day.isToday && !day.holiday" class="check-buttons">
+                        <button v-if="canCheckIn" class="btn-check-in" @click="checkIn">
+                          Check-in
+                        </button>
+                        <button v-else-if="canCheckOut" class="btn-check-out" @click="checkOut">
+                          Check-out
+                        </button>
+                      </div>
                     </div>
 
-                    <!-- Added colleagues working same shift -->
+                    <!-- Show check times when user has checked in/out -->
+                    <div v-if="day.checkTimes.length > 0" class="check-times">
+                      <div
+                        v-for="time in day.checkTimes"
+                        :key="time.id"
+                        :class="['time-badge', time.type]"
+                      >
+                        {{ time.time }}
+                      </div>
+                    </div>
+
+                    <!-- Fixed colleagues section below check times -->
                     <div
                       v-if="day.colleagues && day.colleagues.length > 0"
                       class="colleagues-section"
@@ -245,17 +254,6 @@
                           />
                           <span class="colleague-name">{{ colleague.shortName }}</span>
                         </div>
-                      </div>
-                    </div>
-
-                    <!-- Show check times when user has checked in/out -->
-                    <div v-if="day.checkTimes.length > 0" class="check-times">
-                      <div
-                        v-for="time in day.checkTimes"
-                        :key="time.id"
-                        :class="['time-badge', time.type]"
-                      >
-                        {{ time.time }}
                       </div>
                     </div>
 
@@ -279,7 +277,7 @@
           <div class="tasks-header">
             <h1>Quản lý công việc</h1>
             <button class="btn btn-primary" @click="showAddTaskModal = true">
-              <i class="icon-plus"></i>
+              <i class="icon-plus">➕</i>
               Thêm công việc
             </button>
           </div>
@@ -287,56 +285,77 @@
           <div class="tasks-content">
             <div class="tasks-section">
               <h3>Công việc cần làm ({{ todoTasks.length }})</h3>
-              <div class="tasks-list">
-                <div v-for="task in todoTasks" :key="task.id" class="task-item">
-                  <label class="task-checkbox">
-                    <input
-                      type="checkbox"
-                      :checked="task.completed"
-                      @change="toggleTaskStatus(task.id)"
-                    />
-                    <span class="checkmark"></span>
-                  </label>
-                  <div class="task-content">
-                    <div class="task-title">{{ task.title }}</div>
-                    <div class="task-description">{{ task.description }}</div>
-                    <div class="task-meta">
-                      <span class="task-priority" :class="task.priority">{{
-                        getPriorityText(task.priority)
-                      }}</span>
-                      <span class="task-deadline">Hạn: {{ task.deadline }}</span>
-                    </div>
-                  </div>
-                  <button class="task-delete" @click="deleteTask(task.id)">
-                    <i class="icon-trash"></i>
-                  </button>
-                </div>
+              <div class="tasks-table-container">
+                <table class="tasks-table">
+                  <thead>
+                    <tr>
+                      <th>Công việc</th>
+                      <th>Mô tả</th>
+                      <th>Độ ưu tiên</th>
+                      <th>Hạn hoàn thành</th>
+                      <th>Hoàn thành</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="task in todoTasks" :key="task.id" class="task-row">
+                      <td class="task-title-cell">{{ task.title }}</td>
+                      <td class="task-description-cell">{{ task.description }}</td>
+                      <td>
+                        <span class="task-priority" :class="task.priority">
+                          {{ getPriorityText(task.priority) }}
+                        </span>
+                      </td>
+                      <td class="task-deadline-cell">{{ task.deadline }}</td>
+                      <td class="task-checkbox-cell">
+                        <label class="task-checkbox">
+                          <input
+                            type="checkbox"
+                            :checked="task.completed"
+                            @change="toggleTaskStatus(task.id)"
+                          />
+                          <span class="checkmark"></span>
+                        </label>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
 
             <div class="tasks-section">
               <h3>Công việc đã hoàn thành ({{ completedTasks.length }})</h3>
-              <div class="tasks-list">
-                <div v-for="task in completedTasks" :key="task.id" class="task-item completed">
-                  <label class="task-checkbox">
-                    <input
-                      type="checkbox"
-                      :checked="task.completed"
-                      @change="toggleTaskStatus(task.id)"
-                    />
-                    <span class="checkmark"></span>
-                  </label>
-                  <div class="task-content">
-                    <div class="task-title">{{ task.title }}</div>
-                    <div class="task-description">{{ task.description }}</div>
-                    <div class="task-meta">
-                      <span class="task-completed-date">Hoàn thành: {{ task.completedDate }}</span>
-                    </div>
-                  </div>
-                  <button class="task-delete" @click="deleteTask(task.id)">
-                    <i class="icon-trash"></i>
-                  </button>
-                </div>
+              <div class="tasks-table-container">
+                <table class="tasks-table">
+                  <thead>
+                    <tr>
+                      <th>Công việc</th>
+                      <th>Mô tả</th>
+                      <th>Ngày hoàn thành</th>
+                      <th>Hoàn thành</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="task in completedTasks"
+                      :key="task.id"
+                      class="task-row completed-task"
+                    >
+                      <td class="task-title-cell">{{ task.title }}</td>
+                      <td class="task-description-cell">{{ task.description }}</td>
+                      <td class="task-completed-date-cell">{{ task.completedDate }}</td>
+                      <td class="task-checkbox-cell">
+                        <label class="task-checkbox">
+                          <input
+                            type="checkbox"
+                            :checked="task.completed"
+                            @change="toggleTaskStatus(task.id)"
+                          />
+                          <span class="checkmark"></span>
+                        </label>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -350,7 +369,7 @@
         <div class="modal-header">
           <h4>Layout Settings</h4>
           <button class="modal-close" @click="showSettings = false">
-            <i class="icon-close"></i>
+            <i class="icon-close">✖</i>
           </button>
         </div>
         <div class="modal-body">
@@ -381,7 +400,7 @@
         <div class="modal-header">
           <h4>Thêm công việc mới</h4>
           <button class="modal-close" @click="showAddTaskModal = false">
-            <i class="icon-close"></i>
+            <i class="icon-close">✖</i>
           </button>
         </div>
         <div class="modal-body">
@@ -608,9 +627,7 @@ const tasks = ref([
 const currentMonthName = computed(() => monthNames[currentMonth.value])
 
 const canCheckIn = computed(() => {
-  const now = new Date()
-  const isStartOfDay = now.getHours() === 0 && now.getMinutes() === 0
-  return !isCheckedIn.value && !hasCheckedOut.value && isStartOfDay
+  return !isCheckedIn.value && !hasCheckedOut.value
 })
 
 const canCheckOut = computed(() => {
@@ -663,39 +680,35 @@ const deleteNotification = (id) => {
 }
 
 const checkIn = () => {
-  if (isConnectedToCompanyWifi.value) {
-    isCheckedIn.value = true
-    const now = new Date()
-    const today = now.toISOString().split('T')[0]
-    const time = now.toTimeString().slice(0, 5)
+  isCheckedIn.value = true
+  const now = new Date()
+  const today = now.toISOString().split('T')[0]
+  const time = now.toTimeString().slice(0, 5)
 
-    // Add check-in time to today's calendar entry
-    calendarWeeks.value.forEach((week) => {
-      week.days.forEach((day) => {
-        if (day.date === today) {
-          day.checkTimes.push({ id: Date.now(), time, type: 'on-time' })
-        }
-      })
+  // Add check-in time to today's calendar entry
+  calendarWeeks.value.forEach((week) => {
+    week.days.forEach((day) => {
+      if (day.date === today) {
+        day.checkTimes.push({ id: Date.now(), time, type: 'on-time' })
+      }
     })
-  }
+  })
 }
 
 const checkOut = () => {
-  if (isConnectedToCompanyWifi.value) {
-    hasCheckedOut.value = true
-    const now = new Date()
-    const today = now.toISOString().split('T')[0]
-    const time = now.toTimeString().slice(0, 5)
+  hasCheckedOut.value = true
+  const now = new Date()
+  const today = now.toISOString().split('T')[0]
+  const time = now.toTimeString().slice(0, 5)
 
-    // Add check-out time to today's calendar entry
-    calendarWeeks.value.forEach((week) => {
-      week.days.forEach((day) => {
-        if (day.date === today) {
-          day.checkTimes.push({ id: Date.now(), time, type: 'on-time' })
-        }
-      })
+  // Add check-out time to today's calendar entry
+  calendarWeeks.value.forEach((week) => {
+    week.days.forEach((day) => {
+      if (day.date === today) {
+        day.checkTimes.push({ id: Date.now(), time, type: 'on-time' })
+      }
     })
-  }
+  })
 }
 
 const goToToday = () => {
@@ -839,6 +852,11 @@ onMounted(() => {
   text-decoration: none;
 }
 
+.logo img {
+  width: 32px;
+  height: 32px;
+}
+
 .logo-text {
   margin-left: 0.5rem;
   font-weight: bold;
@@ -876,10 +894,9 @@ onMounted(() => {
 }
 
 .nav-search {
-  width: 100%;
+  width: calc(100% - 2rem);
   padding: 0.5rem;
   margin: 0 1rem 1rem 1rem;
-  width: calc(100% - 2rem);
   border: none;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.1);
@@ -956,6 +973,11 @@ onMounted(() => {
   overflow: hidden;
 }
 
+.page-content {
+  flex: 1;
+  padding-top: 10rem; /* Reduced from default padding */
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -992,7 +1014,11 @@ onMounted(() => {
 .announcement {
   display: flex;
   align-items: center;
-  color: #007bff;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 4px;
+  padding: 0.5rem;
+  color: #856404;
 }
 
 .announcement i {
@@ -1011,8 +1037,8 @@ onMounted(() => {
   padding: 0.5rem;
   cursor: pointer;
   border-radius: 4px;
-  position: relative;
   transition: background 0.2s ease;
+  position: relative;
 }
 
 .header-btn:hover {
@@ -1034,6 +1060,20 @@ onMounted(() => {
   justify-content: center;
 }
 
+.user-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.user-avatar-small {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+/* Dropdown Styles */
 .notification-dropdown,
 .user-dropdown {
   position: relative;
@@ -1053,9 +1093,37 @@ onMounted(() => {
 
 .dropdown-header {
   padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #e9ecef;
+  margin: 0.5rem 0;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #495057;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: #f8f9fa;
+}
+
+.dropdown-item.logout {
+  color: #dc3545;
 }
 
 .notification-tabs {
@@ -1065,16 +1133,17 @@ onMounted(() => {
 
 .notification-tabs button {
   flex: 1;
-  padding: 0.75rem 0.5rem;
-  border: none;
+  padding: 0.75rem;
   background: none;
+  border: none;
   cursor: pointer;
   font-size: 0.875rem;
-  transition: background 0.2s ease;
+  color: #6c757d;
+  transition: all 0.2s ease;
 }
 
 .notification-tabs button.active {
-  background: #f8f9fa;
+  color: #007bff;
   border-bottom: 2px solid #007bff;
 }
 
@@ -1107,55 +1176,53 @@ onMounted(() => {
 .notification-delete {
   background: none;
   border: none;
-  color: #6c757d;
+  color: #dc3545;
   cursor: pointer;
   padding: 0.25rem;
 }
 
-.user-btn {
+/* Content Tabs */
+.content-tabs {
+  display: flex;
+  background: white;
+  border-bottom: 1px solid #e9ecef;
+  padding: 0 1rem;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
   background: none;
   border: none;
   cursor: pointer;
-  border-radius: 50%;
-  padding: 0.25rem;
+  color: #6c757d;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border-bottom: 3px solid transparent;
 }
 
-.user-avatar-small {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+.tab-btn:hover {
+  color: #495057;
 }
 
-.dropdown-divider {
-  height: 1px;
-  background: #e9ecef;
-  margin: 0.5rem 0;
+.tab-btn.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
 }
 
-.dropdown-item {
-  display: block;
-  padding: 0.75rem 1rem;
-  color: #333;
-  text-decoration: none;
-  transition: background 0.2s ease;
+.tab-btn i {
+  margin-right: 0.5rem;
 }
 
-.dropdown-item:hover {
-  background: #f8f9fa;
-}
-
-.dropdown-item.logout {
-  color: #dc3545;
-  font-weight: 600;
+/* Page Content */
+.page-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
 }
 
 /* Calendar Styles */
-.page-content {
-  flex: 1;
-  padding: 1rem;
-  overflow: auto;
-}
-
 .calendar-container {
   background: white;
   border-radius: 8px;
@@ -1165,10 +1232,9 @@ onMounted(() => {
 
 .calendar-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
+  justify-content: space-between;
+  padding: 1.5rem;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -1180,17 +1246,25 @@ onMounted(() => {
 
 .calendar-controls {
   display: flex;
-  gap: 0.5rem;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .btn {
+  display: inline-flex;
+  align-items: center;
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
   font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn i {
+  margin-right: 0.5rem;
 }
 
 .btn-primary {
@@ -1202,6 +1276,15 @@ onMounted(() => {
   background: #0056b3;
 }
 
+.btn-success {
+  background: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #1e7e34;
+}
+
 .btn-danger {
   background: #dc3545;
   color: white;
@@ -1209,6 +1292,15 @@ onMounted(() => {
 
 .btn-danger:hover {
   background: #c82333;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #545b62;
 }
 
 .btn-group {
@@ -1220,11 +1312,13 @@ onMounted(() => {
 }
 
 .btn-group .btn:first-child {
-  border-radius: 4px 0 0 4px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
 }
 
 .btn-group .btn:last-child {
-  border-radius: 0 4px 4px 0;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
 .calendar-table {
@@ -1237,39 +1331,50 @@ onMounted(() => {
 }
 
 .table th {
-  background: #007bff;
-  color: white;
-  padding: 0.75rem 0.5rem;
+  background: #f8f9fa;
+  padding: 1rem;
   text-align: center;
   font-weight: 600;
+  border-bottom: 1px solid #e9ecef;
 }
 
 .table td {
+  padding: 0;
   border: 1px solid #e9ecef;
-  padding: 0.5rem;
   vertical-align: top;
   height: 120px;
   width: 14.28%;
   position: relative;
 }
 
-.table td.weekend {
+.table td.past {
   background: #f8f9fa;
 }
 
+.table td.weekend {
+  background: #fff5f5;
+}
+
 .table td.holiday {
-  background: #e3f2fd;
+  background: #fff3cd;
 }
 
 .table td.today {
-  background: #fff3cd;
+  background: #e3f2fd;
+  border: 2px solid #2196f3;
+}
+
+.table td:not(.current-month) {
+  color: #ccc;
+  background: #fafafa;
 }
 
 .day-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.5rem;
+  align-items: center;
+  padding: 0.5rem;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .day-number {
@@ -1280,64 +1385,253 @@ onMounted(() => {
 .holiday-badge {
   background: #ffc107;
   color: #212529;
-  padding: 0.125rem 0.25rem;
-  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
   font-size: 0.75rem;
-  margin-bottom: 0.25rem;
-}
-
-.check-times {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  margin-bottom: 0.25rem;
-}
-
-.time-badge {
-  padding: 0.125rem 0.25rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
+  font-weight: 500;
+  margin: 0.25rem;
   text-align: center;
 }
 
-.time-badge.on-time {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+.colleagues-section {
+  margin: 0.25rem;
+}
+
+.colleagues-header {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+}
+
+.colleagues-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.colleague-item {
+  display: flex;
+  align-items: center;
+  background: #e3f2fd;
+  border-radius: 12px;
+  padding: 0.125rem 0.25rem;
+  font-size: 0.75rem;
+}
+
+.colleague-avatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 0.25rem;
+}
+
+.colleague-name {
+  font-weight: 500;
+}
+
+.check-times {
+  margin: 0.25rem;
+}
+
+.time-badge {
+  display: inline-block;
+  background: #28a745;
+  color: white;
+  padding: 0.125rem 0.375rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin: 0.125rem;
 }
 
 .time-badge.late {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background: #ffc107;
+  color: #212529;
 }
 
 .time-badge.early {
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background: #17a2b8;
 }
 
 .day-events {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
+  margin: 0.25rem;
 }
 
 .event {
   display: flex;
   align-items: center;
-  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
 }
 
 .event-icon {
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   margin-right: 0.25rem;
 }
 
 .event-text {
+  font-size: 0.75rem;
+  color: #495057;
+}
+
+/* Tasks Styles */
+.tasks-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.tasks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tasks-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.tasks-content {
+  padding: 1.5rem;
+}
+
+.tasks-section {
+  margin-bottom: 2rem;
+}
+
+.tasks-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.tasks-table-container {
+  overflow-x: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+}
+
+.tasks-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tasks-table th {
+  background: #f8f9fa;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid #e9ecef;
+  white-space: nowrap;
+}
+
+.tasks-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #f8f9fa;
+  vertical-align: middle;
+}
+
+.task-row:hover {
+  background: #f8f9fa;
+}
+
+.task-row.completed-task {
   color: #6c757d;
+  background: #f8f9fa;
+}
+
+.task-title-cell {
+  font-weight: 500;
+  min-width: 200px;
+}
+
+.task-description-cell {
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+.task-priority {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.task-priority.high {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.task-priority.medium {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.task-priority.low {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.task-deadline-cell,
+.task-completed-date-cell {
+  white-space: nowrap;
+}
+
+.task-checkbox-cell {
+  text-align: center;
+  width: 60px;
+}
+
+.task-checkbox {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.task-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.task-checkbox:hover .checkmark {
+  border-color: #007bff;
+}
+
+.task-checkbox input:checked ~ .checkmark {
+  background: #007bff;
+  border-color: #007bff;
+}
+
+.task-checkbox input:checked ~ .checkmark:after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
 
 /* Modal Styles */
@@ -1351,54 +1645,71 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: 1000;
 }
 
 .modal-content {
   background: white;
   border-radius: 8px;
-  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   max-width: 500px;
-  max-height: 80vh;
-  overflow: hidden;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h4 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .modal-close {
   background: none;
   border: none;
-  color: white;
+  font-size: 1.5rem;
   cursor: pointer;
-  padding: 0.25rem;
+  color: #6c757d;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.modal-close:hover {
+  background: #f8f9fa;
 }
 
 .modal-body {
-  padding: 1rem;
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.settings-section {
-  margin-bottom: 1.5rem;
+  padding: 1.5rem;
 }
 
 .settings-section h5 {
-  margin-bottom: 1rem;
-  color: #333;
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .setting-item {
   display: flex;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.setting-item span {
+  margin-left: 0.75rem;
 }
 
 .switch {
@@ -1406,7 +1717,6 @@ onMounted(() => {
   display: inline-block;
   width: 50px;
   height: 24px;
-  margin-right: 0.75rem;
 }
 
 .switch input {
@@ -1447,299 +1757,6 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    left: -280px;
-    z-index: 1000;
-    transition: left 0.3s ease;
-  }
-
-  .sidebar.active {
-    left: 0;
-  }
-
-  .main-content {
-    margin-left: 0;
-  }
-
-  .calendar-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-
-  .calendar-controls {
-    justify-content: center;
-  }
-
-  .announcement marquee {
-    display: none;
-  }
-}
-
-/* Added styles for new features */
-.wifi-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
-
-.wifi-status.connected {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
-
-.content-tabs {
-  display: flex;
-  background: white;
-  border-bottom: 1px solid #e9ecef;
-  padding: 0 1rem;
-}
-
-.tab-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem 1.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.875rem;
-  color: #6c757d;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s ease;
-}
-
-.tab-btn:hover {
-  color: #007bff;
-}
-
-.tab-btn.active {
-  color: #007bff;
-  border-bottom-color: #007bff;
-}
-
-.wifi-warning {
-  font-size: 0.875rem;
-  color: #dc3545;
-  font-style: italic;
-}
-
-.colleagues-section {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #e9ecef;
-}
-
-.colleagues-header {
-  font-size: 0.75rem;
-  color: #6c757d;
-  margin-bottom: 0.25rem;
-}
-
-.colleagues-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-}
-
-.colleague-item {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  background: #f8f9fa;
-  padding: 0.125rem 0.25rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-}
-
-.colleague-avatar {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-}
-
-.colleague-name {
-  color: #495057;
-}
-
-.tasks-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
-
-.tasks-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
-}
-
-.tasks-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-.tasks-content {
-  padding: 1rem;
-}
-
-.tasks-section {
-  margin-bottom: 2rem;
-}
-
-.tasks-section h3 {
-  margin-bottom: 1rem;
-  color: #333;
-  font-size: 1.25rem;
-}
-
-.tasks-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.task-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-  transition: all 0.2s ease;
-}
-
-.task-item:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.task-item.completed {
-  opacity: 0.7;
-}
-
-.task-item.completed .task-title {
-  text-decoration: line-through;
-}
-
-.task-checkbox {
-  position: relative;
-  cursor: pointer;
-  margin-top: 0.25rem;
-}
-
-.task-checkbox input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.checkmark {
-  display: block;
-  width: 20px;
-  height: 20px;
-  background: white;
-  border: 2px solid #ddd;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.task-checkbox input:checked + .checkmark {
-  background: #007bff;
-  border-color: #007bff;
-}
-
-.task-checkbox input:checked + .checkmark::after {
-  content: '✓';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.task-content {
-  flex: 1;
-}
-
-.task-title {
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-  color: #333;
-}
-
-.task-description {
-  color: #6c757d;
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-}
-
-.task-meta {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.75rem;
-}
-
-.task-priority {
-  padding: 0.125rem 0.5rem;
-  border-radius: 12px;
-  font-weight: 600;
-}
-
-.task-priority.low {
-  background: #d1ecf1;
-  color: #0c5460;
-}
-
-.task-priority.medium {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.task-priority.high {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.task-deadline {
-  color: #6c757d;
-}
-
-.task-completed-date {
-  color: #28a745;
-}
-
-.task-delete {
-  background: none;
-  border: none;
-  color: #dc3545;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 4px;
-  transition: background 0.2s ease;
-}
-
-.task-delete:hover {
-  background: #f8d7da;
-}
-
 .form-group {
   margin-bottom: 1rem;
 }
@@ -1747,16 +1764,16 @@ input:checked + .slider:before {
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #333;
+  font-weight: 500;
+  color: #495057;
 }
 
 .form-control {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #ddd;
+  border: 1px solid #ced4da;
   border-radius: 4px;
-  font-size: 0.875rem;
+  font-size: 1rem;
   transition: border-color 0.2s ease;
 }
 
@@ -1768,82 +1785,50 @@ input:checked + .slider:before {
 
 .form-actions {
   display: flex;
-  gap: 0.5rem;
   justify-content: flex-end;
+  gap: 0.5rem;
   margin-top: 1.5rem;
 }
 
-.btn-secondary {
-  background: #6c757d;
-  color: white;
-}
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
 
-.btn-secondary:hover {
-  background: #5a6268;
-}
+  .sidebar.active {
+    left: 0;
+  }
 
-.btn-success {
-  background: #28a745;
-  color: white;
-}
+  .main-content {
+    width: 100%;
+  }
 
-.btn-success:hover {
-  background: #218838;
-}
+  .calendar-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
 
-/* Icon placeholders */
-.icon-calendar::before {
-  content: '📅';
-}
-.icon-share::before {
-  content: '📤';
-}
-.icon-note::before {
-  content: '📝';
-}
-.icon-book::before {
-  content: '📚';
-}
-.icon-clipboard::before {
-  content: '📋';
-}
-.icon-menu::before {
-  content: '☰';
-}
-.icon-settings::before {
-  content: '⚙️';
-}
-.icon-bell::before {
-  content: '🔔';
-}
-.icon-flag::before {
-  content: '🚩';
-}
-.icon-sign-out::before {
-  content: '🚪';
-}
-.icon-chevron-left::before {
-  content: '‹';
-}
-.icon-chevron-right::before {
-  content: '›';
-}
-.icon-trash::before {
-  content: '🗑️';
-}
-.icon-close::before {
-  content: '✕';
-}
-.icon-wifi::before {
-  content: '📶';
-}
-.icon-tasks::before {
-  content: '📋';
-}
-.icon-plus::before {
-  content: '+';
-}
-.icon-sign-in::before {
-  content: '🚪';
+  .calendar-controls {
+    flex-wrap: wrap;
+  }
+
+  .tasks-table-container {
+    font-size: 0.875rem;
+  }
+
+  .tasks-table th,
+  .tasks-table td {
+    padding: 0.5rem;
+  }
+
+  .task-description-cell {
+    max-width: 150px;
+  }
 }
 </style>
