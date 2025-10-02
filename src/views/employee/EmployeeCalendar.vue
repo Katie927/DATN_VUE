@@ -206,20 +206,10 @@
                       <div class="day-number">{{ day.day }}</div>
                     </div>
 
-                    <!-- Fixed check-in/check-out and holiday display at top of cell -->
+                    <!-- Removed check-in/check-out buttons from day cells, only show holiday badge -->
                     <div class="day-top-section">
-                      <!-- Holiday display takes priority over check-in/check-out -->
                       <div v-if="day.holiday" class="holiday-badge">
                         {{ day.holiday }}
-                      </div>
-                      <!-- Check-in/Check-out buttons only show for today and when no holiday -->
-                      <div v-else-if="day.isToday && !day.holiday" class="check-buttons">
-                        <button v-if="canCheckIn" class="btn-check-in" @click="checkIn">
-                          Check-in
-                        </button>
-                        <button v-else-if="canCheckOut" class="btn-check-out" @click="checkOut">
-                          Check-out
-                        </button>
                       </div>
                     </div>
 
@@ -289,11 +279,12 @@
                 <table class="tasks-table">
                   <thead>
                     <tr>
+                      <!-- Added checkbox column header -->
+                      <th style="width: 50px">Chọn</th>
                       <th>Công việc</th>
                       <th>Mô tả</th>
                       <th>Độ ưu tiên</th>
                       <th>Hạn hoàn thành</th>
-                      <th>Hoàn thành</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -306,19 +297,23 @@
                         </span>
                       </td>
                       <td class="task-deadline-cell">{{ task.deadline }}</td>
+                      <!-- Changed to selection checkbox only -->
                       <td class="task-checkbox-cell">
                         <label class="task-checkbox">
-                          <input
-                            type="checkbox"
-                            :checked="task.completed"
-                            @change="toggleTaskStatus(task.id)"
-                          />
+                          <input type="checkbox" v-model="selectedTaskIds" :value="task.id" />
                           <span class="checkmark"></span>
                         </label>
                       </td>
                     </tr>
                   </tbody>
                 </table>
+                <!-- Added complete button below the table -->
+                <div class="table-actions" v-if="selectedTaskIds.length > 0">
+                  <button class="btn btn-success" @click="completeSelectedTasks">
+                    <i class="icon-check">✓</i>
+                    Hoàn thành ({{ selectedTaskIds.length }})
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -509,6 +504,13 @@ const notifications = ref([
   },
 ])
 
+const getLocalDateString = (date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 const generateCalendarData = () => {
   const year = currentYear.value
   const month = currentMonth.value
@@ -519,16 +521,18 @@ const generateCalendarData = () => {
 
   const weeks = []
   let currentDate = new Date(startDate)
+  const today = getLocalDateString(new Date())
 
   for (let week = 0; week < 6; week++) {
     const days = []
     for (let day = 0; day < 7; day++) {
       const isCurrentMonth = currentDate.getMonth() === month
-      const isToday = currentDate.toDateString() === new Date().toDateString()
+      const dateString = getLocalDateString(currentDate)
+      const isToday = dateString === today
       const isPast = currentDate < new Date().setHours(0, 0, 0, 0)
 
       days.push({
-        date: currentDate.toISOString().split('T')[0],
+        date: dateString,
         day: currentDate.getDate(),
         isCurrentMonth,
         isPast,
@@ -592,6 +596,8 @@ const newTask = ref({
   priority: 'medium',
   deadline: '',
 })
+
+const selectedTaskIds = ref([])
 
 const tasks = ref([
   {
@@ -682,7 +688,7 @@ const deleteNotification = (id) => {
 const checkIn = () => {
   isCheckedIn.value = true
   const now = new Date()
-  const today = now.toISOString().split('T')[0]
+  const today = getLocalDateString(now)
   const time = now.toTimeString().slice(0, 5)
 
   // Add check-in time to today's calendar entry
@@ -698,7 +704,7 @@ const checkIn = () => {
 const checkOut = () => {
   hasCheckedOut.value = true
   const now = new Date()
-  const today = now.toISOString().split('T')[0]
+  const today = getLocalDateString(now)
   const time = now.toTimeString().slice(0, 5)
 
   // Add check-out time to today's calendar entry
@@ -758,6 +764,19 @@ const toggleTaskStatus = (taskId) => {
       task.completedDate = null
     }
   }
+}
+
+const completeSelectedTasks = () => {
+  const now = new Date().toLocaleDateString('vi-VN')
+  selectedTaskIds.value.forEach((taskId) => {
+    const task = tasks.value.find((t) => t.id === taskId)
+    if (task && !task.completed) {
+      task.completed = true
+      task.completedDate = now
+    }
+  })
+  // Clear selection after completing
+  selectedTaskIds.value = []
 }
 
 const deleteTask = (taskId) => {
@@ -973,9 +992,11 @@ onMounted(() => {
   overflow: hidden;
 }
 
+/* Reduced padding from 1.5rem to 0.5rem to bring calendar closer to header */
 .page-content {
   flex: 1;
-  padding-top: 10rem; /* Reduced from default padding */
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  overflow-y: auto;
 }
 
 .header {
@@ -1215,13 +1236,6 @@ onMounted(() => {
   margin-right: 0.5rem;
 }
 
-/* Page Content */
-.page-content {
-  flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
-}
-
 /* Calendar Styles */
 .calendar-container {
   background: white;
@@ -1380,6 +1394,11 @@ onMounted(() => {
 .day-number {
   font-weight: 600;
   font-size: 0.875rem;
+}
+
+/* Simplified day-top-section to only show holidays */
+.day-top-section {
+  min-height: 24px;
 }
 
 .holiday-badge {
@@ -1585,9 +1604,10 @@ onMounted(() => {
   white-space: nowrap;
 }
 
+/* Simplified task checkbox cell to center align */
 .task-checkbox-cell {
   text-align: center;
-  width: 60px;
+  width: 50px;
 }
 
 .task-checkbox {
@@ -1632,6 +1652,15 @@ onMounted(() => {
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+}
+
+/* Added styles for table actions section below the table */
+.table-actions {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Modal Styles */
