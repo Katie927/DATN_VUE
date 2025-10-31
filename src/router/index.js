@@ -16,6 +16,8 @@ import ProductDetailRow from '@/views/manage-view/product-detail-row.vue'
 import ProductAdd from '@/views/manage-view/product-add.vue'
 import EmployeeCalendar from '@/views/employee/EmployeeCalendar.vue'
 import EmployeeAdd from '@/views/manage-view/employee-add.vue'
+import CustomerCare from '@/views/employee/customer-care.vue'
+import RepairTechnician from '@/views/employee/repair-technician.vue'
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
@@ -64,7 +66,8 @@ const employeeRoutes = [
   {
     path: '/employee',
     children: [
-      { path: '', component: EmployeeCalendar },
+      { path: 'customer', component: CustomerCare },
+      { path: 'repair', component: RepairTechnician },
       { path: 'profile', component: UserProfile },
       { path: 'history', component: UserHistory },
     ],
