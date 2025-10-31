@@ -60,18 +60,24 @@
 
                   <!-- Nhóm hàng -->
                   <div class="form-group form-group-product">
-                    <label class="form-label">
-                      Nhóm hàng
-                    </label>
+                    <label class="form-label">Loại hàng</label>
                     <div class="form-wrap form-wrap-product">
-                      <input class="form-control form-control-form-group-product" type="text"
-                        placeholder="---Lựa chọn---" 
-                        v-model="form.group"
-                      />
+                      <select 
+                        class="form-control form-control-form-group-product"
+                        v-model="form.category.id"
+                      >
+                        <option disabled value="">---Lựa chọn---</option>
+                        <option v-for="c in categories" :key="c.id" :value="c.id">
+                          {{ c.name }}
+                        </option>
+                      </select>
+
                       <div class="group-icon-add-new">
                         <i class="show-hide-icon fas fa-solid fa-sort-down" aria-hidden="true"></i>
-                        <a href="#" class="add-product-group-icon btn-icon add-group-product fas fa-solid fa-plus"
-                          title="Thêm nhóm hàng mới"   aria-hidden="true"
+                        <a href="#" 
+                          class="add-product-group-icon btn-icon add-group-product fas fa-solid fa-plus"
+                          title="Thêm nhóm hàng mới"
+                          aria-hidden="true"
                           @click.prevent="addGroup"></a>
                         <span class="sr-only">Thêm nhóm hàng mới</span>
                       </div>
@@ -86,7 +92,7 @@
                     <div class="form-wrap form-wrap-product">
                       <input id="productTrademark"  class="form-control form-control-form-group-product"
                         type="text"   placeholder="---Chọn thương hiệu---"
-                        v-model="form.brand"
+                        v-model="form.name"
                       />
                       <div class="group-icon-add-new">
                         <i class="show-hide-icon fas fa-solid fa-sort-down" id="hideAddProductTrademarkForm" aria-hidden="true"></i>
@@ -137,20 +143,25 @@
                         </div>
                       </div>
 
-                      <div class="form-image-product"  style="margin-left: 7px; width: 170px;"
-                        v-for="(img, index) in form.introImagesPreview"  :key="index"
-                      >
-                      <div class="wrap-img wrap-img-form-product" style="margin-left: 7px; width: 170px;">
-                        <label class="custom-upload-btn" style="margin-left: 7px; width: 170px;">
-                          <img  v-if="img"  :src="img"  alt="Preview Image" 
-                            style="width:100%; height:100%; object-fit:cover;" />
-                          <span v-else>Chưa có ảnh</span>
-                          <input  type="file"  accept="image/*"  style="display:none;" 
-                            @change="onIntroChange($event, index)" />
+                      <div class="form-image-product" style="margin-left: 7px; width: 170px;"
+                          v-for="(img, index) in form.introImagesPreview" :key="index">
+                        <div class="wrap-img wrap-img-form-product" style="margin-left: 7px; width: 170px;">
+                          <label class="custom-upload-btn" style="margin-left: 7px; width: 170px;">
+                            <img v-if="img && img.url" :src="img.url" alt="Preview Image"
+                                style="width:100%; height:100%; object-fit:cover;" />
+                            <span v-else>Chưa có ảnh</span>
+                            <input type="file" accept="image/*" style="display:none;"
+                                  @change="e => replaceIntroImage(e, index)" />
+                          </label>
+                          <button type="button" @click="removeIntroImage(index)">X</button>
+                        </div>
+                      </div>
+                      <div style="display: block; height:31px; width:31px; padding:9px;">
+                        <label class="custom-upload-btn" style="display:block; height:31px; width:31px; padding:9px;">
+                          <span>+</span>
+                          <input type="file" accept="image/*" style="display:none;" @change="addIntroImage" />
                         </label>
                       </div>
-
-                    </div>
                     </div>
                   </div>
         <!-- Variant Images -->
@@ -170,22 +181,33 @@
                   </div>
                   <div class="form-image-group">
                     <div class="form-image-product" style="margin-left: 7px;"
-                      v-for="(img, index) in variant.detailImagesPreview" :key="index"
+                      v-for="(img, index) in variant.detailImagesPreview"
+                      :key="index"
                     >
                       <div class="wrap-img wrap-img-form-product">
                         <label :for="`productImg-${vIndex}-${index}`" class="custom-upload-btn">
-                          <img :src="img || ''" alt="Preview Image"/>
+                          <img v-if="img?.url" :src="img.url" alt="Preview Image"/>
+                          <span v-else>Chưa có ảnh</span>
                         </label>
+                        <input type="file" :id="`productImg-${vIndex}-${index}`"
+                          accept="image/*" style="display:none;"
+                          @change="e => replaceDetailImage(e, vIndex, index)"
+                        />
                       </div>
-                      <div class="dropzone">
-                        <div class="upload-button">
-                          <input type="file"  :id="`productImg-${vIndex}-${index}`"  accept="image/*"
-                            @change="e => handleImageChange(e, vIndex, index)"
-                          />
-                        </div>
-                      </div>
+                      <button type="button" @click="removeDetailImage(vIndex, index)">X</button>
+                    </div>
+
+                    <!-- nút thêm ảnh -->
+                    <div class="form-image-product add-btn" style="margin-left: 7px;">
+                      <label class="custom-upload-btn" style="display: block; height: 31px; width: 31px; padding: 9px;">
+                        <span>+</span>
+                        <input type="file" accept="image/*" style="display:none;"
+                          @change="e => addDetailImage(e, vIndex)"
+                        />
+                      </label>
                     </div>
                   </div>
+
                 </div>
                 <div class="variant-selector">
                   <button type="button" class="variant-btn" @click="addVariant">
@@ -360,11 +382,12 @@
 
         <!-- add product bottom -->
         <div class="add-product-bottom">
-          <button id="btnSaveApplicationProductMore" class="btn btn-success btn-success-bottom"
-            @click="handleAddNew"
-          >
-            <i class="btn-success-icon fas fa-solid fa-floppy-disk" aria-hidden="true"></i>
-            <span>Thêm mới</span>
+          <button id="btnSaveApplicationProductMore"  class="btn btn-success btn-success-bottom"
+                  @click="form.id ? handleUpdate() : handleAddNew()">
+            <i class="btn-success-icon fas" 
+              :class="form.id ? 'fa-pen' : 'fa-floppy-disk'" 
+              aria-hidden="true"></i>
+            <span>{{ form.id ? 'Cập nhật' : 'Thêm mới' }}</span>
           </button>
 
           <button id="btnSaveApplicationProductCopy" class="btn btn-success btn-success-bottom">
@@ -394,20 +417,34 @@ import { reactive, watch, ref, onMounted, toRaw } from 'vue'
 const form = reactive({
   id: '',
   name: '',
-  image: '',
-  imagePreview: '',
+  image: null,             // file chính
+  imagePreview: '',        // preview (bỏ qua khi gửi)
+  category: {
+    name: '',
+  },
   status: 1,
   createDate: '',
-  introImages: Array(6).fill(null),
-  introImagesPreview: Array(6).fill(null),
+  introImages: [           // list ảnh giới thiệu
+    {
+      id: null,
+      file: null           // file upload
+    }
+  ],
+  introImagesPreview: [],  // bỏ qua khi gửi
   variants: [
     {
       id: null,
       color: '',
-      detailImages: Array(11).fill(null),
-      detailImagesPreview: Array(11).fill(null), // URL[]
+      detailImages: [      // list ảnh chi tiết
+        {
+          id: null,
+          file: null
+        }
+      ],
+      detailImagesPreview: [], // bỏ qua
       attributes: [
         {
+          id: null,
           name: '',
           originalPrice: 0,
           finalPrice: 0,
@@ -435,28 +472,30 @@ watch(
       form.name = newVal.name;
       form.status = newVal.status ?? 1;
       form.createDate = newVal.createDate ?? null;
-
+      form.category = newVal.category;
       // ảnh chính
-      form.image = null;                     // reset file
-      form.imagePreview = newVal.image || null;
+      form.image = newVal.image || null;                     // chỉ set khi user upload ảnh mới
+      form.imagePreview = newVal.image || null; // preview ảnh cũ
 
       // intro images (6 ảnh)
-      let introImgs = [...(newVal.introImages || [])];
-      while (introImgs.length < 6) introImgs.push(null);
-      form.introImages = Array(6).fill(null);   // File[]
-      form.introImagesPreview = introImgs;      // URL[]
+      form.introImages = (newVal.introImages || []).map(img => ({
+        id: img.id,
+        file: null   // ảnh cũ thì chưa có file mới
+      })); // File[]
+      form.introImagesPreview = [...(newVal.introImages || [])]; // URL[]
 
       // variants
       form.variants = (newVal.variants || []).map(v => {
-        let images = [...(v.detailImages || [])];
-        while (images.length < 11) images.push(null);
-
         return {
           id: v.id,
           color: v.color,
-          detailImages: Array(11).fill(null),     // File[]
-          detailImagesPreview: images,            // URL[]
+          detailImages: (v.detailImages || []).map(img => ({
+            id: img.id,
+            file: null   // ảnh cũ thì chưa có file mới
+          })),
+          detailImagesPreview: [...(v.detailImages || [])], // URL[]
           attributes: (v.attributes || []).map(attr => ({
+            id: attr.id,
             name: attr.name,
             originalPrice: attr.originalPrice ?? 0,
             finalPrice: attr.finalPrice ?? 0,
@@ -470,16 +509,17 @@ watch(
       // reset mặc định
       form.image = null;
       form.imagePreview = null;
-      form.introImages = Array(6).fill(null);
-      form.introImagesPreview = Array(6).fill(null);
+      form.introImages = [];
+      form.introImagesPreview = [];
       form.variants = [
         {
           id: null,
           color: '',
-          detailImages: Array(11).fill(null),
-          detailImagesPreview: Array(11).fill(null),
+          detailImages: [],
+          detailImagesPreview: [],
           attributes: [
             {
+              id: null,
               name: '',
               originalPrice: 0,
               finalPrice: 0,
@@ -495,33 +535,82 @@ watch(
   { immediate: true }
 );
 
-
 // add new -----------------------------------------------------------------------------
 function objectToFormData(obj, formData = new FormData(), parentKey = "") {
   if (obj === null || obj === undefined) return formData;
 
+  // Nếu là file
   if (obj instanceof File || obj instanceof Blob) {
-    formData.append(parentKey, obj);
-  } else if (Array.isArray(obj)) {
+    if (parentKey) {
+      formData.append(parentKey, obj);
+      console.log(`[FormData-Check] ${parentKey} -> File(${obj.name})`);
+    }
+  }
+  // Nếu là array
+  else if (Array.isArray(obj)) {
     obj.forEach((value, index) => {
       const key = parentKey ? `${parentKey}[${index}]` : `${index}`;
       objectToFormData(value, formData, key);
     });
-  } else if (typeof obj === "object" && !(obj instanceof Date)) {
+  }
+  // Nếu là object
+  else if (typeof obj === "object" && !(obj instanceof Date)) {
     Object.keys(obj).forEach((key) => {
+      if (key.toLowerCase().includes("preview") || key === "createDate") return;
+
       const value = obj[key];
       const fullKey = parentKey ? `${parentKey}.${key}` : key;
-      objectToFormData(value, formData, fullKey);
+
+      // xử lý riêng cho image chính
+      if (key === "image") {
+        if (value instanceof File) {
+          formData.append(fullKey, value);
+          console.log(`[FormData-Check] ${fullKey} -> File(${value.name})`);
+        } else {
+          // formData.append(fullKey, null);
+          // console.log(`[FormData-Check] ${fullKey} -> null`);
+        }
+      }
+      // xử lý riêng cho introImages và detailImages
+      else if (parentKey.endsWith("introImages") || parentKey.endsWith("detailImages")) {
+        // xử lý riêng cho từng ảnh trong list
+        if (key === "file" && value instanceof File) {
+          // ảnh mới
+          formData.append(fullKey, value);
+          console.log(`[FormData-Check] ${fullKey} -> File(${value.name})`);
+        } 
+        else if (key === "id" && value) {
+          // ảnh cũ
+          formData.append(fullKey, value);
+          console.log(`[FormData-Check] ${fullKey} -> old image id=${value}`);
+        } 
+        // bỏ qua url (server không cần)
+        else if (key === "url") {
+          console.log(`[FormData-Check] ${fullKey} -> skipped (url only)`);
+        }
+      }
+      else {
+        objectToFormData(value, formData, fullKey);
+      }
     });
-  } else {
-    if (parentKey) {
+  }
+  // Bỏ qua Date
+  else if (obj instanceof Date) {
+    return formData;
+  }
+  // Nếu là primitive
+  else {
+    if (parentKey && obj !== null) {
       formData.append(parentKey, obj);
+      console.log(`[FormData-Check] ${parentKey} -> ${obj}`);
     }
   }
 
   return formData;
 }
 
+
+// add api ===============================================================
 const emit = defineEmits(['added-success', 'close']);
 const handleAddNew = async () => {
   const token = localStorage.getItem("token");
@@ -531,19 +620,27 @@ const handleAddNew = async () => {
     // convert reactive form -> FormData
     const formData = objectToFormData(toRaw(form)); 
 
+    for (let [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`[FormData] ${key} -> File(${value.name})`);
+      } else {
+        console.log(`[FormData] ${key} -> ${value}`);
+      }
+    }
+ 
     await axios.post(
-      "http://localhost:8080/bej3/admin/product/add",
+      "http://localhost:8080/bej3/manage/product/add",
       formData,
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          // "Content-Type": "multipart/form-data"
         }
       }
     );
 
     alert("Thêm hàng hóa thành công!");
-    emit("added-success");
+    emit("added-success, close");
   } catch (error) {
     console.error("Lỗi khi thêm sản phẩm:", error.message);
     if (error.response) {
@@ -556,9 +653,48 @@ const handleAddNew = async () => {
     alert("Thêm hàng hóa thất bại!");
   }
 };
+// update api ===============================================================
+const handleUpdate = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) return router.push("/login");
+
+  if (!form.id) {
+    alert("Không tìm thấy ID sản phẩm để cập nhật!");
+    return;
+  }
+
+  try {
+    const formData = objectToFormData(toRaw(form));
+    // for (let [k, v] of formData.entries()) {
+    //   console.log(k, v);
+    // }
+    await axios.put(
+      `http://localhost:8080/bej3/manage/product/update/${form.id}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      }
+    );
+
+    alert("Cập nhật hàng hóa thành công!");
+    emit("added-success");
+  } catch (error) {
+    console.error("Lỗi khi cập nhật sản phẩm:", error.message);
+    if (error.response) {
+      console.error("Chi tiết:", error.response.data);
+      if ([401, 403].includes(error.response.status)) {
+        localStorage.removeItem("token");
+        router.push("/login");
+      }
+    }
+    alert("Cập nhật hàng hóa thất bại!");
+  }
+};
+// update api ===============================================================
 
 // preview img -----------------------------------------------------------
-const previewUrl = ref(null);
 const handleMainImageChange = (event) => {
   const file = event.target.files[0];
   if (file) {
@@ -569,27 +705,76 @@ const handleMainImageChange = (event) => {
     form.imagePreview = '';
   }
 };
-const handleImageChange = (event, vIndex, index) => {
-  const file = event.target.files[0];
-  if (!file) return;
+//
+// Thêm ảnh mới
+function addImage(list, previewList, file) {
+  list.push({ id: null, file });   // wrap object
+  previewList.push({
+    id: null,
+    url: URL.createObjectURL(file)
+  });
+}
 
-  form.variants[vIndex].detailImages[index] = file;
-  form.variants[vIndex].detailImagesPreview[index] = URL.createObjectURL(file);
+// Thay thế ảnh trong list
+function replaceImage(list, previewList, index, file) {
+  list[index] = { 
+    id: list[index]?.id ?? null, 
+    file 
+  };
+  previewList[index] = {
+    id: previewList[index]?.id ?? null,
+    url: URL.createObjectURL(file)
+  };
+}
+
+// Xóa ảnh
+function removeImage(list, previewList, index) {
+  list.splice(index, 1);
+  previewList.splice(index, 1);
+}
+
+// Intro images
+const addIntroImage = (event) => {
+  const file = event.target.files?.[0];
+  if (file) addImage(form.introImages, form.introImagesPreview, file);
+  event.target.value = "";
 };
-const onIntroChange = (event, index) => {
-  const file = event.target.files[0];
-  if (!file) return;
-  form.introImages[index] = file;
-  form.introImagesPreview[index] = URL.createObjectURL(file);
-  
+
+const replaceIntroImage = (event, index) => {
+  const file = event.target.files?.[0];
+  if (file) replaceImage(form.introImages, form.introImagesPreview, index, file);
+  event.target.value = "";
 };
+
+const removeIntroImage = (index) => {
+  removeImage(form.introImages, form.introImagesPreview, index);
+};
+
+// Detail images
+const addDetailImage = (event, vIndex) => {
+  const file = event.target.files?.[0];
+  if (file) addImage(form.variants[vIndex].detailImages, form.variants[vIndex].detailImagesPreview, file);
+  event.target.value = "";
+};
+
+const replaceDetailImage = (event, vIndex, index) => {
+  const file = event.target.files?.[0];
+  if (file) replaceImage(form.variants[vIndex].detailImages, form.variants[vIndex].detailImagesPreview, index, file);
+  event.target.value = "";
+};
+
+const removeDetailImage = (vIndex, index) => {
+  removeImage(form.variants[vIndex].detailImages, form.variants[vIndex].detailImagesPreview, index);
+};
+
+
 // them variant -------------------------------------------------------------------------------
 const addVariant = () => {
   form.variants.push({
     id: null,
     color: '',
-    detailImages: Array(11).fill(null),  // chuẩn hóa 11 ảnh
-    detailImagesPreview: Array(11).fill(null),
+    detailImages: [], 
+    detailImagesPreview: [],
     attributes: [
       {
         name: '',
@@ -612,7 +797,8 @@ const removeVariant = (vIndex) => {
       form.variants[0] = {
         id: null,
         color: '',
-        detailImages: Array(11).fill(null),
+        detailImages: [],
+        detailImagesPreview: [],
         attributes: [
           {
             name: '',
@@ -680,6 +866,19 @@ function selectVariant(index) {
 const selectAttribute = (index) => {
   selectedAttributeIndex.value = parseInt(index);
 };
+
+// category 
+const categories = ref([]);
+const fetchCategories = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("http://localhost:8080/bej3/manage/category", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  categories.value = res.data.result;
+};
+onMounted(async () => {
+  await fetchCategories();
+});
 </script>
 
 
@@ -699,6 +898,29 @@ const selectAttribute = (index) => {
   background: #009981;
   color: white;
   border-color: #009981;
+}
+
+
+.form-control-form-group-product {
+  -webkit-appearance: none; /* Chrome, Safari */
+  -moz-appearance: none;    /* Firefox */
+  appearance: none;         /* chuẩn */
+  padding-right: 30px;      /* chừa chỗ cho icon custom */
+  background: white;        /* đảm bảo không bị trong suốt */
+}
+
+.form-wrap-product {
+  position: relative;
+}
+
+.show-hide-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* để click vào icon vẫn bấm được select */
+  font-size: 16px;
+  color: #4d4d4d;
 }
 
 </style>

@@ -21,7 +21,7 @@
                             :key="index"
                             class="container-check-box check-box-menu-type"
                             >
-                            {{ item.label }}
+                            {{ item.name }}
                                 <input
                                     type="checkbox"
                                     v-model="item.checked"
@@ -288,10 +288,7 @@ import axios from "axios";
 import { ref, computed, onMounted, watch } from 'vue'
 import router from '@/router';
 
-const productTypes = ref([
-  { label: 'Hàng hóa', checked: true },
-  { label: 'Hàng hóa', checked: true }
-])
+const productTypes = ref([ ])
 
 const searchKeyword = ref('')
 const productGroups = ref(['Sách', 'Kéo'])
@@ -312,20 +309,21 @@ const fetchProductData = async () => {
         return;
     }
     try {
-      const response = await axios.get('http://localhost:8080/bej3/admin/product/list'
-    //   const response = await axios.get('https://btn-bej3-api.onrender.com/bej3/admin/product/list'
-      ,{
-            headers: {
-                Authorization: `Bearer ${token}` // Gửi token trong header
-            }
-        });
+      const [productListResponse, categoryListResponse] = await Promise.all([
+            axios.get("http://localhost:8080/bej3/manage/product/list", {
+                headers: { Authorization: `Bearer ${token}` },
+            }),
+            axios.get("http://localhost:8080/bej3/manage/category", {
+                headers: { Authorization: `Bearer ${token}` },
+            }),
+        ]);
       // console.log("Response Data:", response.data);
-      productData.value = response.data.result;
-      // console.log("Product Data in Vue:", productData.value);
+      productData.value = productListResponse.data.result;
+      productTypes.value = categoryListResponse.data.result;
     } catch (error) {
         console.error('Lỗi:', error);
         // Nếu lỗi 401 (Unauthorized) hoặc 403 (Forbidden), chuyển hướng về trang login
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        if (error.response && (error.response.status === 401 || error.response.status === 500)) {
             localStorage.removeItem("token"); // Xóa token cũ
             router.push("/login"); // Chuyển hướng về trang đăng nhập
         }
@@ -363,6 +361,8 @@ const handleEditProduct = (product) => {
 </script>
 
 <style scoped>
+
+
 
 
 </style>
