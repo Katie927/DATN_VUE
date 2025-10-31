@@ -95,7 +95,7 @@
                                 </button>
                                 <ul class="btn-add-product-list" id="btnAddProductList">
                                     <li>
-                                        <button class="operation" id="addCommodityProductButton" data-action="">
+                                        <button class="operation" id="addCommodityProductButton" data-action="" @click="showEmpployeeAdd = true">
                                         <i class="btn-icon fas fa-solid fa-plus" aria-hidden="true"></i>
                                         <span>Thêm nhân viên</span>
                                         </button>
@@ -207,7 +207,8 @@
                                 </tr>
                                 <tr v-if="expandedId === employee.id">
                                     <td colspan="9" class="cell-detail p-0">
-                                        <EmployeeDetails :employee-id ="employee.id" />
+                                        <EmployeeDetails :employee-id ="employee.id"
+                                                        @edit-user="handleEditUser" />
                                     </td>
                                 </tr>
                             </template>
@@ -219,6 +220,8 @@
     </div>
 </div>
 
+<EmployeeAdd v-if="showEmpployeeAdd" :user="selectedUser" @close="showEmpployeeAdd = false, selectedUser=null"/>
+
 </template>
 
 <script setup>
@@ -227,11 +230,15 @@ import '@/assets/styles/admin-css/kv-product.css';
 import '@/assets/styles/admin-css/kv-style.css'; 
 
 import axios from "axios";
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from "vue-router";
 import EmployeeDetails from './employee-details.vue';
 
+import EmployeeAdd from './employee-add.vue';
+
 const router = useRouter();
+
+const showEmpployeeAdd = ref(false)
 
 const productTypes = ref([
   { label: 'Staff', checked: true },
@@ -247,7 +254,7 @@ const fetchEmployeeData = async () => {
         return;
     }
     try {
-        const response = await axios.get(`http://localhost:8080/bej3/users`, {
+        const response = await axios.get(`http://localhost:8080/bej3/manage/users`, {
             headers: {
                 Authorization: `Bearer ${token}` // Gửi token trong header
             }
@@ -259,7 +266,7 @@ const fetchEmployeeData = async () => {
     } catch (error) {
         console.error('Lỗi:', error);
         // Nếu lỗi 401 (Unauthorized) hoặc 403 (Forbidden), chuyển hướng về trang login
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        if (error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 500)) {
             localStorage.removeItem("token"); // Xóa token cũ
             router.push("/login"); // Chuyển hướng về trang đăng nhập
         }
@@ -267,6 +274,12 @@ const fetchEmployeeData = async () => {
 };
 onMounted(fetchEmployeeData);
 
+// edit --------------------------------------------------------
+const selectedUser = ref(false)
+const handleEditUser = (user) => {
+    selectedUser.value = {...user};
+    showEmpployeeAdd.value = true;
+}
 
 const expandedId = ref(null)
 function toggleDetail(id) {
@@ -277,5 +290,13 @@ function toggleDetail(id) {
 defineProps({
   employeeData: Array
 })
+
+watch(showEmpployeeAdd, (val) => {
+  if (val) {
+    document.body.style.overflow = "hidden"; // chặn cuộn nền
+  } else {
+    document.body.style.overflow = ""; // trả lại bình thường
+  }
+});
 
 </script>

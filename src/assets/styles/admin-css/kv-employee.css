@@ -1,0 +1,487 @@
+/* cover */
+
+/* section add employee */
+.add-employee{
+    overflow-y: auto;
+    position: fixed;
+    top: 50px;
+    right: 0;
+    left: 0;
+    z-index: 999;
+    max-height: 93vh;
+}
+
+.mask-1{
+    background-color: rgba(0, 0, 0, .2);
+    z-index: 1000;
+}
+
+.add-employee #containerAddEmployee{
+    width: 1300px;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #f2f2f2;
+    border-radius: 4px;
+    position: relative;
+    z-index: 1001;
+}
+
+.add-employee-head{
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+.add-employee-head:hover{
+    cursor: pointer;
+}
+
+.add-employee-head-title{
+    border-start-start-radius: 4px;
+    border-start-end-radius: 4px;
+    align-items: start;
+    justify-content: space-between;
+}
+
+.add-employee-head-title span{
+    padding-left: 28px;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 62px;
+    height: 62px;
+}
+
+.add-employee-head-title i{
+    padding: 16px;
+}
+
+/* add employee container */
+.add-employee-container{
+    box-sizing: content-box;
+    padding: 0 -10px;
+    padding-bottom: 28px;
+}
+
+.active-info-setting{
+    width: 1300px;
+    font-size: 13px;
+    margin-bottom: 34px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.active-info-setting a{
+    width: 110px;
+    padding: 8px 28px;
+    line-height: 30px;
+}
+
+/* form content */
+.tab-content-form-employee{
+    background-color: #f2f2f2;
+    padding: 0 28px;
+}
+
+.tab-content{
+    display: block;
+}
+
+.tab-content .form-wrapper{
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: space-between;
+}
+
+/* left content */
+.profile-img{
+    padding-left: 16px;
+    flex: 0 0 15.0838%;
+    box-sizing: border-box;
+}
+
+.wrap-img{
+    width: 135px;
+    height: 135px;
+    border-radius: 3px;
+    background-color: #fff;
+    border: 1px dashed #959595;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.wrap-img img{
+    width: 133px;
+    height: 133px;
+}
+
+.wrap-img i{
+    font-size: 20px;
+    color: #959595;
+}
+
+.upload-button {
+    position: relative;
+}
+
+.upload-button label{
+    position: absolute;
+    min-width: 133px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.dropzone input{
+    display: none;
+}
+
+.dropzone em{
+    position: absolute;
+    top: -12px;
+    font-size: 10px;
+    line-height: 12px;
+    color: red;
+    display: none;
+}
+
+.upload-status-total{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+}
+
+.upload-status-total strong{
+    font-size: 13px;
+    line-height: 15px;
+    color: #00b63e;
+    display: none;
+}
+.file-name{
+    border: 1px solid #00b63e;
+}
+
+.upload-status, .file-name{
+    min-width: 133px;
+    align-items: center;
+    display: none;
+}
+
+.custom-upload-btn {
+    cursor: pointer;
+    box-sizing: border-box;
+    padding: 8px 12px;
+    background-color: #fff;
+    color: #010101;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid #959595;
+    border-radius: 5px;
+}
+
+.custom-upload-btn:hover {
+    background-color: #00b63e;
+    color: #fff;
+    border: 1px solid #00b63e;
+    box-shadow: 1px 1px 2px rgba(0,182,62,.8) ;
+}
+
+/* right content */
+.information{
+    flex: 0 0 84.9162%;
+    width: 872px;
+}
+
+.detail-information{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+}
+.information-group {
+    background-color: #fff;
+    padding: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
+    border-radius: 8px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, .1);
+}
+
+.information-title{
+    flex: 0 0 100%;
+    margin-bottom: 20px;
+}
+
+.information-title .info-heading{
+    flex: 0 0 100%;
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 700;
+}
+
+.info-heading.info-heading-add-employee{
+    margin-bottom: 20px;
+}
+
+.information-group{
+    margin-right: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: start;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.form-group label[class="form-label"]{
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 18px;
+    min-width: 150px;
+    padding-top: 7px;
+    padding-right: 5px;
+  }
+  
+  .form-group input[class="form-control"]{
+    padding-top: 7px;
+    line-height: 18px;
+    font-size: 14px;
+    min-width: 250px;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #ddd;
+  }
+
+  /* .search-input-branch-list{
+    position: absolute;
+    z-index: 1000;
+    display: none;
+  }
+
+  #searchSalaryBranch:focus #branchListId{
+    display: block;
+  } */
+
+.salary-branch-icon{
+    position: absolute;
+    right: 5px;
+}
+
+#searchSalaryBranchIcon{
+    position: absolute;
+    right: 10px;
+}
+
+#branchItemsId{
+    min-width: 250px;
+    position: absolute;
+    text-align: left;
+    z-index: 1000;
+    background-color: #f2f2f2;
+}
+
+#searchSalaryBranch{
+    padding-right: 42px;
+    background-color: #e6f1fe;
+}
+
+#branchItemsId .item-name{
+    flex-grow: 0;
+}
+
+.select-salary-branch-search{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.information-group:nth-child(1) .form-group:last-child input,
+.information-group:nth-child(3) .form-group:last-child input{
+    width: 692px;
+}
+
+.information-group:last-child .form-group:last-child{
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+}
+
+.information-group:last-child .form-group:last-child input{
+    width: 250px;
+    margin-left: 3px;
+}
+
+.information-group:last-child{
+    padding-bottom: 64px;
+}
+
+.information-group:nth-child(4){
+    position: relative;
+}
+
+.group-icon-add-new{
+    position: absolute;
+    right: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.group-icon-add-new i{
+    margin-right: 5px;
+    color: #15171a;
+    cursor: pointer;
+}
+
+.group-icon-add-new a{
+    color: #15171a;
+}
+
+.group-icon-add-new a:hover{
+    background-color: #f2f2f2;
+    border-radius: 50%;
+}
+
+#hideAddDepartmentFormEmployee, #hideAddPositionFormEmployee, #hideAddAccountFormEmployee{
+    padding-bottom: 9px;
+}
+
+.work-information .form-wrap{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.work-information .form-control{
+    position: relative;
+    padding-right: 24px;
+}
+
+.work-information .note-pen{
+    position: absolute;
+    z-index: 1000;
+    right: 5px;
+    color: #666;
+}
+
+#formWrapGender{
+    position: absolute;
+    left: 100px;
+    bottom: 40px;
+}
+
+#employeeGender{
+    display: none;
+}
+
+.hide-show-information{
+    /* display: none; */
+}
+
+/* set-salary */
+.set-salary{
+    display: block;
+}
+
+/* new application */
+.new-application{
+    position: absolute;
+    width: 1170px;
+    top: -20px;
+    right: 0;
+    left: 0;
+    display: none;
+    z-index: 1009;
+}
+
+.mask-2{
+    background-color: rgba(0, 0, 0, .5);
+    z-index: 1010;
+}
+
+.new-application-container{
+    position: relative;
+    z-index: 1011;
+}
+
+
+
+/* button add more information */
+.btn-form{
+    cursor: pointer;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    background-color: #fff;
+    color: #0090da;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.btn-form:focus{
+    outline: none;
+}
+
+/* button add employee bottom */
+.add-employee-bottom{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    margin-right: 0;
+    margin-top: 10px;
+    background-color: #f2f2f2;
+}
+
+.btn-success-bottom, .btn-default-bottom{
+    font-size: 13px;
+    line-height: 20px;
+    padding: 8px 20px;
+    margin-left: 10px;
+}
+
+.add-employee-bottom button span{
+    margin-left: 10px;
+}
+
+#btnSaveApplication, #btnSaveSetSalary{
+    margin-right: 28px;
+}
+
+/* pay update */
+.pay-rate-update{
+
+}
+
+.otherSpan{
+    /* display: none; */
+}
+
+.pay-rate-form{
+    /* display: none; */
+}
+
+/* Ẩn các nút điều chỉnh (stepper) cho input kiểu number */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield; /* Firefox */
+}
