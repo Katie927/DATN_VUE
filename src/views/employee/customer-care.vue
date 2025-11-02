@@ -1,6 +1,6 @@
 <template>
   <div class="app-container" :class="{ dark: isDarkMode }">
-    <!-- Header -->
+    <!-- Header with sticky position -->
     <header class="header">
       <div class="header-left">
         <h1 class="app-title">📱 Chăm sóc Khách hàng</h1>
@@ -56,23 +56,20 @@
         </div>
 
         <div class="schedule-grid">
-          <div v-for="day in weekDays" :key="day.date" class="day-column">
+          <div
+            v-for="day in weekDays"
+            :key="day.date"
+            class="day-column"
+            :class="{ today: day.isToday }"
+          >
             <div class="day-header">
               <div class="day-name">{{ day.name }}</div>
               <div class="day-date">{{ day.date }}</div>
             </div>
-            <div class="shifts">
-              <div class="shift morning">
-                <div class="shift-time">Sáng (8-12h)</div>
-                <div v-for="staff in day.morning" :key="staff" class="staff-item">
-                  {{ staff }}
-                </div>
-              </div>
-              <div class="shift afternoon">
-                <div class="shift-time">Chiều (13-18h)</div>
-                <div v-for="staff in day.afternoon" :key="staff" class="staff-item">
-                  {{ staff }}
-                </div>
+            <!-- CHANGE: Removed shift sections, display all staff in single area with balanced heights -->
+            <div class="staff-list">
+              <div v-for="staff in day.allStaff" :key="staff" class="staff-item">
+                {{ staff }}
               </div>
             </div>
           </div>
@@ -113,9 +110,16 @@
             <span class="task-count completed">{{ completedTasks.length }}</span>
           </div>
           <div class="tasks-list">
+            <!-- CHANGE: Completed tasks now have enabled checkbox to move back to pending -->
             <div v-for="task in completedTasks" :key="task.id" class="task-item completed">
-              <input type="checkbox" checked disabled class="task-checkbox" />
-              <label class="task-label">
+              <input
+                type="checkbox"
+                :id="`completed-task-${task.id}`"
+                checked
+                @change="uncompleteTasks(task.id)"
+                class="task-checkbox"
+              />
+              <label :for="`completed-task-${task.id}`" class="task-label">
                 <span class="task-name">{{ task.name }}</span>
                 <span class="task-time">{{ task.time }}</span>
               </label>
@@ -224,6 +228,8 @@ const selectedCount = computed(
 const weekDays = computed(() => {
   const days = []
   const today = new Date()
+  const todayDate = today.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })
+
   const monday = new Date(today)
   monday.setDate(today.getDate() - today.getDay() + 1 + currentWeekOffset.value * 7)
 
@@ -233,11 +239,18 @@ const weekDays = computed(() => {
   for (let i = 0; i < 7; i++) {
     const date = new Date(monday)
     date.setDate(monday.getDate() + i)
+    const dateStr = date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })
+
+    // CHANGE: Combine morning and afternoon staff, check if day is today
+    const morning = staffList.slice(0, Math.floor(Math.random() * 3) + 2)
+    const afternoon = staffList.slice(0, Math.floor(Math.random() * 3) + 2)
+    const allStaff = [...new Set([...morning, ...afternoon])]
+
     days.push({
       name: dayNames[i],
-      date: date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }),
-      morning: staffList.slice(0, Math.floor(Math.random() * 3) + 2),
-      afternoon: staffList.slice(0, Math.floor(Math.random() * 3) + 2),
+      date: dateStr,
+      allStaff: allStaff,
+      isToday: dateStr === todayDate && currentWeekOffset.value === 0,
     })
   }
   return days
@@ -271,6 +284,14 @@ const completeTasks = () => {
     }
   })
 }
+
+// CHANGE: New function to move task from completed back to pending
+const uncompleteTasks = (taskId) => {
+  const task = allTasks.value.find((t) => t.id === taskId)
+  if (task) {
+    task.completed = false
+  }
+}
 </script>
 
 <style scoped>
@@ -293,7 +314,11 @@ const completeTasks = () => {
   color: #e0e0e0;
 }
 
+/* CHANGE: Header is now sticky */
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   padding: 1.5rem 2rem;
@@ -302,7 +327,6 @@ const completeTasks = () => {
   align-items: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-bottom: 2px solid #3b82f6;
-  position: relative;
 }
 
 .app-container.dark .header {
@@ -344,7 +368,6 @@ const completeTasks = () => {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Bell icon dropdown styles */
 .notifications-dropdown {
   position: relative;
 }
@@ -572,7 +595,6 @@ const completeTasks = () => {
   color: #60a5fa;
 }
 
-/* Schedule grid with balanced shift heights */
 .schedule-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -586,11 +608,25 @@ const completeTasks = () => {
   border: 2px solid #3b82f6;
   display: flex;
   flex-direction: column;
+  transition: all 0.3s;
+}
+
+/* CHANGE: Highlight today's date with different background */
+.day-column.today {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: #1e40af;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
 }
 
 .app-container.dark .day-column {
   background: rgba(96, 165, 250, 0.1);
   border-color: #60a5fa;
+}
+
+.app-container.dark .day-column.today {
+  background: rgba(96, 165, 250, 0.2);
+  border-color: #3b82f6;
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
 }
 
 .day-header {
@@ -615,50 +651,27 @@ const completeTasks = () => {
   color: #aaa;
 }
 
-.shifts {
+/* CHANGE: Unified staff list with balanced heights */
+.staff-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
   flex: 1;
-}
-
-.shift {
   background: white;
   border-radius: 6px;
   padding: 0.75rem;
-  font-size: 0.85rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100px;
+  min-height: 120px;
 }
 
-.app-container.dark .shift {
+.app-container.dark .staff-list {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.shift.morning {
-  border-left: 3px solid #fbbf24;
-}
-
-.shift.afternoon {
-  border-left: 3px solid #f87171;
-}
-
-.shift-time {
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
-
-.app-container.dark .shift-time {
-  color: #e0e0e0;
-}
-
 .staff-item {
-  padding: 0.25rem 0;
+  padding: 0.5rem 0;
   color: #666;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 500;
 }
 
 .app-container.dark .staff-item {
