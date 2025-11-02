@@ -14,9 +14,12 @@ import ListEmployee from '@/views/manage-view/list-employee.vue'
 import EmployeeDetails from '@/views/manage-view/employee-details.vue'
 import ProductDetailRow from '@/views/manage-view/product-detail-row.vue'
 import ProductAdd from '@/views/manage-view/product-add.vue'
+import EmployeeCalendar from '@/views/employee/EmployeeCalendar.vue'
+import EmployeeAdd from '@/views/manage-view/employee-add.vue'
 import CustomerCare from '@/views/employee/customer-care.vue'
 import RepairTechnician from '@/views/employee/repair-technician.vue'
 
+//-----------------------------------------------------------------
 //-----------------------------------------------------------------
 const customerRoutes = [
   {
@@ -25,36 +28,40 @@ const customerRoutes = [
     children: [
       { path: '', component: Home }, // Home page
       { path: '/login', component: Login }, // Login page
-      {
-        path: '/user',
-        component: User,
+      { 
+        path: '/user', 
+        component: User, 
         children: [
           { path: 'promotion', component: UserProfile },
           { path: 'history', component: UserHistory },
           { path: 'profile/my-info', component: UserProfile },
           { path: 'order', component: UserOrders },
-        ],
+        ]
       },
-      { path: '/product-detail', component: ProductDetails },
-    ],
-  },
-]
+      { path: '/product-detail/:productId', component: ProductDetails },
+    ]
+  }
+];
 
 //-----------------------------------------------------------------
-const adminRoutes = [
-  {
-    path: '/admin',
-    component: AdminLayout,
-    children: [
-      { path: 'product/list', component: ListProduct },
-      { path: 'employee', component: ListEmployee },
-      { path: 'employee/details', component: EmployeeDetails },
-      { path: 'product/details', component: ProductDetailRow },
-      { path: 'product/add', component: ProductAdd },
-    ],
-  },
-]
+//-----------------------------------------------------------------
+  const adminRoutes = [
+    { 
+      path: '/admin',
+      component: AdminLayout,
+      children: [
+        { path: 'product/list', component: ListProduct },
+        { path: 'employee', component: ListEmployee },
+        { path: 'employee/details', component: EmployeeDetails },
+        { path: 'employee/add', component: EmployeeAdd },
+        { path: 'product/details', component: ProductDetailRow },
+        { path: 'product/add', component: ProductAdd }
+      ]
+    }
+  ];
 
+//-----------------------------------------------------------------
+//-----------------------------------------------------------------
 const employeeRoutes = [
   {
     path: '/employee',

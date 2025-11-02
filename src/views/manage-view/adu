@@ -1,209 +1,130 @@
+{
+        "id": "a76255bd-8473-4095-9e12-59cb070201c5",
+        "name": "Samsung Galaxy S25",
+        "image": "http://localhost:8080/bej3/images/galaxy-s25-blue-1-b404affd42.webp",
+        "status": 1,
+        "createDate": "2025-09-18",
+        "introImages": [
+            "http://localhost:8080/bej3/images/slider-tinh-nang-2-1.webp",
+            "http://localhost:8080/bej3/images/slider-tinh-nang-3.webp",
+            "http://localhost:8080/bej3/images/slider-tinh-nang-4.webp",
+            "http://localhost:8080/bej3/images/slider-tinh-nang-5.webp",
+            "http://localhost:8080/bej3/images/slider-tinh-nang-6.webp"
+        ],
+        "variants": [
+            {
+                "id": "d6cc57ad-d93d-43ab-89cd-9a3df4d626b6",
+                "color": "Xanh Lá",
+                "detailImages": [
+                    "http://localhost:8080/bej3/images/galaxy-s25-mint-1-81ad52cf9f.webp",
+                    "http://localhost:8080/bej3/images/galaxy-s25-mint-3.webp",
+                    "http://localhost:8080/bej3/images/galaxy-s25-mint-2.webp",
+                    "http://localhost:8080/bej3/images/galaxy-s25-mint-4.webp",
+                    "http://localhost:8080/bej3/images/galaxy-s25-mint-5.webp",
+                    "http://localhost:8080/bej3/images/galaxy-s25-mint-1.webp"
+                ],
+                "attributes": [
+                    {
+                        "name": "12 / 256",
+                        "originalPrice": 22990000,
+                        "finalPrice": 17490000,
+                        "discount": 0,
+                        "stockQuantity": 12,
+                        "soldQuantity": 3324
+                    },
+                    {
+                        "name": "12 / 512",
+                        "originalPrice": 20490000,
+                        "finalPrice": 25990000,
+                        "discount": 0,
+                        "stockQuantity": 3,
+                        "soldQuantity": 44
+                    }
+                ]
+            },
+            {
+                "id": "e47feec2-e283-47eb-aacb-5fe6618a6952",
+                "color": "Xanh dương",
+                "detailImages": [
+                    "http://localhost:8080/bej3/images/galaxy-s25-blue-1-b404affd42.webp",
+                    "http://localhost:8080/bej3/images/galaxy-s25-blue-2.webp",
+                    "http://localhost:8080/bej3/images/galaxy-s25-blue-1.webp",
+                    "http://localhost:8080/bej3/images/galaxy-s25-blue-3.webp"
+                ],
+                "attributes": [
+                    {
+                        "name": "16 / 1T",
+                        "originalPrice": 29990000,
+                        "finalPrice": 0,
+                        "discount": 0,
+                        "stockQuantity": 27,
+                        "soldQuantity": 0
+                    }
+                ]
+            }
+        ]
+    }
 
-                 <!-- row-detail --> 
-                 <tr id="'+showDetailProductId+'" class="row-detail row-detail-commodity" data-product-id="' + productId + '"> 
-                   <td class="cell-detail"> 
-                     <div class="make-boder-table"></div> 
-                     <div class="product-detail"> 
-                       <div class="product-detail-container"> 
-                         <div class="product-detail-menu"> 
-                           <ul class="product-detail-menu-items"> 
-                             <li class="product-detail-menu-item"> 
-                               <span class="detail-item">Thông tin</span> 
-                             </li> 
-                             <li class="product-detail-menu-item"> 
-                               <span class="detail-item">Thẻ kho</span> 
-                             </li> 
-                             <li class="product-detail-menu-item"> 
-                               <span class="detail-item">Tồn kho</span> 
-                             </li> 
-                           </ul> 
-                         </div> 
-  
-                         <!-- product-detail-body --> 
-                         <div class="product-detail-body"> 
-                                   <div class="identification-item"> 
-                                     <h3 id="identificationProductName" class="identification-item-title">'+product.name+'</h3> 
-                                     <ul class="identification-item-direct"> 
-                                       <li class="identification-item-directly"> 
-                                         <i class="direct-icon fas fa-solid fa-check"></i>Bán trực tiếp 
-                                       </li> 
-                                       <li class="identification-item-not-directly"> 
-                                         <i class="not-direct-icon fas fa-solid fa-times"></i>Không tích điểm 
-                                        </li> 
-                                     </ul>';
-                                   </div> 
-  
-                           <div class="form-wrapper product-detail-body-container"> 
-                             <!-- product-detail-left --> 
-                             <div class="product-detail-left"> 
-                               <div class="profile-img-detail-large"> 
-                                 <div class="wrap-img-detail-large"> 
-                                   <img id="'+previewImgZoom+'" class="preview-img-detail-large" src="'+product.img1+'" 
-                                     alt="Preview Image" data-product-id="' + productId + '"/> 
-                                 </div> 
-                               </div> 
-                               <div class="profile-img-detail-group"> 
-                                 <div class="profile-img-detail"> 
-                                   <div class="wrap-img-detail"> 
-                                     <img id="'+previewImg1Id+'" class="preview-img-detail-1" src="'+product.img1+'" 
-                                       alt="Preview Image" data-product-id="' + productId + '"/> 
-                                   </div> 
-                                 </div> 
-                                 <div class="profile-img-detail"> 
-                                   <div class="wrap-img-detail"> 
-                                     <img id="'+previewImg2Id+'" class="preview-img-detail-2" src="'+product.img2+'" 
-                                       alt="Preview Image" data-product-id="' + productId + '" /> 
-                                   </div> 
-                                 </div> 
-                                 <div class="profile-img-detail"> 
-                                   <div class="wrap-img-detail"> 
-                                     <img id="'+previewImg3Id+'" class="preview-img-detail-3" src="'+product.img3+'" 
-                                       alt="Preview Image" data-product-id="' + productId + '"/> 
-                                   </div> 
-                                 </div> 
-                                 <div class="profile-img-detail"> 
-                                   <div class="wrap-img-detail"> 
-                                     <img id="'+previewImg4Id+'" class="preview-img-detail-4" src="'+product.img4+'" 
-                                       alt="Preview Image" data-product-id="' + productId + '"/> 
-                                   </div> 
-                                 </div> 
-                                 <div class="profile-img-detail"> 
-                                   <div class="wrap-img-detail"> 
-                                     <img id="'+previewImg5Id+'" class="preview-img-detail-5" src="'+product.img5+'" 
-                                       alt="Preview Image" data-product-id="' + productId + '"/> 
-                                   </div> 
-                                 </div> 
-                                </div> 
-                             </div> 
-  
-                             <!-- product detail right --> 
-                             <div class="product-detail-right"> 
-                             <div class="product-detail-right-content"> 
-                               <!-- product-detail-indentification --> 
-                               <div class="product-detail-identification"> 
-                                 <!-- identification-group --> 
-                                 <div class="identification-group"> 
-                                   <div class="identification-item"> 
-                                     <span class="identification-item-name">Mã hàng:</span> 
-                                     <span id="identificationProductCode" 
-                                       class="identification-item-code">'+product.code+'</span> 
-                                   </div> 
-  
-                                 <div class="identification-item"> 
-                                   <span class="identification-item-name">Mã vạch:</span> 
-                                   <span id="'+identificationProductBarcode+'" class="identification-item-code" data-product-id="' + productId + '">'+product.barcode+'</span> 
-                                 </div> 
-  
-                                 <div class="identification-item"> 
-                                   <span class="identification-item-name">Nhóm hàng:</span> 
-                                   <span id="identificationProductGroup" class="identification-item-code">'+product.group+'</span> 
-                                 </div> 
-  
-                                   <div class="identification-item"> 
-                                     <span class="identification-item-name">Loại hàng:</span> 
-                                     <span id="identificationproductproperties" class="identification-item-code">'+product.type+'</span> 
-                                   </div> 
-  
-                                 <div class="identification-item"> 
-                                   <span class="identification-item-name">Thương hiệu:</span> 
-                                   <span id="identificationProductTrademark" class="identification-item-code">'+product.trademark+'</span> 
-                                 </div> 
-  
-                                 <div class="identification-item"> 
-                                   <span class="identification-item-name">Định mức tồn:</span> 
-                                   <span id="identificationProductInventory" class="identification-item-code">'+product.mininventory+'>'+product.maxinventory+'</span> 
-                                 </div> 
-  
-                                   <div class="identification-item"> 
-                                     <span class="identification-item-name">Giá bán:</span>\n'
-                                     <span id="identificationSellingPrice" class="identification-item-code">'+product.selling+'</span> 
-                                   </div> 
-  
-                                   <div class="identification-item"> 
-                                     <span class="identification-item-name">Giá vốn:</span> 
-                                     <span id="identificationCostPrice" class="identification-item-code">'+product.cost+'</span> 
-                                   </div> 
-  
-                                   <div class="identification-item"> 
-                                     <span class="identification-item-name">Trọng lượng:</span> 
-                                     <span id="identificationProductWeight" class="identification-item-code">'+product.weight+'</span> 
-                                   </div> 
-  
-                                 <div class="identification-item"> 
-                                   <span class="identification-item-name">Vị trí:</span>\n'
-                                   <span id="identificationProductLocation" class="identification-item-code">'+product.location+'</span> 
-                                 </div> 
-  
-                                 </div> 
-                               </div> 
-  
-                             <!-- product-detail-description --> 
-                             <div class="product-detail-description"> 
-                               <div class="description-group"> 
-                                 <div class="description-item"> 
-                                   <span class="description-item-name">Mô tả</span> 
-                                   <span id="descriptionProductDesc" class="description-item-code">'+product.desc+'</span> 
-                                 </div> 
-  
-                                   <div class="description-item"> 
-                                     <span class="description-item-name">Ghi chú đặt hàng</span> 
-                                     <span id="descriptionProductNoteForm" class="description-item-code">'+product.noteform+'</span> 
-                                   </div> 
-  
-                                   <div class="description-item"> 
-                                     <span class="description-item-name">Nhà cung cấp</span> 
-                                     <span id="descriptionProductSupplier" class="description-item-code"></span>\n'
-                                   </div> 
-  
-                               </div> 
-                             </div> 
-                           </div> 
-                         </div> 
-                       </div>';
-  
-                           <!-- add-edit-product --> 
-                           <div class="add-edit-product"> 
-                             <button id="'+showEditProduct+'" class="btn btn-success btn-success-bottom btn-edit-product" data-action="editCommodity" data-product-id="' + productId + '"> 
-                               <i class="btn-success-icon fas fa-solid fa-check-square"></i> 
-                               <span>Cập nhật</span> 
-                             </button> 
-                             <button id="'+showPrintCodeStamp+'" class="btn btn-default btn-red-bottom btn-default-product" data-product-id="' + productId + '"> 
-                               <i class="btn-success-icon fas fa-solid fa-barcode"></i> 
-                               <span>In tem mã</span> 
-                             </button> 
-                             <button id="'+showCopyProduct+'" class="btn btn-success btn-success-bottom btn-copy-product" data-action="copyCommodity" data-product-id="' + productId + '"> 
-                               <i class="btn-success-icon fa fa-regular fa-copy"></i> 
-                               <span>Sao chép</span> 
-                             </button> 
-                             <button id="'+showStatusProduct+'" class="btn btn-red btn-red-bottom btn-lock-product" data-product-id="' + productId + '"> 
-                               <i class="btn-success-icon fas fa-solid fa-lock"></i> 
-                               <span>Ngừng kinh doanh</span> 
-                             </button> 
-                             <button id="'+showRemoveProduct+'" class="btn btn-red btn-red-bottom btn-remove-product" data-product-id="' + productId + '"> 
-                               <i class="btn-success-icon fas fa-solid fa-trash-can"></i> 
-                               <span>Xóa</span> 
-                             </button> 
-                             <button id="'+showMoreOperationProduct+'" class="btn btn-more btn-more-bottom btn-more-product" data-product-id="' + productId + '"> 
-                               <i class="btn-success-icon fas fa-solid fa-ellipsis-vertical"></i> 
-                             </button> 
-                   <ul class="operation-detail-list" id="'+operationDetailProductList+'" data-product-id="' + productId + '"> 
-                     <li> 
-                       <button class="operation" id="btnOperationInboxProduct"> 
-                         <i class="btn-icon fas fa-solid fa-inbox"></i> 
-                         <span>Đặt nhập hàng</span> 
-                       </button> 
-                     </li> 
-                     <li> 
-                       <button class="operation" id="btnOperationFlatbedProduct"> 
-                         <i class="btn-icon fas fa-solid fa-cart-flatbed"></i> 
-                         <span>Nhập hàng</span> 
-                       </button> 
-                     </li> 
-                   </ul>
-                         </div> 
-                       </div> 
-                     </div> 
-  
-                     </div> 
-                   </td> 
-                 </tr>
+
+function objectToFormData(obj, formData = new FormData(), parentKey = "") {
+  if (obj === null || obj === undefined) return formData;
+
+  // Nếu là File (ảnh upload)
+  if (obj instanceof File || obj instanceof Blob) {
+    if (parentKey) {
+      formData.append(parentKey, obj);
+      console.log(`[FormData-Check] ${parentKey} -> File(${obj.name})`);
+    }
+  }
+  // Nếu là Array
+  else if (Array.isArray(obj)) {
+    obj.forEach((value, index) => {
+      // Dùng dot notation để Spring map
+      const key = parentKey ? `${parentKey}.${index}` : `${index}`;
+      objectToFormData(value, formData, key);
+    });
+  }
+  // Nếu là Object
+  else if (typeof obj === "object" && !(obj instanceof Date)) {
+    Object.keys(obj).forEach((key) => {
+      // Bỏ qua preview và createDate
+      if (key.toLowerCase().includes("preview") || key === "createDate") return;
+
+      const value = obj[key];
+      const fullKey = parentKey ? `${parentKey}.${key}` : key;
+
+      // Xử lý riêng cho image chính
+      if (fullKey === "image") {
+        if (value instanceof File) {
+          formData.append(fullKey, value);
+          console.log(`[FormData-Check] ${fullKey} -> File(${value.name})`);
+        } else {
+          // bỏ qua nếu chỉ là URL (string)
+          console.log(`[FormData-Check] ${fullKey} -> BỎ QUA (URL cũ)`);
+        }
+        return;
+      }
+
+      // Nếu là file trong introImages / detailImages
+      if (key === "file" && value instanceof File) {
+        formData.append(fullKey, value);
+        console.log(`[FormData-Check] ${fullKey} -> File(${value.name})`);
+      } else {
+        objectToFormData(value, formData, fullKey);
+      }
+    });
+  }
+  // Bỏ qua Date
+  else if (obj instanceof Date) {
+    return formData;
+  }
+  // Nếu là primitive (string, number, boolean, id...)
+  else {
+    if (parentKey && obj !== null) {
+      formData.append(parentKey, obj);
+      console.log(`[FormData-Check] ${parentKey} -> ${obj}`);
+    }
+  }
+
+  return formData;
+}

@@ -82,7 +82,7 @@
 .product-gallery .color-thumb {
     width: 100%;
     height: 60px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 5px;
 }
 .product-gallery .swiper{
@@ -150,8 +150,9 @@
     position: relative;
     overflow: hidden;
     display: flex;
+    flex-direction: column;
     text-align: center;
-    /* justify-content: center; */
+    justify-content: center;
     align-items: center;
     cursor: pointer;
     min-height: 44px;
@@ -193,10 +194,10 @@
     -webkit-font-smoothing: antialiased;
 }
 .detail-info-right .box-product-option .item-option img {
-    height: 30px;
+    height: 34px;
     position: absolute;
     left: 10px;
-    width: 30px;
+    max-width: 34px;
 }
 .detail-info-right .box-product-option .item-option .color-price {
     display: flex;
@@ -309,3 +310,4 @@
     width: 50%;
     background: var(--green-green-1, #009981);
 }
+
