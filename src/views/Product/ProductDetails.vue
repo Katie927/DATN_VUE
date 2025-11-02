@@ -3,35 +3,48 @@
     <div class="container">
         <div class="product-detail">
             <div class="box-header">
-                <h1>Điện thoại Samsung Galaxy S25 Ultra - 12GB/256GB</h1>
+                <h1>{{ productDetails.name }}</h1>
             </div>
             <div class="box-detail-info">
                 <div class="detail-info-left">
                     <div class="product-gallery">
                         <!-- Slider chính -->
-                        <Swiper
-                        :loop="true"
-                        :navigation="true"
-                        :thumbs="{ swiper: thumbsSwiper }"
-                        :modules="[Navigation, Thumbs]"
-                        class="main-slider"
+                        <Swiper :loop="true" :navigation="true" :thumbs="{ swiper: thumbsSwiper }"
+                            :modules="[Navigation, Thumbs]" class="main-slider"
                         >
-                        <SwiperSlide v-for="(image, index) in productImages[selectedColor]" :key="index">
-                            <img :src="image" class="main-image" />
-                        </SwiperSlide>
+                            <template v-if="isIntroImages === 1">
+                                <SwiperSlide 
+                                    v-for="(image, index) in productDetails?.introImages ?? []" 
+                                    :key="'intro-' + index"
+                                >
+                                    <img :src="image?.url" class="main-image" />
+                                </SwiperSlide>
+                            </template>
+                            <template v-else>
+                                <SwiperSlide 
+                                    v-for="(image, index) in productDetails?.variants?.[selectedVariantIndex]?.detailImages ?? []" 
+                                    :key="'detail-' + index"
+                                >
+                                    <img :src="image?.url" class="main-image" />
+                                </SwiperSlide>
+                            </template>
                         </Swiper>
 
                         <!-- Danh sách màu sắc (thumbnail) -->
                         <div class="color-selector">
-                            <div
-                                v-for="(images, color) in productImages"
-                                :key="color"
-                                class="color-item"
-                                :class="{ active: selectedColor === color }"
-                                @click="selectColor(color)"
+                            <div class="color-item" :class="{ active: isIntroImages === 1 }"
+                                @click="isIntroImages = 1"
                             >
-                                <img :src="images[0]" class="color-thumb" />
-                                <p>{{ color }}</p>
+                                <img src="@/assets/icon/star.svg" class="color-thumb" alt="">
+                                <p>Tính năng nổi bật</p>
+                            </div>
+                            <div v-for="(variant, index) in productDetails?.variants ?? []"
+                                :key="index" class="color-item"
+                                :class="{ active: selectedVariantIndex === index && isIntroImages === 0 }"
+                                @click="selectVariant(index); isIntroImages = 0"
+                            >
+                                <img :src="variant.detailImages?.[0]?.url" class="color-thumb" />
+                                <p>{{ variant.color }}</p>
                             </div>
                         </div>
                     </div>
@@ -39,8 +52,10 @@
                 <div class="detail-info-right">
                     <div class="position-relative">
                         <div class="box-price">
-                            <strong class="price"> 28,990,000 ₫ </strong>
-                            <span class="last-price">33,990,000 ₫</span>
+                            <strong class="price"> {{ productDetails?.variants?.[selectedVariantIndex]?.attributes?.[selectedAttributeIndex]?.finalPrice
+                                ?.toLocaleString('vi-VN') }} ₫ </strong>
+                            <span class="last-price">{{ productDetails?.variants?.[selectedVariantIndex]?.attributes?.[selectedAttributeIndex]?.finalPrice
+                                ?.toLocaleString('vi-VN') }} ₫</span>
                             <br>
                             <i style="font-size: 14px;">Máy nguyên seal chính hãng, kick hoạt bảo hành 8/2/2025 giá 26.990.000 (LH 1900 2091)</i>
                         </div>
@@ -49,14 +64,18 @@
                     <div class="box-product-option version">
                         <strong class="label"> Lựa chọn phiên bản </strong>
                         <div class="list-option" id="option-version" data-id="5">
-                            <div class="item-option btn-active selected">
-                                <a href=""><span>256GB</span></a>
-                            </div>
-                            <div class="item-option btn-active ">
-                                <a href=""><span>512GB</span></a>
-                            </div>
-                            <div class="item-option btn-active ">
-                                <a href=""><span>1TB</span></a>
+                            <div v-for="(attr, aIndex) in productDetails?.variants?.[selectedVariantIndex]?.attributes || []" 
+                                :key="aIndex"
+                                :class="['item-option', 'btn-active',
+                                    { selected: aIndex === selectedAttributeIndex }
+                                ]"
+                                @click="selectAttribute(aIndex)"
+                            >
+                                <a href="javascript:void(0)" style="color: black;"><span>{{ attr.name }}</span></a>
+                                <div class="color-price" style="padding: 0;">
+                                    <p>{{ attr?.finalPrice
+                                        ?.toLocaleString('vi-VN') }} ₫ </p>                                            
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -65,31 +84,13 @@
                             Lựa chọn màu
                         </strong>
                         <div class="list-option" id="option-color">
-                            <div data-name="Xanh Dương" data-hotsale="" data-limitstock="0" data-pricenote="Máy nguyên seal chính hãng, kick hoạt bảo hành 8/2/2025 giá 26.990.000 (LH 1900 2091)" data-buyonline="true" data-bestprice="28,990,000 ₫" data-lastprice="33,990,000 ₫" data-idx="0" data-hex="#d5dde0" data-title="" data-id="185" data-sku="S938B256XD" class="item-option btn-active">
-                                        <img src="https://cdn.hoanghamobile.com/i/productlist/dst/Uploads/2025/01/23/galaxy-s25-ultra-titan-silver-blue-1-8225f9e1f4.png;trim.threshold=80;trim.percentpadding=0.5;mode=pad;paddingWidth=0;" title="Samsung Galaxy S25 Ultra - 12GB/256GB Xanh Dương" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Xanh Dương">
+                            <div v-for="(variant, index) in productDetails?.variants ?? []" :key="index"
+                                class="item-option btn-active" :class="{ selected: selectedVariantIndex === index }"
+                                @click="selectVariant(index), isIntroImages = 0"
+                            >
+                                    <img :src="variant.detailImages?.[0]?.url" title="Samsung Galaxy S25 Ultra - 12GB/256GB Đen" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Đen">
                                 <div class="color-price">
-                                    <span>Xanh Dương</span>
-                                    <p>28,990,000 ₫ </p>                                            
-                                </div>
-                            </div>
-                            <div class="item-option btn-active">
-                                        <img src="https://cdn.hoanghamobile.com/i/productlist/dst/Uploads/2025/01/23/galaxy-s25-ultra-titan-white-silver-1-e9f4db0fc4.png;trim.threshold=80;trim.percentpadding=0.5;mode=pad;paddingWidth=0;" title="Samsung Galaxy S25 Ultra - 12GB/256GB Bạc" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Bạc">
-                                <div class="color-price">
-                                    <span>Bạc</span>
-                                    <p>28,990,000 ₫ </p>                                            
-                                </div>
-                            </div>
-                            <div class="item-option btn-active">
-                                        <img src="https://cdn.hoanghamobile.com/i/productlist/dst/Uploads/2025/01/23/xam.png;trim.threshold=80;trim.percentpadding=0.5;mode=pad;paddingWidth=0;" title="Samsung Galaxy S25 Ultra - 12GB/256GB Xám" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Xám">
-                                <div class="color-price">
-                                    <span>Xám</span>
-                                    <p>28,990,000 ₫ </p>                                            
-                                </div>
-                            </div>
-                            <div class="item-option btn-active selected">
-                                        <img src="https://cdn.hoanghamobile.com/i/productlist/dst/Uploads/2025/01/23/galaxy-s25-ultra-titan-black-1-5ffaab118c.png;trim.threshold=80;trim.percentpadding=0.5;mode=pad;paddingWidth=0;" title="Samsung Galaxy S25 Ultra - 12GB/256GB Đen" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Đen">
-                                <div class="color-price">
-                                    <span>Đen</span>
+                                    <span>{{ variant.color }}</span>
                                     <p>28,990,000 ₫ </p>                                            
                                 </div>
                             </div>
@@ -123,48 +124,46 @@
     import "@/assets/styles/style.css";
     import "@/assets/styles/product-detail.css";
 
-    import { ref } from "vue";
+    import { ref, onMounted } from "vue";
     import { Swiper, SwiperSlide } from "swiper/vue";
     import { Navigation, Thumbs } from "swiper/modules";
+    import axios from "axios";
+    import { useRoute } from 'vue-router';
 
     import "swiper/css";
     import "swiper/css/navigation";
     import "swiper/css/thumbs";
-
     
-    // Dữ liệu: Danh sách ảnh theo màu sắc
-    const productImages = {
-    "Xanh dương": [
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/galaxy-s25-ultra-titan-silver-blue-1-8225f9e1f4.png",
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/galaxy-s25-ultra-titan-silver-blue-1-8225f9e1f4.png",
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/galaxy-s25-ultra-titan-silver-blue-1-8225f9e1f4.png",
-    ],
-    "Bạc": [
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/galaxy-s25-ultra-titan-white-silver-1-e9f4db0fc4.png",
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/galaxy-s25-ultra-titan-white-silver-1-e9f4db0fc4.png",
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/galaxy-s25-ultra-titan-white-silver-1-e9f4db0fc4.png",
-    ],
-    "Xám": [
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/xam.png",
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/xam.png",
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/xam.png",
-    ],
-    "Đen": [
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/galaxy-s25-ultra-titan-black-1-5ffaab118c.png",
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/galaxy-s25-ultra-titan-black-1-5ffaab118c.png",
-        "https://cdn.hoanghamobile.com/i/previewV2/Uploads/2025/01/23/galaxy-s25-ultra-titan-black-1-5ffaab118c.png",
-    ],
-    };
 
-    // Màu sắc đang được chọn (mặc định là xanh dương)
-    const selectedColor = ref("Xanh dương");
+    const route = useRoute();
+    const productDetails = ref({});
+    const productId = route.params.productId;
+    const fetchProductData = async () => {
+        try{
+            // console.log("id: "+productId)
+            const response = await axios.get(`http://localhost:8080/bej3/home/product/${productId}`)
+            productDetails.value = response.data.result;
+        } catch (error) {
+            console.error("Lỗi", error);
+            alert("Không thể tải chi tiết sản phẩm!");
+        }
+    }
+    onMounted(fetchProductData);
+    // data
     const thumbsSwiper = ref(null);
+    const selectedVariantIndex = ref(0);
+    const selectedAttributeIndex = ref(0);
+    const isIntroImages = ref(-1)
 
-    // Khi chọn màu mới, cập nhật slider chính
-    const selectColor = (color) => {
-    selectedColor.value = color;
+    const selectVariant = (vIndex) => {
+    selectedVariantIndex.value = vIndex;
+    // selectedAttributeIndex.value = 0; // reset attribute khi đổi variant
     };
-    
+
+    const selectAttribute = (aIndex) => {
+    selectedAttributeIndex.value = aIndex;
+    };
+
 
 </script>
 

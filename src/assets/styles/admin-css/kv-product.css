@@ -1015,6 +1015,7 @@ table .cell-img {
 }
 
 .info-form-price-add-product {
+    margin-right: 12px;
     flex: 1 1 36.5%;
     width: 350px;
 }

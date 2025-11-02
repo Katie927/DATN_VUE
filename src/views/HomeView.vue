@@ -78,32 +78,34 @@
                         <div class="img">
                           <div class="img-info">
                             <span class="left-sticker"> Góp 0%, 0 phí </span>
-                            <a href="">
+                            <router-link :to="`/product-detail/${product.id}`">
                               <img :src="product.image" :alt="product.name" style="max-width: 140px; max-height: 100%;">
-                            </a>
+                            </router-link>
                           </div>
                           <div class="specs">
-                            <ul v-if="product.attributes && product.attributes.length > 0">
+                            <!-- <ul v-if="product.attributes && product.attributes.length > 0">
                               <li v-for="(attribute, i) in product.attributes" :key="i" class="spec-item">
                                 <label>
                                   <span :class="['icon-CPU', 'icon-Battery', 'icon-Storage'][i % 3]"></span>
                                 </label>
                                 <div><span>{{ attribute }}</span></div>
                               </li>
-                            </ul>
+                            </ul> -->
                           </div>
                         </div>
-                        <h3><a href="">{{ product.name }}</a></h3>
+                        <h3>
+                          <router-link :to="`/product-detail/${product.id}`">{{ product.name }}</router-link>
+                        </h3>
                         <div class="item-gap8px">
                           <div class="price price-last">
                             <!-- <span style="text-decoration: line-through;" v-if="product.originalPrice"> -->
-                              <s>{{ product.originalPrice.toLocaleString('vi-VN') }} ₫</s>
+                              <s>{{ product.variant.finalPrice == product.variant.originalPrice ? product.variant.finalPrice.toLocaleString('vi-VN') + " ₫" : "" }}</s>
                               
                             <!-- </span> -->
                             <span v-if="product.discount">- {{ product.discount }}%</span>
                           </div>
                           <div class="price">
-                            <strong>{{ product.finalPrice > 0 ? product.finalPrice.toLocaleString('vi-VN') + " ₫" : "Liên hệ" }}</strong>
+                            <strong>{{ product.variant.finalPrice > 0 ? product.variant.finalPrice.toLocaleString('vi-VN') + " ₫" : "Liên hệ" }}</strong>
                           </div>
                         </div>
                       </div>
@@ -175,34 +177,10 @@
     },
   ]);
 
-  const productData = ref([
-  // {
-  //        "name": "iPhone 16 - Chính hãng VN/A",
-  //        "image": "https://cdn.hoanghamobile.com/Uploads/2024/09/10/ip16-xanh-mong-ket.png;trim.threshold=80;trim.percentpadding=0.5;width=180;height=180;mode=pad;",
-  //        "specs": [
-  //            "A18",
-  //            "8GB",
-  //            "128GB"
-  //        ],
-  //        "originalPrice": "22,990,000 ",
-  //        "discount": 17,
-  //        "finalPrice": "18,990,000 ",
-  //    },
-  //    {
-  //        "name": "Samsung Galaxy S25 Ultra - 12GB/256GB (BHĐT)",
-  //        "image": "https://cdn.hoanghamobile.com/Uploads/2025/02/03/s25-ultra.png;trim.threshold=80;trim.percentpadding=0.5;width=180;height=180;mode=pad;",
-  //        "specs": [
-  //            "Snap 8 Gen 3",
-  //            "12GB"
-  //        ],
-  //        "originalPrice": "N/A",
-  //        "discount": 0,
-  //        "finalPrice": "26,990,000 ",
-  //    }
-  ])
+  const productData = ref([])
   const fetchProductData = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/bej3/');
+      const response = await axios.get('http://localhost:8080/bej3/home');
       // console.log("Response Data:", response.data);
       productData.value = response.data.result;
       // console.log("Product Data in Vue:", productData.value);

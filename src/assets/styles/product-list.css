@@ -146,7 +146,7 @@ strike {
 
 .v5-list .v5-list-items .pj16-item h3 a {
     color: var(--blackText);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600 /*;height:29px*/;
     display: -webkit-box;
     /* -webkit-line-clamp: 2; */
@@ -154,6 +154,7 @@ strike {
     overflow: hidden;
     text-overflow: ellipsis;
     max-height: 3em;
+    color: #484848;
 }
 
 .item-gap8px {
