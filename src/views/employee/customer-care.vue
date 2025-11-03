@@ -197,6 +197,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import router from '@/router'
 
 const isDarkMode = ref(false)
 const showProfile = ref(false)
@@ -294,18 +295,50 @@ const weekRange = computed(() => {
   return `${formatDate(monday)} - ${formatDate(sunday)}`
 })
 
-const weekSchedule = ref([]);
+// ================ get month schedule ======================================
+const monthSchedule = ref([]);
 const fetchScheduleData = async () => {
-        try{
-            // console.log("id: "+productId)
-            const response = await axios.get(`http://localhost:8080/bej3/manage/schedule`)
-            weekSchedule.value = response.data.result;
-        } catch (error) {
-            console.error("Lỗi", error);
-            alert("Không thể tải chi tiết lịch!");
+  const token = localStorage.getItem("token");
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    .toISOString().split("T")[0];
+
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    .toISOString().split("T")[0];
+  const body = {
+    startOfMonth,
+    endOfMonth
+  };
+
+  try {
+    const response = await axios.post(
+      `http://localhost:8080/bej3/manage/schedule/monthly`,
+      body,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
+      }
+    );
+    monthSchedule.value = response.data.result;
+
+  } catch (error) {
+    console.error("Lỗi", error);
+    alert("Không thể tải chi tiết lịch!");
+
+    if (error.response && (error.response.status === 401 || error.response.status === 500)) {
+      localStorage.removeItem("token");
+      router.push("/login");
     }
-  onMounted(fetchScheduleData);
+  }
+};
+onMounted(fetchScheduleData);
+// ================ get month schedule ==============================================
 
 const previousWeek = () => {
   currentWeekOffset.value--
