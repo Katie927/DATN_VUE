@@ -26,20 +26,21 @@ const customerRoutes = [
     children: [
       { path: '', component: Home }, // Home page
       { path: '/login', component: Login }, // Login page
-      { 
-        path: '/user', 
-        component: User, 
+      {
+        path: '/user',
+        component: User,
         children: [
           { path: 'promotion', component: UserProfile },
           { path: 'history', component: UserHistory },
           { path: 'profile/my-info', component: UserProfile },
           { path: 'order', component: UserOrders },
-        ]
+          { path: 'booking', component: BookingRepair },
+        ],
       },
       { path: '/product-detail/:productId', component: ProductDetails },
-    ]
-  }
-];
+    ],
+  },
+]
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
