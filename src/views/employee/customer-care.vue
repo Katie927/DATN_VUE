@@ -44,6 +44,31 @@
 
     <!-- Main Content -->
     <main class="main-content">
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📱</div>
+          <div class="stat-info">
+            <div class="stat-label">Đang sửa</div>
+            <div class="stat-value">{{ pendingTasks.length }}</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <div class="stat-label">Hoàn thành hôm nay</div>
+            <div class="stat-value">{{ completedTasks.length }}</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏰</div>
+          <div class="stat-info">
+            <div class="stat-label">Trung bình thời gian</div>
+            <div class="stat-value">2.5h</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Weekly Schedule - Full Width -->
       <div class="card schedule-card">
         <div class="schedule-header">
@@ -170,7 +195,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+import router from '@/router'
 
 const isDarkMode = ref(false)
 const showProfile = ref(false)
@@ -267,6 +294,51 @@ const weekRange = computed(() => {
     d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
   return `${formatDate(monday)} - ${formatDate(sunday)}`
 })
+
+// ================ get month schedule ======================================
+const monthSchedule = ref([]);
+const fetchScheduleData = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    .toISOString().split("T")[0];
+
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+    .toISOString().split("T")[0];
+  const body = {
+    startOfMonth,
+    endOfMonth
+  };
+
+  try {
+    const response = await axios.post(
+      `http://localhost:8080/bej3/manage/schedule/monthly`,
+      body,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+    monthSchedule.value = response.data.result;
+
+  } catch (error) {
+    console.error("Lỗi", error);
+    alert("Không thể tải chi tiết lịch!");
+
+    if (error.response && (error.response.status === 401 || error.response.status === 500)) {
+      localStorage.removeItem("token");
+      router.push("/login");
+    }
+  }
+};
+onMounted(fetchScheduleData);
+// ================ get month schedule ==============================================
 
 const previousWeek = () => {
   currentWeekOffset.value--
@@ -969,6 +1041,10 @@ const uncompleteTasks = (taskId) => {
   .tasks-section {
     grid-template-columns: 1fr;
   }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
@@ -990,5 +1066,49 @@ const uncompleteTasks = (taskId) => {
     width: 100%;
     justify-content: space-between;
   }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #3b82f6;
+}
+
+.app-container.dark .stat-card {
+  background: rgba(26, 46, 26, 0.95);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.stat-icon {
+  font-size: 2rem;
+}
+.stat-info {
+  flex: 1;
+}
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.25rem;
+}
+
+.app-container.dark .stat-label {
+  color: #aaa;
+}
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #3b82f6;
 }
 </style>

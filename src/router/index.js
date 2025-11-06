@@ -28,9 +28,9 @@ const customerRoutes = [
     children: [
       { path: '', component: Home }, // Home page
       { path: '/login', component: Login }, // Login page
-      {
-        path: '/user',
-        component: User,
+      { 
+        path: '/user', 
+        component: User, 
         children: [
           { path: 'promotion', component: UserProfile },
           { path: 'history', component: UserHistory },
@@ -40,9 +40,9 @@ const customerRoutes = [
         ],
       },
       { path: '/product-detail/:productId', component: ProductDetails },
-    ],
-  },
-]
+    ]
+  }
+];
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
@@ -68,7 +68,6 @@ const employeeRoutes = [
     path: '/employee',
     children: [
       { path: 'customer', component: CustomerCare },
-      { path: 'repair', component: RepairTechnician },
       { path: 'profile', component: UserProfile },
       { path: 'history', component: UserHistory },
     ],

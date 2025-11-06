@@ -32,7 +32,7 @@
 
                         <!-- Danh sách màu sắc (thumbnail) -->
                         <div class="color-selector">
-                            <div class="color-item" :class="{ active: selectedVariantIndex === index }"
+                            <div class="color-item" :class="{ active: isIntroImages === 1 }"
                                 @click="isIntroImages = 1"
                             >
                                 <img src="@/assets/icon/star.svg" class="color-thumb" alt="">
@@ -40,8 +40,8 @@
                             </div>
                             <div v-for="(variant, index) in productDetails?.variants ?? []"
                                 :key="index" class="color-item"
-                                :class="{ active: selectedVariantIndex === index }"
-                                @click="selectVariant(index), isIntroImages = 0"
+                                :class="{ active: selectedVariantIndex === index && isIntroImages === 0 }"
+                                @click="selectVariant(index); isIntroImages = 0"
                             >
                                 <img :src="variant.detailImages?.[0]?.url" class="color-thumb" />
                                 <p>{{ variant.color }}</p>
@@ -153,7 +153,7 @@
     const thumbsSwiper = ref(null);
     const selectedVariantIndex = ref(0);
     const selectedAttributeIndex = ref(0);
-    const isIntroImages = ref(0)
+    const isIntroImages = ref(-1)
 
     const selectVariant = (vIndex) => {
     selectedVariantIndex.value = vIndex;
@@ -163,6 +163,7 @@
     const selectAttribute = (aIndex) => {
     selectedAttributeIndex.value = aIndex;
     };
+
 
 </script>
 

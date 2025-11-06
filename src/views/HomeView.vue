@@ -177,7 +177,7 @@
     },
   ]);
 
-  const productData = ref([ ])
+  const productData = ref([])
   const fetchProductData = async () => {
     try {
       const response = await axios.get('http://localhost:8080/bej3/home');
