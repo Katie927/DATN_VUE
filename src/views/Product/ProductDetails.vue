@@ -99,15 +99,15 @@
                     <div class="box-order product-action">
 
                         <div class="box-order-btn">
-                            <a title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" data-sku="S931B256BAC" href="javascript:;" class="add-buy order-btn btnQuickOrder inventory"><strong>MUA NGAY</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
-                            <a title="Thêm giỏ hàng" data-sku="S931B256BAC" data-authorize="True" href="javascript:;" class="add-buy add-cart inventory">
+                            <a title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" href="javascript:;" class="add-buy order-btn btnQuickOrder inventory"><strong>MUA NGAY</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
+                            <a title="Thêm giỏ hàng" data-authorize="True" href="javascript:;" class="add-buy add-cart inventory">
                                 <i class="icon-Cart1SolidOn"></i>
                                 <label>Thêm giỏ hàng </label>
                             </a>
                         </div>
                         <div class="box-order-btn">
-                            <a title="TRẢ GÓP 0%" href="/tra-gop/dien-thoai/samsung-galaxy-s25" class="add-buy btn-installment order-btn btnInstallment" data-sku="S931B256BAC"><strong>TRẢ GÓP 0%</strong><span>Không phí - Duyệt nhanh&nbsp;10p</span></a>
-                            <a title="TRẢ GÓP 0%" href="/tra-gop/dien-thoai/samsung-galaxy-s25?color=123&amp;prepay=5&amp;month=5&amp;card=True#estimation" class="add-buy btn-installment order-btn btnInstallment" data-sku="S931B256BAC"><strong>TRẢ GÓP QUA THẺ</strong><span>(Visa, Mastercard, JCB)</span></a>
+                            <a title="TRẢ GÓP 0%" href="" class="add-buy btn-installment order-btn btnInstallment"><strong>TRẢ GÓP 0%</strong><span>Không phí - Duyệt nhanh&nbsp;10p</span></a>
+                            <a title="TRẢ GÓP 0%" href="" class="add-buy btn-installment order-btn btnInstallment"><strong>TRẢ GÓP QUA THẺ</strong><span>(Visa, Mastercard, JCB)</span></a>
                         </div>
                     </div>
                 </div>
@@ -136,6 +136,7 @@
     
 
     const route = useRoute();
+    
     const productDetails = ref({});
     const productId = route.params.productId;
     const fetchProductData = async () => {
@@ -153,16 +154,40 @@
     const thumbsSwiper = ref(null);
     const selectedVariantIndex = ref(0);
     const selectedAttributeIndex = ref(0);
-    const isIntroImages = ref(-1)
+    const isIntroImages = ref(1)
 
     const selectVariant = (vIndex) => {
-    selectedVariantIndex.value = vIndex;
-    // selectedAttributeIndex.value = 0; // reset attribute khi đổi variant
+        selectedVariantIndex.value = vIndex;
+        selectedAttributeIndex.value = 0; 
     };
 
     const selectAttribute = (aIndex) => {
-    selectedAttributeIndex.value = aIndex;
+        selectedAttributeIndex.value = aIndex;
+        console.log(productDetails?.variants?.[selectedVariantIndex]?.attributes?.[selectedAttributeIndex]?.id);
+        console.log(selectedAttributeIndex.value);
+
+        console.log("selectedVariantIndex:", selectedVariantIndex)
+        console.log("selectedAttributeIndex:", selectedAttributeIndex)
+
+        const v = productDetails?.variants?.[selectedVariantIndex]
+        console.log("variant:", v)
+
+        const attrs = v?.attributes
+        console.log("attributes:", attrs)
+
+        const attr = attrs?.[selectedAttributeIndex]
+        console.log("selected attribute:", attr)
+
+        console.log("selected attribute id:", attr?.id)
     };
+
+// ==================================== add to cart ====================================
+    const handleAddToCart = () => {
+        // Logic thêm sản phẩm vào giỏ hàng
+        alert(`Đã thêm sản phẩm ${productDetails.value.name} vào giỏ hàng!`);
+    };
+// ==================================== add to cart ====================================
+
 
 
 </script>
