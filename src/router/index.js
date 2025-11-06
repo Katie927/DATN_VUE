@@ -16,8 +16,7 @@ import ProductDetailRow from '@/views/manage-view/product-detail-row.vue'
 import ProductAdd from '@/views/manage-view/product-add.vue'
 import EmployeeAdd from '@/views/manage-view/employee-add.vue'
 import CustomerCare from '@/views/employee/customer-care.vue'
-import RepairTechnician from '@/views/employee/repair-technician.vue'
-import UserCart from '@/views/Product/user-cart.vue'
+import BookingRepair from '@/views/Booking/BookingRepair.vue'
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
@@ -28,21 +27,21 @@ const customerRoutes = [
     children: [
       { path: '', component: Home }, // Home page
       { path: '/login', component: Login }, // Login page
-      { 
-        path: '/user', 
-        component: User, 
+      {
+        path: '/user',
+        component: User,
         children: [
           { path: 'promotion', component: UserProfile },
           { path: 'history', component: UserHistory },
           { path: 'profile/my-info', component: UserProfile },
           { path: 'order', component: UserOrders },
-          { path: 'cart', component: UserCart },
+          { path: 'booking', component: BookingRepair },
         ],
       },
       { path: '/product-detail/:productId', component: ProductDetails },
-    ]
-  }
-];
+    ],
+  },
+]
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
