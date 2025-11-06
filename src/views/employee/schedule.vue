@@ -31,13 +31,9 @@
           </div>
         </div>
         <div class="avatar-container">
-          <img
-            :src="currentUser.avatar"
-            :alt="currentUser.name"
-            class="avatar"
-            @click="showProfile = true"
-          />
-          <span class="user-name">{{ currentUser.name }}</span>
+          <img :src="currentUser.avatar" :alt="currentUser.name" class="avatar"
+            @click="showProfile = true" />
+          <span class="user-name">{{ currentUser.fullName }}</span>
         </div>
       </div>
     </header>
@@ -89,7 +85,7 @@
           >
             <div class="day-header">
               <div class="day-name">{{ day.name }}</div>
-              <div class="day-date">{{ day.date }}</div>
+              <div class="day-date">{{ day.workDate }}</div>
             </div>
             <!-- CHANGE: Removed shift sections, display all staff in single area with balanced heights -->
             <div class="staff-list">
@@ -160,7 +156,7 @@
         <button class="btn-close" @click="showProfile = false">✕</button>
         <div v-if="!editingProfile" class="profile-view">
           <img :src="currentUser.avatar" :alt="currentUser.name" class="profile-avatar" />
-          <h2 class="profile-name">{{ currentUser.name }}</h2>
+          <h2 class="profile-name">{{ currentUser.fullName }}</h2>
           <p class="profile-info">📧 {{ currentUser.email }}</p>
           <p class="profile-info">📱 {{ currentUser.phone }}</p>
           <p class="profile-info">🏢 {{ currentUser.department }}</p>
@@ -203,7 +199,6 @@ const isDarkMode = ref(false)
 const showProfile = ref(false)
 const editingProfile = ref(false)
 const showNotifications = ref(false)
-const currentWeekOffset = ref(0)
 
 const currentUser = ref({
   name: 'Nguyễn Văn A',
@@ -212,6 +207,33 @@ const currentUser = ref({
   department: 'Chăm sóc khách hàng',
   avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=customer1',
 })
+const fetchUserProfile = async () => {
+  const token = localStorage.getItem("token"); 
+  if (!token) {
+      console.error("Token không tồn tại!");
+      router.push("/login"); // Chuyển hướng về trang login
+      return;
+  }
+
+  try {
+      const response = await axios.get(`http://localhost:8080/bej3/users/profile/my-info`, {
+          headers: {
+              Authorization: `Bearer ${token}` // Gửi token trong header
+          }
+      });
+
+      currentUser.value = response.data.result; // Gán dữ liệu user
+  } catch (error) {
+      console.error('Lỗi:', error);
+
+      // Nếu lỗi 401 (Unauthorized) hoặc 403 (Forbidden), chuyển hướng về trang login
+      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          localStorage.removeItem("token"); // Xóa token cũ
+          router.push("/login"); // Chuyển hướng về trang đăng nhập
+      }
+  }
+};
+onMounted(fetchUserProfile);
 
 const notifications = ref([
   { id: 1, icon: '📞', text: 'Khách hàng cần tư vấn iPhone 15', time: '5 phút trước' },
@@ -252,51 +274,12 @@ const selectedCount = computed(
   () => allTasks.value.filter((t) => t.selected && !t.completed).length,
 )
 
-const weekDays = computed(() => {
-  const days = []
-  const today = new Date()
-  const todayDate = today.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })
 
-  const monday = new Date(today)
-  monday.setDate(today.getDate() - today.getDay() + 1 + currentWeekOffset.value * 7)
-
-  const dayNames = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật']
-  const staffList = ['Nguyễn A', 'Trần B', 'Lê C', 'Phạm D', 'Hoàng E']
-
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(monday)
-    date.setDate(monday.getDate() + i)
-    const dateStr = date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })
-
-    // CHANGE: Combine morning and afternoon staff, check if day is today
-    const morning = staffList.slice(0, Math.floor(Math.random() * 3) + 2)
-    const afternoon = staffList.slice(0, Math.floor(Math.random() * 3) + 2)
-    const allStaff = [...new Set([...morning, ...afternoon])]
-
-    days.push({
-      name: dayNames[i],
-      date: dateStr,
-      allStaff: allStaff,
-      isToday: dateStr === todayDate && currentWeekOffset.value === 0,
-    })
-  }
-  return days
-})
-
-const weekRange = computed(() => {
-  const today = new Date()
-  const monday = new Date(today)
-  monday.setDate(today.getDate() - today.getDay() + 1 + currentWeekOffset.value * 7)
-  const sunday = new Date(monday)
-  sunday.setDate(monday.getDate() + 6)
-
-  const formatDate = (d) =>
-    d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  return `${formatDate(monday)} - ${formatDate(sunday)}`
-})
-
-// ================ get month schedule ======================================
+// ================ get month schedule ===============================================
 const monthSchedule = ref([]);
+const currentWeekOffset = ref(0); // 0 = tuần hiện tại
+const currentMonth = ref(new Date()); // tháng đang xem
+
 const fetchScheduleData = async () => {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -304,10 +287,9 @@ const fetchScheduleData = async () => {
     return;
   }
 
-  const now = new Date();
+  const now = currentMonth.value;;
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
     .toISOString().split("T")[0];
-
   const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0)
     .toISOString().split("T")[0];
   const body = {
@@ -338,6 +320,68 @@ const fetchScheduleData = async () => {
   }
 };
 onMounted(fetchScheduleData);
+const weekDays = computed(() => {
+  const days = [];
+  const today = new Date();
+  const todayStr = today.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+  });
+
+  // Monday
+  const monday = new Date(today);
+  monday.setDate(
+    today.getDate() - today.getDay() + 1 + currentWeekOffset.value * 7
+  );
+
+  const dayNames = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật", ];
+
+  const scheduleMap = new Map();
+  monthSchedule.value.forEach((s) => {
+    if (!scheduleMap.has(s.workDate)) {
+      scheduleMap.set(s.workDate, new Set());
+    }
+    (s.userName ?? []).forEach((u) => scheduleMap.get(s.workDate).add(u));
+  });
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+
+    const yyyyMMDD = d.toISOString().split("T")[0];
+    const dateStr = d.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+    });
+
+    const allStaff = scheduleMap.has(yyyyMMDD)
+      ? Array.from(scheduleMap.get(yyyyMMDD))
+      : [];
+
+    days.push({
+      name: dayNames[i],
+      date: dateStr,
+      workDate: yyyyMMDD,
+      allStaff,
+      isToday: dateStr === todayStr && currentWeekOffset.value === 0,
+    });
+  }
+  return days;
+});
+
+const weekRange = computed(() => {
+  const today = new Date()
+  const monday = new Date(today)
+  monday.setDate(today.getDate() - today.getDay() + 1 + currentWeekOffset.value * 7)
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+  const formatDate = d => d.toLocaleDateString('vi-VN', {
+    day: '2-digit', month: '2-digit', year: 'numeric'
+  })
+
+  return `${formatDate(monday)} - ${formatDate(sunday)}`
+})
+
 // ================ get month schedule ==============================================
 
 const previousWeek = () => {

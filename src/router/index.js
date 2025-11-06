@@ -15,7 +15,7 @@ import EmployeeDetails from '@/views/manage-view/employee-details.vue'
 import ProductDetailRow from '@/views/manage-view/product-detail-row.vue'
 import ProductAdd from '@/views/manage-view/product-add.vue'
 import EmployeeAdd from '@/views/manage-view/employee-add.vue'
-import CustomerCare from '@/views/employee/customer-care.vue'
+import Schedule from '@/views/employee/schedule.vue'
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
@@ -64,7 +64,7 @@ const employeeRoutes = [
   {
     path: '/employee',
     children: [
-      { path: 'customer', component: CustomerCare },
+      { path: 'schedule', component: Schedule },
       { path: 'profile', component: UserProfile },
       { path: 'history', component: UserHistory },
     ],
