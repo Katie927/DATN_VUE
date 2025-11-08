@@ -26,13 +26,13 @@
           <div v-for="(product, i) in products" :key="i" class="product-item">
             <input type="checkbox" v-model="product.selected" class="product-checkbox" />
 
-            <img :src="product.image" alt="" class="product-image" />
+            <img :src="product.img" alt="" class="product-image" />
 
             <div class="product-info">
               <h3 class="product-name">{{ product.name }}</h3>
 
               <div class="product-selects">
-                <select v-model="product.version" class="select-sm">
+                <select v-model="product.productAttName" class="select-sm">
                   <option v-for="v in versions" :key="v" :value="v">{{ v }}</option>
                 </select>
 
@@ -144,7 +144,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 
 const hasProducts = ref(true)
 const showConfirm = ref(false)
@@ -152,26 +153,35 @@ const showConfirm = ref(false)
 const versions = ['128GB', '256GB', '512GB']
 const colors = ['Titan Tự nhiên', 'Xanh', 'Bạc', 'Đen']
 
-const products = ref([
-  {
-    name: 'iPhone 15 Pro Max',
-    version: '256GB',
-    color: 'Titan Tự nhiên',
-    price: 33990000,
-    quantity: 1,
-    selected: true,
-    image: 'https://dummyimage.com/100x100/ddd/000&text=iPhone+15+Pro+Max',
-  },
-  {
-    name: 'iPhone 14 Pro',
-    version: '128GB',
-    color: 'Bạc',
-    price: 26990000,
-    quantity: 1,
-    selected: false,
-    image: 'https://dummyimage.com/100x100/eee/000&text=iPhone+14+Pro',
-  },
-])
+const products = ref([ ])
+
+const handleFetchCart = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) return router.push("/login");
+  try {
+    const response = await axios.get('http://localhost:8080/bej3/cart/view', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    products.value = response.data.result.map((item) => ({
+      name: item.productName,
+      version: item.version,
+      color: item.color,
+      price: item.price,
+      quantity: item.quantity,
+      selected: false,
+      image: item.imageUrl,
+    }))
+    hasProducts.value = products.value.length > 0
+  } catch (error) {
+    console.error('Lỗi khi tải giỏ hàng:', error)
+    alert('Không thể tải giỏ hàng!')
+  }
+}
+onMounted(() => {
+  handleFetchCart()
+})
 
 const form = ref({
   fullName: '',
@@ -231,6 +241,8 @@ const removeProduct = (i) => {
 const mockAddProduct = () => (hasProducts.value = true)
 </script>
 
+
+//=============================== Styles ====================================
 <style scoped>
 .cart-container {
   min-height: 100vh;

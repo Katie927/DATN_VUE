@@ -52,7 +52,7 @@
                     <i class="icon-UserSolidOff"></i>
                     <span>{{displayName}}</span>
                 </router-link>
-                <router-link to="" class="cart text-link">
+                <router-link to="/user/cart" class="cart text-link">
                     <i class="icon-CartSolidOff"></i>
                     <label for="" id="cart-total" class="cart-counter">0</label>
                 </router-link>

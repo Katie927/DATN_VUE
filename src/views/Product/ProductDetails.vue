@@ -100,7 +100,7 @@
 
                         <div class="box-order-btn">
                             <a title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" href="javascript:;" class="add-buy order-btn btnQuickOrder inventory"><strong>MUA NGAY</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
-                            <a title="Thêm giỏ hàng" data-authorize="True" href="javascript:;" class="add-buy add-cart inventory">
+                            <a @click="handleAddToCart" title="Thêm giỏ hàng" data-authorize="True" href="javascript:;" class="add-buy add-cart inventory">
                                 <i class="icon-Cart1SolidOn"></i>
                                 <label>Thêm giỏ hàng </label>
                             </a>
@@ -163,11 +163,11 @@
 
     const selectAttribute = (aIndex) => {
         selectedAttributeIndex.value = aIndex;
-        console.log(productDetails?.variants?.[selectedVariantIndex]?.attributes?.[selectedAttributeIndex]?.id);
+        console.log();
         console.log(selectedAttributeIndex.value);
 
-        console.log("selectedVariantIndex:", selectedVariantIndex)
-        console.log("selectedAttributeIndex:", selectedAttributeIndex)
+        console.log("selectedVariantIndex:", selectedVariantIndex.value)
+        console.log("selectedAttributeIndex:", selectedAttributeIndex.value)
 
         const v = productDetails?.variants?.[selectedVariantIndex]
         console.log("variant:", v)
@@ -178,13 +178,33 @@
         const attr = attrs?.[selectedAttributeIndex]
         console.log("selected attribute:", attr)
 
-        console.log("selected attribute id:", attr?.id)
+        console.log("selected attribute id:", productDetails.value?.variants?.[selectedVariantIndex.value]?.attributes?.[selectedAttributeIndex.value]?.id)
     };
 
 // ==================================== add to cart ====================================
-    const handleAddToCart = () => {
-        // Logic thêm sản phẩm vào giỏ hàng
-        alert(`Đã thêm sản phẩm ${productDetails.value.name} vào giỏ hàng!`);
+    const handleAddToCart = async () => {
+        const attrId = productDetails.value?.variants?.[selectedVariantIndex.value]?.attributes?.[selectedAttributeIndex.value]?.id;
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("Token không tồn tại!");
+            router.push("/login"); // Chuyển hướng về trang login
+            return;
+        }
+        console.log("Thêm vào giỏ hàng sản phẩm với attribute ID:", attrId);
+        try{
+            // console.log("id: "+productId)
+            await axios.post(
+                `http://localhost:8080/bej3/cart/add/${attrId}`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            alert("Thêm vào giỏ hàng thành công!");
+        } catch (error) {
+            console.error("Lỗi", error);
+            alert("Thêm không thành công!");
+        }
     };
 // ==================================== add to cart ====================================
 

@@ -41,33 +41,46 @@
     ])
 
 
-    const handleLogout = async () => {
-        try {
-            const token = localStorage.getItem("token") || sessionStorage.getItem("token");
+const handleLogout = async () => {
+  try {
+    const token =
+      localStorage.getItem("token") ||
+      sessionStorage.getItem("token");
 
-            if (!token) {
-                console.warn("Không tìm thấy token, có thể đã đăng xuất.");
-                if (router.currentRoute.value.path !== '/login') {
-                    router.push('/login');
-                }
-                return;
-            }
-            localStorage.removeItem("token");
-            sessionStorage.removeItem("token");
-            await nextTick();
-
-            await axios.post("http://localhost:8080/bej3/auth/logout", {}, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            if (router.currentRoute.value.path !== '/login') {
-                router.push('/login');
-            }
-        } catch (error) {
-            console.error("Lỗi đăng xuất:", error);
-        }
+    if (!token) {
+      console.warn("Không tìm thấy token, có thể đã đăng xuất.");
+      if (router.currentRoute.value.path !== "/login") {
+        router.push("/login");
+      }
+      return;
     }
+
+    // Gọi API logout trước
+    await axios.post(
+      "http://localhost:8080/bej3/auth/logout",
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // Xóa token sau khi logout thành công
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+
+    if (router.currentRoute.value.path !== "/login") {
+      router.push("/login");
+    }
+  } catch (error) {
+    console.error("Lỗi đăng xuất:", error);
+
+    // fallback: vẫn xóa token & redirect
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    router.push("/login");
+  }
+};
 
 </script>
