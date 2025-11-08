@@ -18,6 +18,7 @@ import EmployeeAdd from '@/views/manage-view/employee-add.vue'
 import Schedule from '@/views/employee/schedule.vue'
 import BookingRepair from '@/views/Booking/BookingRepair.vue'
 import UserCart from '@/views/Product/user-cart.vue'
+import Order from '@/views/Product/Order.vue'
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
@@ -58,6 +59,7 @@ const adminRoutes = [
       { path: 'employee/add', component: EmployeeAdd },
       { path: 'product/details', component: ProductDetailRow },
       { path: 'product/add', component: ProductAdd },
+      { path: 'product/order', component: Order },
     ],
   },
 ]
