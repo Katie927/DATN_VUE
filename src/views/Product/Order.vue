@@ -1,544 +1,1176 @@
 <template>
-  <div class="app-container">
-    <!-- Header -->
-    <header class="header">
-      <div class="header-inner">
-        <div class="logo-section">
-          <div class="logo-box">
-            <span>📱</span>
-          </div>
-          <div>
-            <h1>Quản lý đơn hàng</h1>
-          </div>
-        </div>
+  <div class="phone-shop-container">
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="search-box">
+        <input
+          v-model="searchQuery"
+          type="text"
+          placeholder="Tìm kiếm đơn hàng..."
+          class="search-input"
+        />
+        <span class="search-icon">🔍</span>
       </div>
-    </header>
+      <select v-model="filterType" class="filter-select">
+        <option value="">Tất cả loại đơn</option>
+        <option value="buy">Mua bán</option>
+        <option value="repair">Sửa chữa</option>
+      </select>
+      <button class="add-order-btn" @click="openNewOrderForm">
+        <span class="plus-icon">+</span>
+        Thêm đơn hàng
+      </button>
+    </div>
 
-    <main class="main">
-      <!-- Controls Section -->
-      <div class="controls-section">
-        <div class="search-filter-row">
-          <!-- Search Bar -->
-          <div class="search-bar">
-            <input v-model="searchQuery" type="text" placeholder="Tìm kiếm số đơn, khách hàng..." />
-          </div>
-
-          <!-- Filter by Type -->
-          <select v-model="selectedType">
-            <option value="">Tất cả loại đơn</option>
-            <option value="buy_sell">Mua bán</option>
-            <option value="repair">Sửa chữa</option>
-          </select>
-
-          <!-- Add Order Button -->
-          <button @click="showAddForm = !showAddForm" class="btn-add-order">+ Thêm đơn hàng</button>
-        </div>
-
-        <!-- Add Order Form -->
-        <div v-if="showAddForm" class="form-add-order">
-          <h2>Thêm đơn hàng mới</h2>
-
-          <div class="order-details-grid">
-            <div class="form-group">
-              <label>Loại đơn hàng *</label>
-              <select v-model="newOrder.type">
-                <option value="">Chọn loại...</option>
-                <option value="buy_sell">Mua bán</option>
-                <option value="repair">Sửa chữa</option>
+    <!-- Orders Table -->
+    <div class="table-wrapper">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Loại đơn</th>
+            <th>Khách hàng</th>
+            <th>Địa chỉ</th>
+            <th>Tổng giá</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(order, index) in filteredOrders" :key="order.id" class="order-row">
+            <td class="order-stt">{{ index + 1 }}</td>
+            <td>
+              <span :class="`badge badge-${order.type}`">
+                {{ order.type === 'buy' ? 'Mua bán' : 'Sửa chữa' }}
+              </span>
+            </td>
+            <td class="customer-name">{{ order.customerName }}</td>
+            <td class="address-type">
+              <span :class="`addr-badge addr-${order.addressType}`">
+                {{ order.addressType === '1' ? 'Khách hàng' : 'Cửa hàng' }}
+              </span>
+            </td>
+            <td class="total-price">{{ formatPrice(order.totalPrice) }}</td>
+            <td>
+              <select
+                :value="order.status"
+                @change="updateOrderStatus(order.id, $event.target.value)"
+                class="status-select"
+                :class="`status-${order.status}`"
+              >
+                <option value="pending">Chờ xử lý</option>
+                <option value="processing">Đang xử lý</option>
+                <option value="completed">Hoàn thành</option>
+                <option value="cancelled">Hủy</option>
               </select>
-            </div>
+            </td>
+            <td class="action-cell">
+              <button class="btn-detail" @click="openOrderDetail(order)">Chi tiết</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-            <div class="form-group">
-              <label>Tên khách hàng *</label>
-              <input v-model="newOrder.customer" type="text" placeholder="Nhập tên khách hàng..." />
-            </div>
+    <!-- Empty State -->
+    <div v-if="filteredOrders.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>Không có đơn hàng nào</p>
+    </div>
 
-            <div class="form-group">
-              <label>Địa chỉ giao hàng *</label>
-              <select v-model="newOrder.addressType">
-                <option value="customer">Địa chỉ khách hàng</option>
-                <option value="shop">Cửa hàng</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Địa chỉ chi tiết *</label>
-              <input v-model="newOrder.address" type="text" placeholder="Nhập địa chỉ..." />
-            </div>
+    <!-- Modal Detail -->
+    <transition name="modal-fade">
+      <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>{{ isEditMode ? 'Chi tiết đơn hàng' : 'Thêm đơn hàng mới' }}</h2>
+            <button class="close-btn" @click="closeModal">✕</button>
           </div>
 
-          <!-- Items Section -->
-          <div class="items-section">
-            <label>Sản phẩm/Dịch vụ *</label>
-            <div v-for="(item, idx) in newOrder.items" :key="idx" class="item-row">
-              <input
-                v-model="item.name"
-                type="text"
-                :placeholder="
-                  newOrder.type === 'buy_sell' ? 'Tên điện thoại...' : 'Tên linh kiện...'
-                "
-              />
-              <input v-model.number="item.quantity" type="number" min="1" placeholder="SL" />
-              <input v-model.number="item.price" type="number" min="0" placeholder="Giá" />
-              <button @click="newOrder.items.splice(idx, 1)" class="btn-remove-item">✕</button>
-            </div>
-            <button
-              @click="newOrder.items.push({ name: '', quantity: 1, price: 0 })"
-              class="btn-add-item"
-            >
-              + Thêm sản phẩm
-            </button>
-          </div>
+          <div class="modal-body">
+            <!-- Form fields only for new orders -->
+            <template v-if="!isEditMode">
+              <div class="form-group">
+                <label>Loại đơn hàng</label>
+                <select v-model="formData.type" class="form-input">
+                  <option value="buy">Mua bán điện thoại</option>
+                  <option value="repair">Sửa chữa điện thoại</option>
+                </select>
+              </div>
 
-          <!-- Form Actions -->
-          <div class="form-actions">
-            <button @click="showAddForm = false" class="btn-cancel">Hủy</button>
-            <button @click="addOrder" class="btn-submit">Tạo đơn hàng</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Orders Table -->
-      <div class="orders-table-wrapper">
-        <table class="orders-table">
-          <thead>
-            <tr>
-              <th>STT</th>
-              <th>Loại đơn</th>
-              <th>Sản phẩm/Dịch vụ</th>
-              <th>Tổng giá</th>
-              <th>Khách hàng</th>
-              <th>Địa chỉ</th>
-              <th>Trạng thái</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="order in filteredOrders" :key="order.id">
-              <td>#{{ String(order.id).padStart(4, '0') }}</td>
-              <td>
-                <span v-if="order.type === 'buy_sell'" class="badge-buy">Mua bán</span>
-                <span v-else class="badge-repair">Sửa chữa</span>
-              </td>
-              <td>
-                <div v-for="item in order.items" :key="item.name">
-                  {{ item.name }} ({{ item.quantity }}x) -
-                  {{ formatPrice(item.quantity * item.price) }}
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Tên khách hàng</label>
+                  <input
+                    v-model="formData.customerName"
+                    type="text"
+                    placeholder="Nhập tên khách hàng"
+                    class="form-input"
+                  />
                 </div>
-              </td>
-              <td class="text-total">{{ formatPrice(order.totalPrice) }}</td>
-              <td>{{ order.customer }}</td>
-              <td>
-                <span v-if="order.addressType === 'customer'">👤 </span>
-                <span v-else>🏪 </span>
-                {{ order.address }}
-              </td>
-              <td>
-                <select v-model="order.status" class="status-select">
+                <div class="form-group">
+                  <label>Số điện thoại</label>
+                  <input
+                    v-model="formData.phone"
+                    type="tel"
+                    placeholder="Nhập số điện thoại"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Địa chỉ</label>
+                  <input
+                    v-model="formData.address"
+                    type="text"
+                    placeholder="Nhập địa chỉ"
+                    class="form-input"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Loại địa chỉ</label>
+                  <select v-model="formData.addressType" class="form-input">
+                    <option value="1">Địa chỉ khách hàng</option>
+                    <option value="2">Cửa hàng</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Items section for new orders -->
+              <div class="items-section">
+                <div class="items-header">
+                  <h3>
+                    {{ formData.type === 'buy' ? 'Danh sách điện thoại' : 'Danh sách linh kiện' }}
+                  </h3>
+                  <button class="btn-add-item" @click="addItem">+ Thêm</button>
+                </div>
+
+                <div class="items-list">
+                  <div v-for="(item, index) in formData.items" :key="index" class="item-row">
+                    <input
+                      v-model="item.name"
+                      type="text"
+                      :placeholder="formData.type === 'buy' ? 'Tên điện thoại' : 'Tên linh kiện'"
+                      class="item-input"
+                    />
+                    <div class="quantity-price">
+                      <input
+                        v-model.number="item.quantity"
+                        type="number"
+                        min="1"
+                        placeholder="SL"
+                        class="item-input small"
+                      />
+                      <input
+                        v-model.number="item.unitPrice"
+                        type="number"
+                        min="0"
+                        placeholder="Đơn giá"
+                        class="item-input small"
+                      />
+                      <span class="item-total">{{
+                        formatPrice(item.quantity * item.unitPrice)
+                      }}</span>
+                      <button class="btn-remove-item" @click="removeItem(index)">✕</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="items-summary">
+                  <div class="summary-row">
+                    <span>Tổng cộng:</span>
+                    <span class="summary-value">{{ formatPrice(formData.totalPrice) }}</span>
+                  </div>
+                </div>
+              </div>
+            </template>
+
+            <!-- Edit mode: only show editable fields -->
+            <template v-else>
+              <div class="info-group">
+                <label>Loại đơn</label>
+                <div class="info-value">{{ formData.type === 'buy' ? 'Mua bán' : 'Sửa chữa' }}</div>
+              </div>
+
+              <div class="form-row">
+                <div class="info-group">
+                  <label>Tên khách hàng</label>
+                  <div class="info-value">{{ formData.customerName }}</div>
+                </div>
+                <div class="info-group">
+                  <label>Số điện thoại</label>
+                  <div class="info-value">{{ formData.phone }}</div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="info-group">
+                  <label>Địa chỉ</label>
+                  <div class="info-value">{{ formData.address }}</div>
+                </div>
+                <div class="info-group">
+                  <label>Loại địa chỉ</label>
+                  <div class="info-value">
+                    {{ formData.addressType === '1' ? 'Địa chỉ khách hàng' : 'Cửa hàng' }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Trạng thái</label>
+                <select v-model="formData.status" class="form-input">
                   <option value="pending">Chờ xử lý</option>
                   <option value="processing">Đang xử lý</option>
                   <option value="completed">Hoàn thành</option>
                   <option value="cancelled">Hủy</option>
                 </select>
-              </td>
-            </tr>
-            <tr v-if="filteredOrders.length === 0">
-              <td colspan="7" class="no-orders">Không có đơn hàng phù hợp</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </div>
 
-      <!-- Summary Stats -->
-      <div class="summary-grid">
-        <div class="summary-card">
-          <p>Tổng đơn hàng</p>
-          <p>{{ orders.length }}</p>
-        </div>
-        <div class="summary-card">
-          <p>Chờ xử lý</p>
-          <p>{{ orders.filter((o) => o.status === 'pending').length }}</p>
-        </div>
-        <div class="summary-card">
-          <p>Hoàn thành</p>
-          <p>{{ orders.filter((o) => o.status === 'completed').length }}</p>
-        </div>
-        <div class="summary-card">
-          <p>Tổng doanh thu</p>
-          <p>{{ formatPrice(orders.reduce((sum, o) => sum + o.totalPrice, 0)) }}</p>
+              <!-- Items section read-only -->
+              <div class="items-section">
+                <h3 class="items-title">
+                  {{ formData.type === 'buy' ? 'Danh sách điện thoại' : 'Danh sách linh kiện' }}
+                </h3>
+
+                <table class="items-detail-table">
+                  <thead>
+                    <tr>
+                      <th>Sản phẩm</th>
+                      <th>Đơn giá</th>
+                      <th>Số lượng</th>
+                      <th>Thành tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, index) in formData.items" :key="index">
+                      <td>{{ item.name }}</td>
+                      <td>{{ formatPrice(item.unitPrice) }}</td>
+                      <td class="qty-cell">{{ item.quantity }}</td>
+                      <td class="total-cell">{{ formatPrice(item.quantity * item.unitPrice) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="items-summary">
+                  <div class="summary-row">
+                    <span>Tổng cộng:</span>
+                    <span class="summary-value">{{ formatPrice(formData.totalPrice) }}</span>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn-cancel" @click="closeModal">
+              {{ isEditMode ? 'Đóng' : 'Hủy' }}
+            </button>
+            <button v-if="!isEditMode" class="btn-save" @click="saveOrder">Lưu đơn hàng</button>
+            <button v-else class="btn-save" @click="saveOrder">Cập nhật trạng thái</button>
+          </div>
         </div>
       </div>
-    </main>
+    </transition>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 
-const showAddForm = ref(false)
+// State
+const showModal = ref(false)
+const isEditMode = ref(false)
 const searchQuery = ref('')
-const selectedType = ref('')
-
-const newOrder = ref({
-  type: '',
-  customer: '',
-  address: '',
-  addressType: 'customer',
-  items: [{ name: '', quantity: 1, price: 0 }],
-})
+const filterType = ref('')
+const editingOrderId = ref(null)
 
 const orders = ref([
   {
-    id: 1001,
-    type: 'buy_sell',
-    customer: 'Nguyễn Văn A',
-    address: '123 Đường Lê Lợi, Q.1, TP.HCM',
-    addressType: 'customer',
-    items: [{ name: 'iPhone 15 Pro Max', quantity: 1, price: 35000000 }],
-    totalPrice: 35000000,
+    id: 1,
+    type: 'buy',
+    customerName: 'Nguyễn Văn A',
+    phone: '0123456789',
+    address: '123 Nguyễn Huệ, TP.HCM',
+    addressType: '1',
     status: 'completed',
+    totalPrice: 15000000,
+    items: [{ name: 'iPhone 15 Pro', quantity: 1, unitPrice: 15000000 }],
   },
   {
-    id: 1002,
+    id: 2,
     type: 'repair',
-    customer: 'Trần Thị B',
-    address: '456 Đường Nguyễn Huệ, Q.1, TP.HCM',
-    addressType: 'shop',
-    items: [
-      { name: 'Thay pin', quantity: 1, price: 500000 },
-      { name: 'Thay kính', quantity: 1, price: 800000 },
-    ],
-    totalPrice: 1300000,
+    customerName: 'Trần Thị B',
+    phone: '0987654321',
+    address: '456 Lê Lợi, Hà Nội',
+    addressType: '1',
     status: 'processing',
+    totalPrice: 2000000,
+    items: [
+      { name: 'Thay pin', quantity: 1, unitPrice: 800000 },
+      { name: 'Sửa chữa màn hình', quantity: 1, unitPrice: 1200000 },
+    ],
   },
   {
-    id: 1003,
-    type: 'buy_sell',
-    customer: 'Lê Văn C',
-    address: '789 Đường Trần Hưng Đạo, Q.5, TP.HCM',
-    addressType: 'customer',
-    items: [{ name: 'Samsung Galaxy S24', quantity: 2, price: 18000000 }],
-    totalPrice: 36000000,
+    id: 3,
+    type: 'buy',
+    customerName: 'Lê Văn C',
+    phone: '0912345678',
+    address: '789 Trần Hưng Đạo, Đà Nẵng',
+    addressType: '2',
     status: 'pending',
+    totalPrice: 8000000,
+    items: [{ name: 'Samsung Galaxy S24', quantity: 2, unitPrice: 4000000 }],
   },
 ])
 
-const filteredOrders = computed(() =>
-  orders.value.filter((order) => {
-    const matchesType = !selectedType.value || order.type === selectedType.value
-    const matchesSearch =
-      !searchQuery.value ||
-      order.customer.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      String(order.id).includes(searchQuery.value)
-    return matchesType && matchesSearch
-  }),
+const formData = ref({
+  type: 'buy',
+  customerName: '',
+  phone: '',
+  address: '',
+  addressType: '1',
+  status: 'pending',
+  items: [{ name: '', quantity: 1, unitPrice: 0 }],
+  totalPrice: 0,
+})
+
+// Computed
+const filteredOrders = computed(() => {
+  return orders.value.filter((order) => {
+    const matchesSearch = order.customerName.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchesType = !filterType.value || order.type === filterType.value
+    return matchesSearch && matchesType
+  })
+})
+
+// Watch for items changes to update total
+watch(
+  () => formData.value.items,
+  () => {
+    formData.value.totalPrice = formData.value.items.reduce(
+      (sum, item) => sum + (item.quantity * item.unitPrice || 0),
+      0,
+    )
+  },
+  { deep: true },
 )
 
-const formatPrice = (price) =>
-  new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price)
+// Methods
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  }).format(price)
+}
 
-const addOrder = () => {
-  if (!newOrder.value.type || !newOrder.value.customer || !newOrder.value.address) {
-    alert('Vui lòng điền đầy đủ thông tin')
-    return
-  }
-  if (newOrder.value.items.some((item) => !item.name || item.price <= 0)) {
-    alert('Vui lòng điền đầy đủ thông tin sản phẩm')
-    return
-  }
-  const totalPrice = newOrder.value.items.reduce((sum, item) => sum + item.quantity * item.price, 0)
-  orders.value.unshift({
-    id: Math.max(...orders.value.map((o) => o.id), 0) + 1,
-    type: newOrder.value.type,
-    customer: newOrder.value.customer,
-    address: newOrder.value.address,
-    addressType: newOrder.value.addressType,
-    items: [...newOrder.value.items],
-    totalPrice,
-    status: 'pending',
-  })
-  newOrder.value = {
-    type: '',
-    customer: '',
+const openNewOrderForm = () => {
+  isEditMode.value = false
+  editingOrderId.value = null
+  formData.value = {
+    type: 'buy',
+    customerName: '',
+    phone: '',
     address: '',
-    addressType: 'customer',
-    items: [{ name: '', quantity: 1, price: 0 }],
+    addressType: '1',
+    status: 'pending',
+    items: [{ name: '', quantity: 1, unitPrice: 0 }],
+    totalPrice: 0,
   }
-  showAddForm.value = false
+  showModal.value = true
+}
+
+const openOrderDetail = (order) => {
+  isEditMode.value = true
+  editingOrderId.value = order.id
+  formData.value = {
+    type: order.type,
+    customerName: order.customerName,
+    phone: order.phone,
+    address: order.address,
+    addressType: order.addressType,
+    status: order.status,
+    items: JSON.parse(JSON.stringify(order.items)),
+    totalPrice: order.totalPrice,
+  }
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+}
+
+const addItem = () => {
+  formData.value.items.push({ name: '', quantity: 1, unitPrice: 0 })
+}
+
+const removeItem = (index) => {
+  formData.value.items.splice(index, 1)
+}
+
+const saveOrder = () => {
+  if (isEditMode.value) {
+    const orderIndex = orders.value.findIndex((o) => o.id === editingOrderId.value)
+    if (orderIndex !== -1) {
+      orders.value[orderIndex].status = formData.value.status
+    }
+  } else {
+    orders.value.push({
+      id: Math.max(...orders.value.map((o) => o.id), 0) + 1,
+      ...formData.value,
+    })
+  }
+  closeModal()
+}
+
+const updateOrderStatus = (orderId, newStatus) => {
+  const order = orders.value.find((o) => o.id === orderId)
+  if (order) {
+    order.status = newStatus
+  }
 }
 </script>
 
 <style scoped>
-/* Global Container */
-.app-container {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Typography & Colors */
+:root {
+  --primary: #1a1a1a;
+  --secondary: #2d2d2d;
+  --accent: #d4af37;
+  --light-bg: #f5f5f5;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666;
+  --border-color: #e0e0e0;
+  --success: #4caf50;
+  --warning: #ff9800;
+  --danger: #f44336;
+  --info: #2196f3;
+}
+
+.phone-shop-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #fafafa;
   min-height: 100vh;
-  background-color: #0f172a;
-  color: #f1f5f9;
-  font-family: Arial, sans-serif;
+  padding: 32px;
 }
 
-/* Header */
-.header {
-  border-bottom: 1px solid #1e293b;
-  background-color: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(5px);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-.header-inner {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 1rem 1.5rem;
+/* Filters section moved to top, no header needed */
+.filters-section {
+  max-width: 1400px;
+  margin: 0 auto 32px;
   display: flex;
-  justify-content: space-between;
+  gap: 16px;
   align-items: center;
-}
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.logo-box {
-  width: 2.5rem;
-  height: 2.5rem;
-  background: linear-gradient(to bottom right, #10b981, #059669);
-  border-radius: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  color: white;
-}
-.store-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0;
-}
-.store-subtitle {
-  font-size: 0.75rem;
-  color: #94a3b8;
-  margin: 0;
-}
-.store-info .store-name {
-  color: #34d399;
-  font-weight: 500;
 }
 
-/* Main */
-.main {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
+.search-box {
+  flex: 1;
+  position: relative;
 }
-.controls-section {
-  margin-bottom: 2rem;
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
 }
-.search-filter-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-.search-bar input,
-select,
-input[type='number'],
-input[type='text'] {
-  background-color: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 0.5rem;
-  color: #f1f5f9;
-  padding: 0.625rem 0.75rem;
+
+.search-input:focus {
   outline: none;
-  transition: 0.2s;
-}
-.search-bar input::placeholder {
-  color: #64748b;
-}
-.search-bar input:focus,
-select:focus,
-input[type='number']:focus,
-input[type='text']:focus {
-  border-color: #10b981;
-  box-shadow: 0 0 0 1px #10b981;
-}
-.btn-add-order {
-  background-color: #10b981;
-  color: white;
-  border: none;
-  padding: 0.625rem 1.5rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
-}
-.btn-add-order:hover {
-  background-color: #059669;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
-/* Form */
-.form-add-order {
-  background-color: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 0.5rem;
-  padding: 1.5rem;
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
 }
-.order-details-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
+
+.filter-select {
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
 }
-@media (min-width: 768px) {
-  .order-details-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+
+.filter-select:hover,
+.filter-select:focus {
+  border-color: var(--accent);
+  outline: none;
 }
-.form-group label {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-size: 0.875rem;
-  color: #d1d5db;
-}
-.items-section label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  color: #d1d5db;
-}
-.item-row {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-.btn-remove-item {
-  background-color: rgba(185, 28, 28, 0.3);
+
+.add-order-btn {
+  background: var(--accent);
+  color: var(--primary);
   border: none;
-  color: #f87171;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-}
-.btn-add-item {
-  background-color: #1e293b;
-  border: 1px solid #334155;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-  color: #f1f5f9;
-  cursor: pointer;
-}
-.btn-add-item:hover {
-  background-color: #2c3a4a;
-}
-.form-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
-.btn-cancel {
-  background-color: #1e293b;
-  border: 1px solid #334155;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-  color: #f1f5f9;
-  cursor: pointer;
+
+.add-order-btn:hover {
+  background: #e5c158;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(212, 175, 55, 0.2);
 }
-.btn-cancel:hover {
-  background-color: #2c3a4a;
-}
-.btn-submit {
-  background-color: #10b981;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-  color: white;
-  cursor: pointer;
-}
-.btn-submit:hover {
-  background-color: #059669;
+
+.plus-icon {
+  font-size: 18px;
+  font-weight: bold;
 }
 
 /* Table */
-.orders-table-wrapper {
-  overflow-x: auto;
+.table-wrapper {
+  max-width: 1400px;
+  margin: 0 auto 32px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
+
 .orders-table {
   width: 100%;
   border-collapse: collapse;
 }
-.orders-table th,
-.orders-table td {
-  padding: 0.75rem 1.5rem;
-  text-align: left;
-  font-size: 0.875rem;
-}
-.orders-table thead tr {
-  background-color: rgba(15, 23, 42, 0.3);
-  border-bottom: 1px solid #334155;
-}
-.orders-table tbody tr:hover {
-  background-color: rgba(30, 41, 59, 0.3);
-}
-.badge-buy {
-  background-color: rgba(59, 130, 246, 0.2);
-  color: #60a5fa;
-  padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-.badge-repair {
-  background-color: rgba(192, 132, 252, 0.2);
-  color: #c084fc;
-  padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-.text-total {
-  color: #34d399;
-  font-weight: 600;
-}
-.status-select {
-  background-color: rgba(30, 41, 59, 0.2);
-  border: none;
-  border-radius: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-}
-.no-orders {
-  text-align: center;
-  padding: 3rem 0;
-  color: #94a3b8;
+
+.orders-table thead {
+  background: var(--light-bg);
+  border-bottom: 2px solid var(--border-color);
 }
 
-/* Summary */
-.summary-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  margin-top: 2rem;
+.orders-table th {
+  padding: 18px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-@media (min-width: 768px) {
-  .summary-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
+
+.orders-table tbody tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: all 0.3s ease;
 }
-.summary-card {
-  background-color: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 0.5rem;
-  padding: 1rem;
+
+.orders-table tbody tr:hover {
+  background: #f9f9f9;
+}
+
+.orders-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.order-stt {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.customer-name {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Badges */
+.badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-buy {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.badge-repair {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.addr-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.addr-1 {
+  background: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.addr-2 {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.total-price {
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 15px;
+}
+
+.status-select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.status-pending {
+  border-color: var(--warning);
+  background: #fff8f0;
+}
+
+.status-processing {
+  border-color: var(--info);
+  background: #f0f7ff;
+}
+
+.status-completed {
+  border-color: var(--success);
+  background: #f0f8f4;
+}
+
+.status-cancelled {
+  border-color: var(--danger);
+  background: #fff0f0;
+}
+
+.action-cell {
   text-align: center;
 }
-.summary-card p:first-child {
-  color: #94a3b8;
-  font-size: 0.875rem;
-  margin: 0 0 0.25rem 0;
+
+.btn-detail {
+  background: var(--accent);
+  color: var(--primary);
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-.summary-card p:last-child {
-  font-size: 1.5rem;
+
+.btn-detail:hover {
+  background: #e5c158;
+  transform: translateY(-2px);
+}
+
+/* Empty State */
+.empty-state {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 80px 32px;
+  color: var(--text-secondary);
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  font-size: 16px;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  padding: 24px;
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  font-size: 20px;
   font-weight: 700;
-  margin: 0;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Added info-group styling for read-only fields */
+.info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-group label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  padding: 12px 16px;
+  background: var(--light-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.form-input,
+.form-row {
+  width: 100%;
+}
+
+.form-input {
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Items Section */
+.items-section {
+  background: var(--light-bg);
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.items-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.items-header h3,
+.items-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.items-title {
+  margin-bottom: 16px;
+}
+
+.btn-add-item {
+  background: var(--accent);
+  color: var(--primary);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.btn-add-item:hover {
+  background: #e5c158;
+  transform: translateY(-2px);
+}
+
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.item-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.item-input {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 13px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.item-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.item-input.small {
+  width: 80px;
+}
+
+.quantity-price {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+}
+
+.item-total {
+  font-weight: 600;
+  color: var(--accent);
+  min-width: 100px;
+  text-align: right;
+  font-size: 13px;
+}
+
+.btn-remove-item {
+  background: #ffebee;
+  color: var(--danger);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-remove-item:hover {
+  background: var(--danger);
   color: white;
+}
+
+/* Read-only items display */
+.items-list-readonly {
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.item-readonly-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1.5fr;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  font-size: 13px;
+}
+
+.item-readonly-row:last-child {
+  border-bottom: none;
+}
+
+.item-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.item-qty,
+.item-price,
+.item-total-readonly {
+  text-align: right;
+  color: var(--text-secondary);
+}
+
+.item-total-readonly {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.items-summary {
+  border-top: 1px solid var(--border-color);
+  padding-top: 12px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.summary-value {
+  color: var(--accent);
+  font-size: 16px;
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: 20px 24px;
+  border-top: 2px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-cancel,
+.btn-save {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-cancel {
+  background: var(--light-bg);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+
+.btn-cancel:hover {
+  background: var(--border-color);
+}
+
+.btn-save {
+  background: var(--accent);
+  color: var(--primary);
+}
+
+.btn-save:hover {
+  background: #e5c158;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(212, 175, 55, 0.2);
+}
+
+/* Animations */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-fade-enter-to,
+.modal-fade-leave-from {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .phone-shop-container {
+    padding: 16px;
+  }
+
+  .filters-section {
+    margin-bottom: 16px;
+    flex-direction: column;
+  }
+
+  .filter-select,
+  .add-order-btn {
+    width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .item-row {
+    flex-direction: column;
+  }
+
+  .quantity-price {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .item-total {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .item-readonly-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .item-qty,
+  .item-price,
+  .item-total-readonly {
+    text-align: left;
+  }
+
+  .orders-table {
+    font-size: 12px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 12px 8px;
+  }
+
+  .modal-content {
+    max-width: 95vw;
+  }
+}
+
+/* Added table styling for items display in detail modal */
+.items-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.items-detail-table thead {
+  background: var(--light-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.items-detail-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.items-detail-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.items-detail-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.qty-cell {
+  text-align: center;
+  font-weight: 500;
+}
+
+.total-cell {
+  text-align: right;
+  font-weight: 600;
+  color: var(--accent);
 }
 </style>
