@@ -20,25 +20,25 @@
     <div v-else class="cart-content">
       <!-- Bên trái: Sản phẩm -->
       <div class="left-panel glass-card">
-        <h2 class="section-title">Sản phẩm ({{ products.length }})</h2>
+        <h2 class="section-title">Sản phẩm ({{ cartItems.length }})</h2>
 
         <div class="product-list">
-          <div v-for="(product, i) in products" :key="i" class="product-item">
+          <div v-for="(product, i) in cartItems" :key="i" class="product-item">
             <input type="checkbox" v-model="product.selected" class="product-checkbox" />
 
             <img :src="product.img" alt="" class="product-image" />
 
             <div class="product-info">
-              <h3 class="product-name">{{ product.name }}</h3>
+              <h3 class="product-name">{{ product.productName }}</h3>
 
               <div class="product-selects">
-                <select v-model="product.productAttName" class="select-sm">
-                  <option v-for="v in versions" :key="v" :value="v">{{ v }}</option>
-                </select>
+                <span class="select-sm">
+                  {{ product.productAttName }}
+                </span>
 
-                <select v-model="product.color" class="select-sm">
-                  <option v-for="c in colors" :key="c" :value="c">{{ c }}</option>
-                </select>
+                <span class="select-sm">
+                  {{ product.color }}
+                </span>
               </div>
 
               <div class="price-row">
@@ -150,11 +150,7 @@ import axios from 'axios'
 const hasProducts = ref(true)
 const showConfirm = ref(false)
 
-const versions = ['128GB', '256GB', '512GB']
-const colors = ['Titan Tự nhiên', 'Xanh', 'Bạc', 'Đen']
-
-const products = ref([ ])
-
+const cartItems = ref([ ])
 const handleFetchCart = async () => {
   const token = localStorage.getItem("token");
   if (!token) return router.push("/login");
@@ -164,16 +160,8 @@ const handleFetchCart = async () => {
         Authorization: `Bearer ${token}`,
       },
     })
-    products.value = response.data.result.map((item) => ({
-      name: item.productName,
-      version: item.version,
-      color: item.color,
-      price: item.price,
-      quantity: item.quantity,
-      selected: false,
-      image: item.imageUrl,
-    }))
-    hasProducts.value = products.value.length > 0
+    cartItems.value = response.data.result;
+    hasProducts.value = cartItems.value.length > 0
   } catch (error) {
     console.error('Lỗi khi tải giỏ hàng:', error)
     alert('Không thể tải giỏ hàng!')
@@ -199,7 +187,7 @@ const formatPrice = (v) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v)
 
 const totalPrice = computed(() =>
-  products.value.filter((p) => p.selected).reduce((sum, p) => sum + p.price * p.quantity, 0),
+  cartItems.value.filter((p) => p.selected).reduce((sum, p) => sum + p.price * p.quantity, 0),
 )
 
 const selectedCount = computed(() => products.value.filter((p) => p.selected).length)
@@ -328,7 +316,7 @@ const mockAddProduct = () => (hasProducts.value = true)
   width: 80px;
   height: 80px;
   border-radius: 8px;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .product-info {

@@ -18,8 +18,8 @@
         <form action="" class="form-create-user" @submit.prevent="handleLogin">
           <div class="login-row login-row-aa">
             <label for="">Email</label>
-            <input type="text" name="email" id="email" placeholder="Nhập email" required
-                  v-model="loginData.email">
+            <input type="text" name="phoneNumber" id="phoneNumber" placeholder="Nhập email" required
+                  v-model="loginData.phoneNumber">
           </div>
           <div class="login-row">
             <label for="">Mật khẩu</label>
@@ -43,7 +43,7 @@
         <form class="form-create-user" @submit.prevent="handleSignUp">
           <div class="login-row">
             <label>Email</label>
-            <input type="email" placeholder="Nhập email" required v-model="signUpData.email">
+            <input type="text" placeholder="Nhập email" required v-model="signUpData.email">
             <span v-if="errors.email" class="error">{{ errors.email }}</span>
           </div>
           <div class="login-row">
@@ -84,7 +84,7 @@
 
 // login
     const loginData = ref({
-      email: "",
+      phoneNumber: "",
       password: "",
     })
     const handleLogin = async() => {
@@ -92,7 +92,7 @@
 
       try {
         const response = await axios.post("http://localhost:8080/bej3/auth/log-in", {
-          email: loginData.value.email,
+          phoneNumber: loginData.value.phoneNumber,
           password: loginData.value.password,
         })
         console.log(response.data.result)

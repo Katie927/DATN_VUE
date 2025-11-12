@@ -27,7 +27,7 @@
       <table class="orders-table">
         <thead>
           <tr>
-            <th>STT</th>
+            <th style="width: 34px;">STT</th>
             <th>Loại đơn</th>
             <th>Khách hàng</th>
             <th>Địa chỉ</th>
@@ -37,48 +37,50 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(order, index) in filteredOrders" :key="order.id" class="order-row">
-            <td class="order-stt">{{ index + 1 }}</td>
-            <td>
-              <span :class="`badge badge-${order.type}`">
-                {{ order.type === 'buy' ? 'Mua bán' : 'Sửa chữa' }}
-              </span>
-            </td>
-            <td class="customer-name">{{ order.customerName }}</td>
-            <td class="address-type">
-              <span :class="`addr-badge addr-${order.addressType}`">
-                {{ order.addressType === '1' ? 'Khách hàng' : 'Cửa hàng' }}
-              </span>
-            </td>
-            <td class="total-price">{{ formatPrice(order.totalPrice) }}</td>
-            <td>
-              <select
-                :value="order.status"
-                @change="updateOrderStatus(order.id, $event.target.value)"
-                class="status-select"
-                :class="`status-${order.status}`"
-              >
-                <option value="pending">Chờ xử lý</option>
-                <option value="processing">Đang xử lý</option>
-                <option value="completed">Hoàn thành</option>
-                <option value="cancelled">Hủy</option>
-              </select>
-            </td>
-            <td class="action-cell">
-              <button class="btn-detail" @click="openOrderDetail(order)">Chi tiết</button>
-            </td>
-          </tr>
+          <template v-for="(order, index) in orders" :key="order.id">
+            <tr  class="order-row">
+              <td class="order-stt">{{ index + 1 }}</td>
+              <td>
+                <span :class="`badge badge-${order.type}`">
+                  {{ order.type === 'buy' ? 'Mua bán' : 'Sửa chữa' }}
+                </span>
+              </td>
+              <td class="customer-name">{{ order.userName }}</td>
+              <td class="address-type">
+                <span :class="`addr-badge addr-${order.type}`">
+                  {{ order.addressType === '1' ? 'Khách hàng' : 'Cửa hàng' }}
+                </span>
+              </td>
+              <td class="total-price">{{ formatPrice(order.totalPrice) }}</td>
+              <td>
+                <select
+                  :value="order.status"
+                  @change="updateOrderStatus(order.id, $event.target.value)"
+                  class="status-select"
+                  :class="`status-${order.status}`"
+                >
+                  <option value="0">Chờ xử lý</option>
+                  <option value="1">Đang xử lý</option>
+                  <option value="2">Hoàn thành</option>
+                  <option value="3">Hủy</option>
+                </select>
+              </td>
+              <td class="action-cell">
+                <button class="btn-detail" @click="openOrderDetail(order.id)">Chi tiết</button>
+              </td>
+            </tr>
+          </template>          
         </tbody>
       </table>
     </div>
 
     <!-- Empty State -->
-    <div v-if="filteredOrders.length === 0" class="empty-state">
+    <div v-if="orders.length === 0" class="empty-state">
       <div class="empty-icon">📋</div>
       <p>Không có đơn hàng nào</p>
     </div>
 
-    <!-- Modal Detail -->
+    <!-- Modal Detail --> 
     <transition name="modal-fade">
       <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
         <div class="modal-content">
@@ -93,8 +95,8 @@
               <div class="form-group">
                 <label>Loại đơn hàng</label>
                 <select v-model="formData.type" class="form-input">
-                  <option value="buy">Mua bán điện thoại</option>
-                  <option value="repair">Sửa chữa điện thoại</option>
+                  <option value="0">Mua bán điện thoại</option>
+                  <option value="1">Sửa chữa điện thoại</option>
                 </select>
               </div>
 
@@ -142,7 +144,7 @@
               <div class="items-section">
                 <div class="items-header">
                   <h3>
-                    {{ formData.type === 'buy' ? 'Danh sách điện thoại' : 'Danh sách linh kiện' }}
+                    {{ formData.type === '0' ? 'Danh sách điện thoại' : 'Danh sách linh kiện' }}
                   </h3>
                   <button class="btn-add-item" @click="addItem">+ Thêm</button>
                 </div>
@@ -191,41 +193,56 @@
             <template v-else>
               <div class="info-group">
                 <label>Loại đơn</label>
-                <div class="info-value">{{ formData.type === 'buy' ? 'Mua bán' : 'Sửa chữa' }}</div>
+                <div class="info-value">{{ formData.type === '0' ? 'Mua bán' : 'Sửa chữa' }}</div>
               </div>
 
               <div class="form-row">
                 <div class="info-group">
                   <label>Tên khách hàng</label>
-                  <div class="info-value">{{ formData.customerName }}</div>
+                  <div class="info-value">{{ formData.userName }}</div>
                 </div>
                 <div class="info-group">
                   <label>Số điện thoại</label>
-                  <div class="info-value">{{ formData.phone }}</div>
+                  <div class="info-value">{{ formData.phoneNumber }}</div>
+                </div>
+                <div class="info-group">
+                  <label>Địa chỉ</label>
+                  <div class="info-value">{{ formData.address }}</div>
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="info-group">
-                  <label>Địa chỉ</label>
-                  <div class="info-value">{{ formData.address }}</div>
-                </div>
-                <div class="info-group">
                   <label>Loại địa chỉ</label>
                   <div class="info-value">
-                    {{ formData.addressType === '1' ? 'Địa chỉ khách hàng' : 'Cửa hàng' }}
+                    {{ formData.type === '1' ? 'Địa chỉ khách hàng' : 'Cửa hàng' }}
                   </div>
+                </div>
+                <div class="info-group">
+                  <label>Trạng thái</label>
+                  <select v-model="formData.status" class="form-input">
+                    <option value="0">Chờ xử lý</option>
+                    <option value="1">Đang xử lý</option>
+                    <option value="2">Hoàn thành</option>
+                    <option value="3">Hủy</option>
+                  </select>
                 </div>
               </div>
 
+              <div class="form-row" style="grid-template-columns: 1fr 1fr;">
+                <div class="form-group">
+                  <label>Mô tả của khách</label>
+                  <textarea type="textarea" class="form-input" v-model="formData.descripton" />
+                </div>
+                <div class="form-group">
+                  <label>Ghi chú</label>
+                  <textarea type="textarea" class="form-input" v-model="formData.descripton" />
+                </div>
+              </div>
+              
               <div class="form-group">
-                <label>Trạng thái</label>
-                <select v-model="formData.status" class="form-input">
-                  <option value="pending">Chờ xử lý</option>
-                  <option value="processing">Đang xử lý</option>
-                  <option value="completed">Hoàn thành</option>
-                  <option value="cancelled">Hủy</option>
-                </select>
+                <label>Mô tả/ Ghi chú</label>
+                <textarea type="textarea" class="form-input" v-model="formData.descripton" />
               </div>
 
               <!-- Items section read-only -->
@@ -238,17 +255,21 @@
                   <thead>
                     <tr>
                       <th>Sản phẩm</th>
+                      <th>Màu</th>
+                      <th>Phiên bản</th>
                       <th>Đơn giá</th>
                       <th>Số lượng</th>
                       <th>Thành tiền</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item, index) in formData.items" :key="index">
-                      <td>{{ item.name }}</td>
-                      <td>{{ formatPrice(item.unitPrice) }}</td>
+                    <tr v-for="(item, index) in formData.orderItems" :key="index">
+                      <td>{{ item.productName }}</td>
+                      <td>{{ item.color }}</td>
+                      <td>{{ item.productAttName }}</td>
+                      <td>{{ formatPrice(item.price) }}</td>
                       <td class="qty-cell">{{ item.quantity }}</td>
-                      <td class="total-cell">{{ formatPrice(item.quantity * item.unitPrice) }}</td>
+                      <td class="total-cell">{{ formatPrice(item.quantity * item.price) }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -277,7 +298,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import axios from 'axios'
+import router from '@/router'
+import { ref, computed, watch, onMounted } from 'vue'
 
 // State
 const showModal = ref(false)
@@ -286,55 +309,87 @@ const searchQuery = ref('')
 const filterType = ref('')
 const editingOrderId = ref(null)
 
-const orders = ref([
-  {
-    id: 1,
-    type: 'buy',
-    customerName: 'Nguyễn Văn A',
-    phone: '0123456789',
-    address: '123 Nguyễn Huệ, TP.HCM',
-    addressType: '1',
-    status: 'completed',
-    totalPrice: 15000000,
-    items: [{ name: 'iPhone 15 Pro', quantity: 1, unitPrice: 15000000 }],
-  },
-  {
-    id: 2,
-    type: 'repair',
-    customerName: 'Trần Thị B',
-    phone: '0987654321',
-    address: '456 Lê Lợi, Hà Nội',
-    addressType: '1',
-    status: 'processing',
-    totalPrice: 2000000,
-    items: [
-      { name: 'Thay pin', quantity: 1, unitPrice: 800000 },
-      { name: 'Sửa chữa màn hình', quantity: 1, unitPrice: 1200000 },
-    ],
-  },
-  {
-    id: 3,
-    type: 'buy',
-    customerName: 'Lê Văn C',
-    phone: '0912345678',
-    address: '789 Trần Hưng Đạo, Đà Nẵng',
-    addressType: '2',
-    status: 'pending',
-    totalPrice: 8000000,
-    items: [{ name: 'Samsung Galaxy S24', quantity: 2, unitPrice: 4000000 }],
-  },
-])
+// ============================================================================ FETCH ORDERS =========================
+const orders = ref([ ])
+const fetchOrders = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+  
+  try {
+    const response = await axios.get("http://localhost:8080/bej3/manage/orders/get-all", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    orders.value = response.data.result;
+  } catch (error) {
+    console.error("Lỗi", error);
+    alert("Failed to fetch orders!!!!");
 
-const formData = ref({
-  type: 'buy',
-  customerName: '',
-  phone: '',
-  address: '',
-  addressType: '1',
-  status: 'pending',
-  items: [{ name: '', quantity: 1, unitPrice: 0 }],
-  totalPrice: 0,
-})
+    if (error.response && (error.response.status === 401 || error.response.status === 500)) {
+      localStorage.removeItem("token");
+      router.push("/login");
+    }
+  }
+};
+onMounted(fetchOrders)
+
+const fetchOrderDetails = async (orderId) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+
+  try {
+    const response = await axios.get(`http://localhost:8080/bej3/manage/orders/details/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data.result;
+  } catch (error) {
+    console.error("Lỗi", error);
+    alert("Failed to fetch order details!!!!");
+  }
+};
+// =======================================================================================================================
+const formData = ref({ })
+const openOrderDetail = async (orderId) => {
+  const details = await fetchOrderDetails(orderId)
+  if (!details) return
+
+  isEditMode.value = true
+  editingOrderId.value = orderId
+
+  formData.value = {
+    type: details.type,
+    userName: details.userName,
+    phoneNumber: details.phoneNumber,
+    address: details.address,
+    addressType: details.addressType,
+    status: details.status,
+    description: details.description,
+    orderItems: (details.orderItems || []).map(item => ({
+      productName: item.productName,
+      quantity: item.quantity,
+      price: item.price,
+      productAttName: item.productAttName,
+      color: item.color,
+    })),
+    totalPrice: details.totalPrice,
+  }
+
+  showModal.value = true
+}
+//======================================================================================================================
+
+
 
 // Computed
 const filteredOrders = computed(() => {
@@ -346,16 +401,16 @@ const filteredOrders = computed(() => {
 })
 
 // Watch for items changes to update total
-watch(
-  () => formData.value.items,
-  () => {
-    formData.value.totalPrice = formData.value.items.reduce(
-      (sum, item) => sum + (item.quantity * item.unitPrice || 0),
-      0,
-    )
-  },
-  { deep: true },
-)
+// watch(
+//   () => formData.value.items,
+//   () => {
+//     formData.value.totalPrice = formData.value.items.reduce(
+//       (sum, item) => sum + (item.quantity * item.unitPrice || 0),
+//       0,
+//     )
+//   },
+//   { deep: true },
+// )
 
 // Methods
 const formatPrice = (price) => {
@@ -377,22 +432,6 @@ const openNewOrderForm = () => {
     status: 'pending',
     items: [{ name: '', quantity: 1, unitPrice: 0 }],
     totalPrice: 0,
-  }
-  showModal.value = true
-}
-
-const openOrderDetail = (order) => {
-  isEditMode.value = true
-  editingOrderId.value = order.id
-  formData.value = {
-    type: order.type,
-    customerName: order.customerName,
-    phone: order.phone,
-    address: order.address,
-    addressType: order.addressType,
-    status: order.status,
-    items: JSON.parse(JSON.stringify(order.items)),
-    totalPrice: order.totalPrice,
   }
   showModal.value = true
 }
@@ -608,12 +647,12 @@ const updateOrderStatus = (orderId, newStatus) => {
   letter-spacing: 0.5px;
 }
 
-.badge-buy {
+.badge-0 {
   background: #e3f2fd;
   color: #1565c0;
 }
 
-.badge-repair {
+.badge-1 {
   background: #fff3e0;
   color: #e65100;
 }
@@ -630,7 +669,7 @@ const updateOrderStatus = (orderId, newStatus) => {
   color: #6a1b9a;
 }
 
-.addr-2 {
+.addr-0 {
   background: #e8f5e9;
   color: #2e7d32;
 }
@@ -732,7 +771,7 @@ const updateOrderStatus = (orderId, newStatus) => {
 .modal-content {
   background: white;
   border-radius: 16px;
-  max-width: 700px;
+  max-width: 1200px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
@@ -807,7 +846,7 @@ const updateOrderStatus = (orderId, newStatus) => {
   padding: 12px 16px;
   background: var(--light-bg);
   border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border: 1px solid #00b63e;
   color: var(--text-secondary);
   font-size: 14px;
 }
@@ -819,7 +858,7 @@ const updateOrderStatus = (orderId, newStatus) => {
 
 .form-input {
   padding: 12px 16px;
-  border: 2px solid var(--border-color);
+  border: 2px solid #00b63e;
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.3s ease;
@@ -834,7 +873,7 @@ const updateOrderStatus = (orderId, newStatus) => {
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 16px;
 }
 
@@ -1144,7 +1183,7 @@ const updateOrderStatus = (orderId, newStatus) => {
 
 .items-detail-table th {
   padding: 12px 16px;
-  text-align: left;
+  text-align: center;
   font-weight: 600;
   font-size: 12px;
   color: var(--text-primary);
@@ -1157,6 +1196,7 @@ const updateOrderStatus = (orderId, newStatus) => {
   border-bottom: 1px solid var(--border-color);
   font-size: 13px;
   color: var(--text-secondary);
+  text-align: center;
 }
 
 .items-detail-table tbody tr:last-child td {
