@@ -37,7 +37,7 @@ const navbarItems = ref([
   },
   {
     id: 3, icon: 'fas fa-exchange', label: 'Giao dịch', dropdown: [
-      { label: 'Đặt hàng', icon: 'fas fa-inbox', link: '' },
+      { label: 'Đơn hàng', icon: 'fas fa-inbox', link: '/admin/product/order' },
       { label: 'Hóa đơn', icon: 'fas fa-file-invoice-dollar', link: '' },
       { label: 'Vận đơn', icon: 'fas fa-file-edit', link: '' },
       { label: 'Trả hàng', icon: 'fas fa-reply-all', link: '' },

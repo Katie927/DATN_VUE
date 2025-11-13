@@ -27,15 +27,12 @@
             <input type="checkbox" v-model="product.selected" class="product-checkbox" />
 
             <img :src="product.img" alt="" class="product-image" />
-
             <div class="product-info">
               <h3 class="product-name">{{ product.productName }}</h3>
-
               <div class="product-selects">
                 <span class="select-sm">
                   {{ product.productAttName }}
                 </span>
-
                 <span class="select-sm">
                   {{ product.color }}
                 </span>
@@ -80,19 +77,19 @@
         <form @submit.prevent="handleSubmit" class="order-form">
           <div class="form-group">
             <label>Họ và tên *</label>
-            <input v-model.trim="form.fullName" type="text" class="form-input" />
+            <input required v-model.trim="form.fullName" type="text" class="form-input" />
             <span v-if="errors.fullName" class="error-text">{{ errors.fullName }}</span>
           </div>
 
           <div class="form-group">
             <label>Số điện thoại *</label>
-            <input v-model.trim="form.phone" type="tel" class="form-input" />
-            <span v-if="errors.phone" class="error-text">{{ errors.phone }}</span>
+            <input required v-model.trim="form.phoneNumber" type="tel" class="form-input" />
+            <span v-if="errors.phone" class="error-text">{{ errors.phoneNumber }}</span>
           </div>
 
           <div class="form-group">
             <label>Email *</label>
-            <input v-model.trim="form.email" type="email" class="form-input" />
+            <input v-model.trim="form.email" type="text" class="form-input" />
             <span v-if="errors.email" class="error-text">{{ errors.email }}</span>
           </div>
 
@@ -114,7 +111,7 @@
 
           <div class="form-group">
             <label>Ghi chú (tùy chọn)</label>
-            <textarea v-model.trim="form.note" class="form-input" rows="2"></textarea>
+            <textarea v-model.trim="form.description" class="form-input" rows="2"></textarea>
           </div>
 
           <div class="form-group checkbox-row">
@@ -123,7 +120,7 @@
           </div>
 
           <div class="form-actions">
-            <button type="submit" class="btn-primary">Xác nhận & Đặt hàng</button>
+            <button type="submit" @click="handlePlaceOrder" class="btn-primary">Xác nhận & Đặt hàng</button>
           </div>
         </form>
       </div>
@@ -151,16 +148,31 @@ const hasProducts = ref(true)
 const showConfirm = ref(false)
 
 const cartItems = ref([ ])
+const form = ref({
+  fullName: '',
+  phoneNumber: '',
+  email: '',
+  address: '',
+  description: '',
+  items: [
+    
+  ],
+})
+const errors = ref({ })
 const handleFetchCart = async () => {
   const token = localStorage.getItem("token");
   if (!token) return router.push("/login");
   try {
-    const response = await axios.get('http://localhost:8080/bej3/cart/view', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    cartItems.value = response.data.result;
+    const [cartResponse, userDataRes] = await Promise.all([
+      axios.get('http://localhost:8080/bej3/cart/view', {
+        headers: {  Authorization: `Bearer ${token}`, },
+      }),
+      axios.get('http://localhost:8080/bej3/users/profile/my-info', {
+        headers: {  Authorization: `Bearer ${token}`, },
+      })
+    ]) 
+    form.value = userDataRes.data.result;
+    cartItems.value = cartResponse.data.result;
     hasProducts.value = cartItems.value.length > 0
   } catch (error) {
     console.error('Lỗi khi tải giỏ hàng:', error)
@@ -170,18 +182,44 @@ const handleFetchCart = async () => {
 onMounted(() => {
   handleFetchCart()
 })
+const handlePlaceOrder = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) return router.push("/login");
 
-const form = ref({
-  fullName: '',
-  phone: '',
-  email: '',
-  deliveryMethod: '',
-  address: '',
-  note: '',
-  invoiceEmail: false,
-})
+  try {
+    // Gán danh sách sản phẩm đã chọn vào form
+    const orderData = {
+      description: form.value.description,
+      address: form.value.address,
+      email: form.value.email,
+      phoneNumber: form.value.phoneNumber,
+      items: cartItems.value
+        .filter(p => p.selected)
+        .map(p => ({
+          productAttId: p.attId,
+          cartItemId: p.id,
+          quantity: Number(p.quantity)
+        })),
+      };
 
-const errors = ref({})
+    console.log("Order data gửi lên:", JSON.stringify(orderData, null, 2));
+    const response = await axios.post(
+      'http://localhost:8080/bej3/cart/place-order',
+      orderData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    alert('Đặt hàng thành công!');
+    cartItems.value = cartItems.value.filter(p => !p.selected);
+    hasProducts.value = cartItems.value.length > 0;
+  } catch (error) {
+    console.error('Lỗi khi đặt hàng:', error);
+    alert('Không thể đặt hàng!');
+  }
+};
 
 const formatPrice = (v) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v)

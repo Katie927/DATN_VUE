@@ -42,7 +42,7 @@
               <td class="order-stt">{{ index + 1 }}</td>
               <td>
                 <span :class="`badge badge-${order.type}`">
-                  {{ order.type === 'buy' ? 'Mua bán' : 'Sửa chữa' }}
+                  {{ order.type === 0 ? 'Mua bán' : 'Sửa chữa' }}
                 </span>
               </td>
               <td class="customer-name">{{ order.userName }}</td>
