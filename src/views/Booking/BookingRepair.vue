@@ -40,12 +40,12 @@
             <div class="form-group">
               <label class="label">Số Điện Thoại *</label>
               <input
-                v-model="form.phone"
+                v-model="form.phoneNumber"
                 type="tel"
                 placeholder="Nhập số điện thoại (10 chữ số)"
                 class="input"
               />
-              <p v-if="errors.phone" class="error-text">{{ errors.phone }}</p>
+              <p v-if="errors.phoneNumber" class="error-text">{{ errors.phoneNumber }}</p>
             </div>
 
             <!-- Email -->
@@ -101,7 +101,7 @@
 
             <div class="review-item">
               <p class="review-label">Số Điện Thoại</p>
-              <p class="review-value">{{ form.phone }}</p>
+              <p class="review-value">{{ form.phoneNumber }}</p>
             </div>
 
             <div class="review-item">
@@ -123,7 +123,7 @@
           <!-- Action Buttons -->
           <div class="button-group">
             <button @click="goBack" class="button button-secondary">← Quay Lại</button>
-            <button @click="bookAppointment" class="button button-primary">Đặt Lịch Ngay</button>
+            <button @click="handlePlaceOrder" class="button button-primary">Đặt Lịch Ngay</button>
           </div>
         </div>
 
@@ -150,6 +150,7 @@
 </template>
 
 <script setup>
+import axios from 'axios'
 import { ref } from 'vue'
 
 const currentStep = ref(1)
@@ -157,7 +158,7 @@ const confirmationCode = ref('')
 
 const form = ref({
   fullName: '',
-  phone: '',
+  phoneNumber: '',
   email: '',
   phoneModel: '',
   errorDescription: '',
@@ -165,7 +166,7 @@ const form = ref({
 
 const errors = ref({
   fullName: '',
-  phone: '',
+  phoneNumber: '',
   email: '',
   phoneModel: '',
   errorDescription: '',
@@ -181,22 +182,12 @@ const validateFullName = (name) => {
   return ''
 }
 
-const validatePhone = (phone) => {
-  if (!phone || phone.trim() === '') {
+const validatePhone = (phoneNumber) => {
+  if (!phoneNumber || phoneNumber.trim() === '') {
     return 'Vui lòng nhập số điện thoại'
   }
-  if (!/^[0-9]{10}$/.test(phone.replace(/\s/g, ''))) {
+  if (!/^[0-9]{10}$/.test(phoneNumber.replace(/\s/g, ''))) {
     return 'Số điện thoại phải gồm 10 chữ số'
-  }
-  return ''
-}
-
-const validateEmail = (email) => {
-  if (!email || email.trim() === '') {
-    return 'Vui lòng nhập email'
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return 'Email không hợp lệ'
   }
   return ''
 }
@@ -224,8 +215,8 @@ const validateErrorDescription = (desc) => {
 const validateAndProceed = () => {
   errors.value = {
     fullName: validateFullName(form.value.fullName),
-    phone: validatePhone(form.value.phone),
-    email: validateEmail(form.value.email),
+    phoneNumber: validatePhone(form.value.phoneNumber),
+    // email: validateEmail(form.value.email),
     phoneModel: validatePhoneModel(form.value.phoneModel),
     errorDescription: validateErrorDescription(form.value.errorDescription),
   }
@@ -246,17 +237,50 @@ const bookAppointment = () => {
   currentStep.value = 3
 }
 
+const handlePlaceOrder = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) return router.push("/login");
+
+  try {
+    // Gán danh sách sản phẩm đã chọn vào form
+    const orderData = {
+      type: 1,
+      description: form.value.phoneModel + ' | ' + form.value.errorDescription,
+      address: form.value.address,
+      email: form.value.email,
+      phoneNumber: form.value.phoneNumber,
+      items: []
+    };
+
+    console.log("Order data gửi lên:", JSON.stringify(orderData, null, 2));
+    const response = await axios.post(
+      'http://localhost:8080/bej3/cart/place-order',
+      orderData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    bookAppointment();
+    alert('Đặt lịch thành công!');
+  } catch (error) {
+    console.error('Lỗi khi đặt hàng:', error);
+    alert('Không thể đặt hàng!');
+  }
+};
+
 const resetForm = () => {
   form.value = {
     fullName: '',
-    phone: '',
+    phoneNumber: '',
     email: '',
     phoneModel: '',
     errorDescription: '',
   }
   errors.value = {
     fullName: '',
-    phone: '',
+    phoneNumber: '',
     email: '',
     phoneModel: '',
     errorDescription: '',

@@ -189,6 +189,7 @@ const handlePlaceOrder = async () => {
   try {
     // Gán danh sách sản phẩm đã chọn vào form
     const orderData = {
+      type: 0,
       description: form.value.description,
       address: form.value.address,
       email: form.value.email,
