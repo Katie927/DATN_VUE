@@ -1,9 +1,18 @@
 <template>
   <div class="dashboard-container">
-    <!-- Main Content -->
     <main class="dashboard-main">
       <div class="header-custom">
-        <h1>Thống kê bán hàng & dịch vụ sửa chữa</h1>
+        <div class="header-top header-top--right">
+          <h1>Thống kê bán hàng & dịch vụ sửa chữa</h1>
+          <div class="month-selector">
+            <label for="month-select">Chọn tháng:</label>
+            <select id="month-select" v-model="selectedMonth" class="month-select">
+              <option v-for="month in availableMonths" :key="month.value" :value="month.value">
+                {{ month.label }}
+              </option>
+            </select>
+          </div>
+        </div>
         <span class="date-display">{{ currentDate }}</span>
       </div>
 
@@ -13,8 +22,10 @@
           <div class="stat-icon">💰</div>
           <div class="stat-content">
             <p class="stat-label">Doanh Thu</p>
-            <h2 class="stat-value">{{ formatCurrency(revenue) }}</h2>
-            <p class="stat-change increase">+12% so với tuần trước</p>
+            <h2 class="stat-value">{{ formatCurrency(currentMonthData.revenue) }}</h2>
+            <p class="stat-change increase">
+              {{ currentMonthData.revenueChange }}% so với tháng trước
+            </p>
           </div>
         </div>
 
@@ -22,8 +33,8 @@
           <div class="stat-icon">📦</div>
           <div class="stat-content">
             <p class="stat-label">Đơn Hàng</p>
-            <h2 class="stat-value">{{ totalOrders }}</h2>
-            <p class="stat-change">{{ pendingOrders }} đơn chờ xử lý</p>
+            <h2 class="stat-value">{{ currentMonthData.totalOrders }}</h2>
+            <p class="stat-change">{{ currentMonthData.pendingOrders }} đơn chờ xử lý</p>
           </div>
         </div>
 
@@ -31,8 +42,8 @@
           <div class="stat-icon">🔧</div>
           <div class="stat-content">
             <p class="stat-label">Sửa Chữa</p>
-            <h2 class="stat-value">{{ repairServices }}</h2>
-            <p class="stat-change">{{ completedRepairs }} hoàn thành</p>
+            <h2 class="stat-value">{{ currentMonthData.repairServices }}</h2>
+            <p class="stat-change">{{ currentMonthData.completedRepairs }} hoàn thành</p>
           </div>
         </div>
 
@@ -40,8 +51,8 @@
           <div class="stat-icon">👥</div>
           <div class="stat-content">
             <p class="stat-label">Khách Hàng Mới</p>
-            <h2 class="stat-value">{{ newCustomers }}</h2>
-            <p class="stat-change increase">+8% tăng mới</p>
+            <h2 class="stat-value">{{ currentMonthData.newCustomers }}</h2>
+            <p class="stat-change increase">{{ currentMonthData.customerChange }}% tăng mới</p>
           </div>
         </div>
       </section>
@@ -49,10 +60,14 @@
       <!-- Charts Section -->
       <section class="charts-section">
         <div class="chart-card">
-          <h3 class="chart-title">Doanh Thu 7 Ngày Gần Đây</h3>
+          <h3 class="chart-title">Doanh Thu Theo Tuần</h3>
           <div class="simple-chart">
             <div class="chart-bars">
-              <div class="bar-wrapper" v-for="(bar, index) in chartData" :key="index">
+              <div
+                class="bar-wrapper"
+                v-for="(bar, index) in currentMonthData.chartData"
+                :key="index"
+              >
                 <div class="bar" :style="{ height: bar.height + '%' }"></div>
                 <span class="bar-label">{{ bar.day }}</span>
               </div>
@@ -63,24 +78,20 @@
         <div class="chart-card">
           <h3 class="chart-title">Bán Hàng vs Sửa Chữa</h3>
           <div class="pie-chart-wrapper">
-            <div class="pie">
-              <div
-                class="pie-segment sales"
-                style="clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%)"
-              ></div>
-              <div
-                class="pie-segment repair"
-                style="clip-path: polygon(50% 50%, 0% 100%, 50% 100%, 100% 100%, 100% 50%, 50% 0%)"
-              ></div>
-            </div>
+            <div
+              class="pie"
+              :style="{
+                background: `conic-gradient(${currentMonthData.salesPercent}deg #10b981 0deg ${currentMonthData.salesPercent}deg, #f59e0b ${currentMonthData.salesPercent}deg 360deg)`,
+              }"
+            ></div>
             <div class="pie-legend">
               <div class="legend-item">
                 <span class="legend-color sales"></span>
-                <span>Bán hàng: 65%</span>
+                <span>Bán hàng: {{ currentMonthData.salesPercent }}%</span>
               </div>
               <div class="legend-item">
                 <span class="legend-color repair"></span>
-                <span>Sửa chữa: 35%</span>
+                <span>Sửa chữa: {{ 100 - currentMonthData.salesPercent }}%</span>
               </div>
             </div>
           </div>
@@ -92,7 +103,11 @@
         <div class="products-container">
           <h3 class="section-title">Sản Phẩm Bán Chạy Nhất</h3>
           <div class="products-list">
-            <div class="product-item" v-for="(product, index) in topProducts" :key="index">
+            <div
+              class="product-item"
+              v-for="(product, index) in currentMonthData.topProducts"
+              :key="index"
+            >
               <div class="product-info">
                 <span class="product-name">{{ product.name }}</span>
                 <span class="product-qty">{{ product.quantity }} bán</span>
@@ -105,7 +120,11 @@
         <div class="services-container">
           <h3 class="section-title">Dịch Vụ Sửa Chữa</h3>
           <div class="services-list">
-            <div class="service-item" v-for="(service, index) in repairServices" :key="index">
+            <div
+              class="service-item"
+              v-for="(service, index) in currentMonthData.repairList"
+              :key="index"
+            >
               <div class="service-info">
                 <span class="service-name">{{ service.name }}</span>
                 <span class="service-count">{{ service.count }} lần</span>
@@ -132,7 +151,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(transaction, index) in transactions" :key="index">
+              <tr v-for="(transaction, index) in currentMonthData.transactions" :key="index">
                 <td class="transaction-id">{{ transaction.id }}</td>
                 <td>{{ transaction.customer }}</td>
                 <td>
@@ -159,13 +178,226 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-// Data
-const revenue = ref(45250)
-const totalOrders = ref(156)
-const pendingOrders = ref(12)
-const repairServices = ref(89)
-const completedRepairs = ref(74)
-const newCustomers = ref(24)
+const selectedMonth = ref('11-2024')
+
+const availableMonths = [
+  { value: '09-2024', label: 'Tháng 9 - 2024' },
+  { value: '10-2024', label: 'Tháng 10 - 2024' },
+  { value: '11-2024', label: 'Tháng 11 - 2024' },
+]
+
+const monthsData = {
+  '09-2024': {
+    revenue: 38500000,
+    totalOrders: 128,
+    pendingOrders: 8,
+    repairServices: 65,
+    completedRepairs: 58,
+    newCustomers: 18,
+    revenueChange: 5,
+    customerChange: 3,
+    salesPercent: 60,
+    chartData: [
+      { day: 'T2', height: 35 },
+      { day: 'T3', height: 48 },
+      { day: 'T4', height: 42 },
+      { day: 'T5', height: 65 },
+      { day: 'T6', height: 72 },
+      { day: 'T7', height: 58 },
+      { day: 'CN', height: 78 },
+    ],
+    topProducts: [
+      { name: 'iPhone 15 Pro Max', quantity: 32, price: 35000000 },
+      { name: 'Samsung Galaxy S24', quantity: 28, price: 18000000 },
+      { name: 'Xiaomi 14 Ultra', quantity: 25, price: 12000000 },
+      { name: 'Google Pixel 8', quantity: 20, price: 16000000 },
+    ],
+    repairList: [
+      { name: 'Thay pin iPhone', count: 18, price: 500000 },
+      { name: 'Thay màn hình Samsung', count: 15, price: 1200000 },
+      { name: 'Sửa chữa camera', count: 12, price: 800000 },
+      { name: 'Thay SIM slot', count: 20, price: 300000 },
+    ],
+    transactions: [
+      {
+        id: '#TXN001',
+        customer: 'Nguyễn Văn A',
+        type: 'sale',
+        amount: 35000000,
+        status: 'completed',
+        statusText: 'Thành công',
+        date: '2024-09-15',
+      },
+      {
+        id: '#TXN002',
+        customer: 'Trần Thị B',
+        type: 'repair',
+        amount: 1500000,
+        status: 'completed',
+        statusText: 'Thành công',
+        date: '2024-09-14',
+      },
+      {
+        id: '#TXN003',
+        customer: 'Phạm Quốc C',
+        type: 'sale',
+        amount: 18000000,
+        status: 'completed',
+        statusText: 'Thành công',
+        date: '2024-09-13',
+      },
+    ],
+  },
+  '10-2024': {
+    revenue: 42100000,
+    totalOrders: 145,
+    pendingOrders: 10,
+    repairServices: 78,
+    completedRepairs: 69,
+    newCustomers: 21,
+    revenueChange: 9,
+    customerChange: 6,
+    salesPercent: 62,
+    chartData: [
+      { day: 'T2', height: 40 },
+      { day: 'T3', height: 55 },
+      { day: 'T4', height: 48 },
+      { day: 'T5', height: 72 },
+      { day: 'T6', height: 82 },
+      { day: 'T7', height: 65 },
+      { day: 'CN', height: 88 },
+    ],
+    topProducts: [
+      { name: 'iPhone 15 Pro Max', quantity: 38, price: 35000000 },
+      { name: 'Samsung Galaxy S24', quantity: 33, price: 18000000 },
+      { name: 'Xiaomi 14 Ultra', quantity: 30, price: 12000000 },
+      { name: 'Google Pixel 8', quantity: 25, price: 16000000 },
+    ],
+    repairList: [
+      { name: 'Thay pin iPhone', count: 22, price: 500000 },
+      { name: 'Thay màn hình Samsung', count: 18, price: 1200000 },
+      { name: 'Sửa chữa camera', count: 15, price: 800000 },
+      { name: 'Thay SIM slot', count: 23, price: 300000 },
+    ],
+    transactions: [
+      {
+        id: '#TXN101',
+        customer: 'Lê Minh D',
+        type: 'sale',
+        amount: 35000000,
+        status: 'completed',
+        statusText: 'Thành công',
+        date: '2024-10-20',
+      },
+      {
+        id: '#TXN102',
+        customer: 'Võ Thanh E',
+        type: 'repair',
+        amount: 2000000,
+        status: 'completed',
+        statusText: 'Thành công',
+        date: '2024-10-19',
+      },
+      {
+        id: '#TXN103',
+        customer: 'Hoàng Anh F',
+        type: 'sale',
+        amount: 18000000,
+        status: 'pending',
+        statusText: 'Chờ xử lý',
+        date: '2024-10-18',
+      },
+    ],
+  },
+  '11-2024': {
+    revenue: 45250000,
+    totalOrders: 156,
+    pendingOrders: 12,
+    repairServices: 89,
+    completedRepairs: 74,
+    newCustomers: 24,
+    revenueChange: 12,
+    customerChange: 8,
+    salesPercent: 65,
+    chartData: [
+      { day: 'T2', height: 45 },
+      { day: 'T3', height: 62 },
+      { day: 'T4', height: 55 },
+      { day: 'T5', height: 78 },
+      { day: 'T6', height: 88 },
+      { day: 'T7', height: 72 },
+      { day: 'CN', height: 95 },
+    ],
+    topProducts: [
+      { name: 'iPhone 15 Pro Max', quantity: 42, price: 35000000 },
+      { name: 'Samsung Galaxy S24', quantity: 38, price: 18000000 },
+      { name: 'Xiaomi 14 Ultra', quantity: 35, price: 12000000 },
+      { name: 'Google Pixel 8', quantity: 28, price: 16000000 },
+    ],
+    repairList: [
+      { name: 'Thay pin iPhone', count: 28, price: 500000 },
+      { name: 'Thay màn hình Samsung', count: 22, price: 1200000 },
+      { name: 'Sửa chữa camera', count: 18, price: 800000 },
+      { name: 'Thay SIM slot', count: 21, price: 300000 },
+    ],
+    transactions: [
+      {
+        id: '#TXN201',
+        customer: 'Nguyễn Văn A',
+        type: 'sale',
+        amount: 35000000,
+        status: 'completed',
+        statusText: 'Thành công',
+        date: '2024-11-15',
+      },
+      {
+        id: '#TXN202',
+        customer: 'Trần Thị B',
+        type: 'repair',
+        amount: 1500000,
+        status: 'completed',
+        statusText: 'Thành công',
+        date: '2024-11-15',
+      },
+      {
+        id: '#TXN203',
+        customer: 'Phạm Quốc C',
+        type: 'sale',
+        amount: 18000000,
+        status: 'pending',
+        statusText: 'Chờ xử lý',
+        date: '2024-11-15',
+      },
+      {
+        id: '#TXN204',
+        customer: 'Lê Minh D',
+        type: 'repair',
+        amount: 800000,
+        status: 'completed',
+        statusText: 'Thành công',
+        date: '2024-11-14',
+      },
+      {
+        id: '#TXN205',
+        customer: 'Võ Thanh E',
+        type: 'sale',
+        amount: 12000000,
+        status: 'processing',
+        statusText: 'Đang xử lý',
+        date: '2024-11-14',
+      },
+      {
+        id: '#TXN206',
+        customer: 'Hoàng Anh F',
+        type: 'repair',
+        amount: 2000000,
+        status: 'completed',
+        statusText: 'Thành công',
+        date: '2024-11-13',
+      },
+    ],
+  },
+}
 
 const currentDate = computed(() => {
   const today = new Date()
@@ -177,79 +409,9 @@ const currentDate = computed(() => {
   })
 })
 
-const chartData = [
-  { day: 'T2', height: 45 },
-  { day: 'T3', height: 62 },
-  { day: 'T4', height: 55 },
-  { day: 'T5', height: 78 },
-  { day: 'T6', height: 88 },
-  { day: 'T7', height: 72 },
-  { day: 'CN', height: 95 },
-]
-
-const topProducts = [
-  { name: 'iPhone 15 Pro Max', quantity: 42, price: 35000000 },
-  { name: 'Samsung Galaxy S24', quantity: 38, price: 18000000 },
-  { name: 'Xiaomi 14 Ultra', quantity: 35, price: 12000000 },
-  { name: 'Google Pixel 8', quantity: 28, price: 16000000 },
-]
-
-const transactions = [
-  {
-    id: '#TXN001',
-    customer: 'Nguyễn Văn A',
-    type: 'sale',
-    amount: 35000000,
-    status: 'completed',
-    statusText: 'Thành công',
-    date: '2024-11-15',
-  },
-  {
-    id: '#TXN002',
-    customer: 'Trần Thị B',
-    type: 'repair',
-    amount: 1500000,
-    status: 'completed',
-    statusText: 'Thành công',
-    date: '2024-11-15',
-  },
-  {
-    id: '#TXN003',
-    customer: 'Phạm Quốc C',
-    type: 'sale',
-    amount: 18000000,
-    status: 'pending',
-    statusText: 'Chờ xử lý',
-    date: '2024-11-15',
-  },
-  {
-    id: '#TXN004',
-    customer: 'Lê Minh D',
-    type: 'repair',
-    amount: 800000,
-    status: 'completed',
-    statusText: 'Thành công',
-    date: '2024-11-14',
-  },
-  {
-    id: '#TXN005',
-    customer: 'Võ Thanh E',
-    type: 'sale',
-    amount: 12000000,
-    status: 'processing',
-    statusText: 'Đang xử lý',
-    date: '2024-11-14',
-  },
-  {
-    id: '#TXN006',
-    customer: 'Hoàng Anh F',
-    type: 'repair',
-    amount: 2000000,
-    status: 'completed',
-    statusText: 'Thành công',
-    date: '2024-11-13',
-  },
-]
+const currentMonthData = computed(() => {
+  return monthsData[selectedMonth.value]
+})
 
 // Methods
 const formatCurrency = (value) => {
@@ -283,24 +445,37 @@ body {
 }
 
 /* ===== HEADER ===== */
-.dashboard-header {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: white;
-  padding: 2.5rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
-  gap: 2rem;
-  flex-wrap: wrap;
+.header-custom {
+  max-width: 100%;
+  margin-top: -20px;
+  margin-left: -10px;
+  padding: 1rem;
+  color: #009981;
 }
 
-.header-title {
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.header-top--right {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  flex: 1;
+  align-items: center;
+}
+
+.header-custom h1 {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
   letter-spacing: -0.5px;
   line-height: 1.2;
+  margin: 0;
 }
 
 .date-display {
@@ -310,13 +485,46 @@ body {
   white-space: nowrap;
 }
 
-.header-custom {
-  max-width: 100%;
-  margin-top: -20px;
-  margin-left: -10px;
-  padding: 1rem;
-  color: #009981;
+/* Month selector styling */
+.month-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #009981;
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  backdrop-filter: blur(10px);
+  margin-right: 0;
 }
+
+.month-selector label {
+  font-size: 0.95rem;
+  font-weight: 00;
+  color: white;
+  white-space: nowrap;
+}
+
+.month-select {
+  margin-left: auto;
+  min-width: 180px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.month-select:hover {
+  border-color: #3b82f6;
+}
+
+.month-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
 /* ===== MAIN CONTENT ===== */
 .dashboard-main {
   padding: 2.5rem 2rem;
@@ -326,12 +534,10 @@ body {
 
 /* ===== STATS SECTION ===== */
 .stats-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 3rem;
-}
-
-.stats-section::before {
-  content: '';
-  display: none;
 }
 
 .stat-card {
@@ -350,12 +556,6 @@ body {
   transform: translateY(-6px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
   border-color: rgba(59, 130, 246, 0.2);
-}
-
-.stats-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
 }
 
 .stat-icon {
@@ -486,7 +686,6 @@ body {
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: conic-gradient(#10b981 0deg 234deg, #f59e0b 234deg 360deg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
 }
@@ -747,23 +946,25 @@ body {
 }
 
 @media (max-width: 768px) {
-  .dashboard-header {
+  .header-custom {
     flex-direction: column;
     text-align: center;
     padding: 2rem;
   }
 
-  .header-title {
+  .header-top {
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .header-custom h1 {
     font-size: 1.5rem;
   }
 
-  .header-subtitle {
-    font-size: 0.95rem;
-  }
-
-  .header-stats {
-    justify-content: center;
+  .month-selector {
     width: 100%;
+    justify-content: center;
   }
 
   .dashboard-main {
@@ -839,16 +1040,26 @@ body {
 }
 
 @media (max-width: 480px) {
-  .dashboard-header {
+  .header-custom {
     padding: 1.5rem;
   }
 
-  .header-title {
+  .header-custom h1 {
     font-size: 1.25rem;
   }
 
-  .header-subtitle {
-    font-size: 0.85rem;
+  .month-selector {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .month-selector label {
+    width: 100%;
+    text-align: left;
+  }
+
+  .month-select {
+    width: 100%;
   }
 
   .dashboard-main {
