@@ -4,14 +4,11 @@
       <div class="header-custom">
         <div class="header-top header-top--right">
           <h1>Thống kê bán hàng & dịch vụ sửa chữa</h1>
-          <div class="month-selector">
-            <label for="month-select">Chọn tháng:</label>
-            <select id="month-select" v-model="selectedMonth" class="month-select">
-              <option v-for="month in availableMonths" :key="month.value" :value="month.value">
-                {{ month.label }}
-              </option>
-            </select>
-          </div>
+          <select id="month-select" v-model="selectedMonth" class="month-select">
+            <option v-for="month in availableMonths" :key="month.value" :value="month.value">
+              {{ month.label }}
+            </option>
+          </select>
         </div>
         <span class="date-display">{{ currentDate }}</span>
       </div>
@@ -508,11 +505,10 @@ body {
   margin-left: auto;
   min-width: 180px;
   background: #ffffff;
-  border: 1px solid #d1d5db;
+  border: 2px solid #009981;
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 0.95rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
 }
 
