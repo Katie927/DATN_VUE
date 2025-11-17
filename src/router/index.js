@@ -64,6 +64,7 @@ const adminRoutes = [
       { path: 'product/order', component: Order },
       { path: 'employee/arange', component: Arange },
       { path: 'statistics', component: Statistics },
+      { path: 'manager/images', component: ManagerSlideImage },
     ],
   },
 ]
