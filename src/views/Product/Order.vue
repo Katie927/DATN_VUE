@@ -232,17 +232,17 @@
               <div class="form-row" style="grid-template-columns: 1fr 1fr;">
                 <div class="form-group">
                   <label>Mô tả của khách</label>
-                  <textarea type="textarea" class="form-input" v-model="formData.descripton" />
+                  <textarea type="textarea" class="form-input" v-model="formData.description" />
                 </div>
                 <div class="form-group">
                   <label>Ghi chú</label>
-                  <textarea type="textarea" class="form-input" v-model="formData.descripton" />
+                  <textarea type="textarea" class="form-input" v-model="formData.description" />
                 </div>
               </div>
               
               <div class="form-group">
-                <label>Mô tả/ Ghi chú</label>
-                <textarea type="textarea" class="form-input" v-model="formData.descripton" />
+                <label>Cập nhật Mô tả/ Ghi chú</label>
+                <textarea type="textarea" class="form-input" v-model="formData.newDescription" />
               </div>
 
               <!-- Items section read-only -->
@@ -289,7 +289,7 @@
               {{ isEditMode ? 'Đóng' : 'Hủy' }}
             </button>
             <button v-if="!isEditMode" class="btn-save" @click="saveOrder">Lưu đơn hàng</button>
-            <button v-else class="btn-save" @click="saveOrder">Cập nhật trạng thái</button>
+            <button v-else class="btn-save" @click="hanldeUpdateOrderStatus(editingOrderId)">Cập nhật trạng thái</button>
           </div>
         </div>
       </div>
@@ -387,6 +387,45 @@ const openOrderDetail = async (orderId) => {
 
   showModal.value = true
 }
+//======================================================================================================================
+const hanldeUpdateOrderStatus = async (orderId) => {
+  console.log("orderId:", orderId);
+  const token = localStorage.getItem("token");
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+
+  try {
+    await axios.put(
+      `http://localhost:8080/bej3/manage/orders/update-order-status/${orderId}`,
+      {
+        status: formData.value.status,
+        description: formData.value.newDescription
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    // const order = orders.value.find((o) => o.id === orderId);
+    // if (order) {
+    //   order.status = newStatus;
+    //   order.description = newDescription;
+    // }
+
+  } catch (error) {
+    console.error("Lỗi", error);
+    alert("Failed to update order status!!!!");
+
+    if (error.response && (error.response.status === 401 || error.response.status === 500)) {
+      localStorage.removeItem("token");
+      router.push("/login");
+    }
+  }
+};
 //======================================================================================================================
 
 

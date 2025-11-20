@@ -21,6 +21,7 @@ import UserCart from '@/views/Product/user-cart.vue'
 import Order from '@/views/Product/Order.vue'
 import Arange from '@/views/employee/Arange.vue'
 import Statistics from '@/views/manage-view/statistics.vue'
+import ManagerSlideImage from '@/views/manage-view/manager-slide-image.vue'
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------

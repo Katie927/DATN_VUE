@@ -17,8 +17,8 @@
       <div class="login-form" v-if="isLoginForm">
         <form action="" class="form-create-user" @submit.prevent="handleLogin">
           <div class="login-row login-row-aa">
-            <label for="">Email</label>
-            <input type="text" name="phoneNumber" id="phoneNumber" placeholder="Nhập email" required
+            <label for="">Số điện thoại</label>
+            <input type="text" name="phoneNumber" id="phoneNumber" placeholder="Nhập số điện thoại" required
                   v-model="loginData.phoneNumber">
           </div>
           <div class="login-row">
@@ -42,8 +42,8 @@
       <div class="login-form" v-else>
         <form class="form-create-user" @submit.prevent="handleSignUp">
           <div class="login-row">
-            <label>Email</label>
-            <input type="text" placeholder="Nhập email" required v-model="signUpData.email">
+            <label>Số điện thoại</label>
+            <input type="text" placeholder="Nhập số điện thoại" required v-model="signUpData.email">
             <span v-if="errors.email" class="error">{{ errors.email }}</span>
           </div>
           <div class="login-row">
@@ -182,5 +182,6 @@
   margin-top: 10px;
   font-weight: bold;
 }
+
 </style>
 
