@@ -231,18 +231,19 @@
 
               <div class="form-row" style="grid-template-columns: 1fr 1fr;">
                 <div class="form-group">
-                  <label>Mô tả của khách</label>
-                  <textarea type="textarea" class="form-input" v-model="formData.description" />
+                  <label>Cập nhật</label>
+                  <textarea type="textarea" class="form-input" v-model="formData.newDescription" />
                 </div>
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <label>Ghi chú</label>
                   <textarea type="textarea" class="form-input" v-model="formData.description" />
-                </div>
+                </div> -->
               </div>
               
               <div class="form-group">
-                <label>Cập nhật Mô tả/ Ghi chú</label>
-                <textarea type="textarea" class="form-input" v-model="formData.newDescription" />
+                <label>Ghi chú</label>
+                <textarea type="textarea" class="form-input" ref="noteField"
+                    @input="autoResize" v-model="formData.description" />
               </div>
 
               <!-- Items section read-only -->
@@ -301,6 +302,7 @@
 import axios from 'axios'
 import router from '@/router'
 import { ref, computed, watch, onMounted } from 'vue'
+import { nextTick } from 'vue'
 
 // State
 const showModal = ref(false)
@@ -409,13 +411,9 @@ const hanldeUpdateOrderStatus = async (orderId) => {
         },
       }
     );
-
-    // const order = orders.value.find((o) => o.id === orderId);
-    // if (order) {
-    //   order.status = newStatus;
-    //   order.description = newDescription;
-    // }
-
+    alert("Cập nhật trạng thái đơn hàng thành công!!");
+    openOrderDetail(orderId);
+      
   } catch (error) {
     console.error("Lỗi", error);
     alert("Failed to update order status!!!!");
@@ -508,6 +506,22 @@ const updateOrderStatus = (orderId, newStatus) => {
     order.status = newStatus
   }
 }
+
+
+const noteField = ref(null);
+const autoResize = () => {
+  const el = noteField.value;
+  if (!el) return;
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+};
+watch(
+  () => formData.value.description,
+  async () => {
+    await nextTick();     // đợi DOM update xong
+    autoResize();         // resize theo data mới
+  }
+);
 </script>
 
 <style scoped>

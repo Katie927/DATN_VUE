@@ -43,7 +43,17 @@
         <form class="form-create-user" @submit.prevent="handleSignUp">
           <div class="login-row">
             <label>Số điện thoại</label>
-            <input type="text" placeholder="Nhập số điện thoại" required v-model="signUpData.email">
+            <input type="text" placeholder="Nhập số điện thoại" required v-model="signUpData.phoneNumber">
+            <span v-if="errors.email" class="error">{{ errors.email }}</span>
+          </div>
+          <div class="login-row">
+            <label>Email</label>
+            <input type="text" placeholder="Nhập email" required v-model="signUpData.email">
+            <span v-if="errors.email" class="error">{{ errors.email }}</span>
+          </div>
+          <div class="login-row">
+            <label>Họ tên</label>
+            <input type="text" placeholder="Họ tên" required v-model="signUpData.fullName">
             <span v-if="errors.email" class="error">{{ errors.email }}</span>
           </div>
           <div class="login-row">
@@ -105,7 +115,7 @@
         }
         
       } catch (error) {
-        
+        alert(errorMessage)
       }
     }
 
@@ -113,6 +123,8 @@
     const errors = ref({});
     const signUpData = ref({
       email: "",
+      phoneNumber: "",
+      fullName: "",
       password: "",
       retypePassword: "",
     });
@@ -146,6 +158,8 @@
         const response = await axios.post("http://localhost:8080/bej3/users/create", {
           email: signUpData.value.email,
           password: signUpData.value.password,
+          fullName: signUpData.value.fullName,
+          phoneNumber: signUpData.value.phoneNumber,
         });
 
         errorMessage.value = "Tạo người dùng thành công!";

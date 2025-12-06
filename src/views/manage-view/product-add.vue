@@ -871,7 +871,7 @@ const selectAttribute = (index) => {
 const categories = ref([]);
 const fetchCategories = async () => {
   const token = localStorage.getItem("token");
-  const res = await axios.get("http://localhost:8080/bej3/manage/category", {
+  const res = await axios.get("http://localhost:8080/bej3/admin/category", {
     headers: { Authorization: `Bearer ${token}` },
   });
   categories.value = res.data.result;
