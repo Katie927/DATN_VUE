@@ -120,7 +120,9 @@
           </div>
 
           <div class="form-actions">
-            <button type="submit" @click="handlePlaceOrder" class="btn-primary">Xác nhận & Đặt hàng</button>
+            <button type="submit" @click="handlePlaceOrder" class="btn-primary">
+              Xác nhận & Đặt hàng
+            </button>
           </div>
         </form>
       </div>
@@ -147,32 +149,30 @@ import axios from 'axios'
 const hasProducts = ref(true)
 const showConfirm = ref(false)
 
-const cartItems = ref([ ])
+const cartItems = ref([])
 const form = ref({
   fullName: '',
   phoneNumber: '',
   email: '',
   address: '',
   description: '',
-  items: [
-    
-  ],
+  items: [],
 })
-const errors = ref({ })
+const errors = ref({})
 const handleFetchCart = async () => {
-  const token = localStorage.getItem("token");
-  if (!token) return router.push("/login");
+  const token = localStorage.getItem('token')
+  if (!token) return router.push('/login')
   try {
     const [cartResponse, userDataRes] = await Promise.all([
       axios.get('http://localhost:8080/bej3/cart/view', {
-        headers: {  Authorization: `Bearer ${token}`, },
+        headers: { Authorization: `Bearer ${token}` },
       }),
       axios.get('http://localhost:8080/bej3/users/profile/my-info', {
-        headers: {  Authorization: `Bearer ${token}`, },
-      })
-    ]) 
-    form.value = userDataRes.data.result;
-    cartItems.value = cartResponse.data.result;
+        headers: { Authorization: `Bearer ${token}` },
+      }),
+    ])
+    form.value = userDataRes.data.result
+    cartItems.value = cartResponse.data.result
     hasProducts.value = cartItems.value.length > 0
   } catch (error) {
     console.error('Lỗi khi tải giỏ hàng:', error)
@@ -183,8 +183,15 @@ onMounted(() => {
   handleFetchCart()
 })
 const handlePlaceOrder = async () => {
-  const token = localStorage.getItem("token");
-  if (!token) return router.push("/login");
+  const token = localStorage.getItem('token')
+  if (!token) return router.push('/login')
+
+  const selectedItems = cartItems.value.filter((p) => p.selected)
+
+  if (selectedItems.length === 0) {
+    alert('Vui lòng chọn ít nhất một sản phẩm để đặt hàng.')
+    return
+  }
 
   try {
     // Gán danh sách sản phẩm đã chọn vào form
@@ -195,32 +202,28 @@ const handlePlaceOrder = async () => {
       email: form.value.email,
       phoneNumber: form.value.phoneNumber,
       items: cartItems.value
-        .filter(p => p.selected)
-        .map(p => ({
+        .filter((p) => p.selected)
+        .map((p) => ({
           productAttId: p.attId,
           cartItemId: p.id,
-          quantity: Number(p.quantity)
+          quantity: Number(p.quantity),
         })),
-      };
+    }
 
-    console.log("Order data gửi lên:", JSON.stringify(orderData, null, 2));
-    const response = await axios.post(
-      'http://localhost:8080/bej3/cart/place-order',
-      orderData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    alert('Đặt hàng thành công!');
-    cartItems.value = cartItems.value.filter(p => !p.selected);
-    hasProducts.value = cartItems.value.length > 0;
+    console.log('Order data gửi lên:', JSON.stringify(orderData, null, 2))
+    const response = await axios.post('http://localhost:8080/bej3/cart/place-order', orderData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    alert('Đặt hàng thành công!')
+    cartItems.value = cartItems.value.filter((p) => !p.selected)
+    hasProducts.value = cartItems.value.length > 0
   } catch (error) {
-    console.error('Lỗi khi đặt hàng:', error);
-    alert('Không thể đặt hàng!');
+    console.error('Lỗi khi đặt hàng:', error)
+    alert('Không thể đặt hàng!')
   }
-};
+}
 
 const formatPrice = (v) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v)
@@ -268,12 +271,11 @@ const removeProduct = (i) => {
 const mockAddProduct = () => (hasProducts.value = true)
 </script>
 
-
 //=============================== Styles ====================================
 <style scoped>
 .cart-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f9ff, #e0f2fe, #f8fafc);
+  background: #ffffff;
   padding: 2rem;
   font-family: 'Inter', sans-serif;
 }
