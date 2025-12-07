@@ -90,7 +90,16 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/vi'
+
+dayjs.extend(relativeTime)
+dayjs.locale('vi') // dùng tiếng Việt
+
+console.log('🔵 Notification component loaded!')
 
 const isOpen = ref(false)
 const activeTab = ref('unread')
@@ -100,60 +109,68 @@ const tabs = [
   { label: 'Tất cả', value: 'all' },
 ]
 
-const notifications = ref([
-  {
-    id: 1,
-    type: 'order',
-    title: 'Đơn hàng #12345 được xác nhận',
-    message: 'Đơn hàng của bạn đã được cửa hàng xác nhận',
-    isRead: false,
-    createdAt: new Date(Date.now() - 10 * 60000), // 10 phút trước
-  },
-  {
-    id: 2,
-    type: 'promo',
-    title: 'Khuyến mãi đặc biệt cho bạn',
-    message: 'Giảm 20% cho tất cả sản phẩm yêu thích của bạn',
-    isRead: false,
-    createdAt: new Date(Date.now() - 30 * 60000),
-  },
-  {
-    id: 3,
-    type: 'delivery',
-    title: 'Đơn hàng đang được giao',
-    message: 'Đơn hàng #12344 sẽ tới bạn trong 2 giờ',
-    isRead: false,
-    createdAt: new Date(Date.now() - 1 * 60 * 60000),
-  },
-  {
-    id: 4,
-    type: 'review',
-    title: 'Hãy đánh giá sản phẩm',
-    message: 'Cho chúng tôi biết bạn nghĩ gì về sản phẩm đã mua',
-    isRead: true,
-    createdAt: new Date(Date.now() - 2 * 60 * 60000),
-  },
-  {
-    id: 5,
-    type: 'order',
-    title: 'Đơn hàng #12343 đã giao thành công',
-    message: 'Cảm ơn bạn đã mua sắm',
-    isRead: true,
-    createdAt: new Date(Date.now() - 24 * 60 * 60000),
-  },
-])
+const notifications = ref([])
 
+/* 🟢 1. GỌI API LẤY THÔNG BÁO (THÊM LOG DEBUG) */
+const fetchNotifications = async () => {
+  const url = 'http://localhost:8080/bej3/api/notifications/my-history'
+
+  console.log('🚀 Bắt đầu gọi API:', url)
+
+  try {
+    const res = await axios.get('http://localhost:8080/bej3/api/notifications/my-history', {
+      withCredentials: true,
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    })
+
+    console.log('🟢 API trả về:', res.data)
+
+    const list = res.data.result || []
+
+    notifications.value = list.map((n) => ({
+      id: n.id,
+      type: n.type?.toLowerCase(),
+      title: n.title,
+      message: n.body,
+      isRead: n.isRead,
+      createdAt: new Date(n.createdAt),
+    }))
+
+    console.log('📦 Đã parse dữ liệu:', notifications.value)
+  } catch (error) {
+    console.error('🔴 Lỗi khi load thông báo:', error)
+
+    if (error.response) {
+      console.error('🔴 Response status:', error.response.status)
+      console.error('🔴 Response data:', error.response.data)
+    } else {
+      console.error('🔴 Không kết nối được tới server')
+    }
+  }
+}
+
+onMounted(() => {
+  console.log('⚡ onMounted() đã chạy!')
+  fetchNotifications()
+})
+
+/* 🟢 Computed */
 const unreadCount = computed(() => {
-  return notifications.value.filter((n) => !n.isRead).length
+  const c = notifications.value.filter((n) => !n.isRead).length
+  console.log('🔍 Số lượng chưa đọc:', c)
+  return c
 })
 
 const filteredNotifications = computed(() => {
-  if (activeTab.value === 'unread') {
-    return notifications.value.filter((n) => !n.isRead)
-  }
-  return notifications.value
+  console.log('🔍 Tab hiện tại:', activeTab.value)
+  return activeTab.value === 'unread'
+    ? notifications.value.filter((n) => !n.isRead)
+    : notifications.value
 })
 
+/* 🟢 Icon */
 const getIcon = (type) => {
   const icons = {
     order: '📦',
@@ -164,31 +181,22 @@ const getIcon = (type) => {
   return icons[type] || '📢'
 }
 
+/* 🟢 Format thời gian */
 const getTimeAgo = (date) => {
-  const now = new Date()
-  const diff = now - date
-  const minutes = Math.floor(diff / 60000)
-  const hours = Math.floor(diff / 3600000)
-  const days = Math.floor(diff / 86400000)
-
-  if (minutes < 1) return 'Vừa xong'
-  if (minutes < 60) return `${minutes}m trước`
-  if (hours < 24) return `${hours}h trước`
-  if (days < 7) return `${days}d trước`
-  return date.toLocaleDateString('vi-VN')
+  return dayjs(date).fromNow()
 }
 
+/* 🟢 Mark as read */
 const markAsRead = (id) => {
-  const notification = notifications.value.find((n) => n.id === id)
-  if (notification) {
-    notification.isRead = true
-  }
+  console.log('🖊 Mark as read:', id)
+  const n = notifications.value.find((x) => x.id === id)
+  if (n) n.isRead = true
 }
 
+/* 🟢 Mark all */
 const markAllAsRead = () => {
-  notifications.value.forEach((n) => {
-    n.isRead = true
-  })
+  console.log('🖊 Mark ALL as read')
+  notifications.value.forEach((n) => (n.isRead = true))
 }
 </script>
 
