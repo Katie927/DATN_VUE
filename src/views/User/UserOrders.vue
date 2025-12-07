@@ -22,7 +22,7 @@
       <!-- Filter -->
       <div class="filter-wrapper">
         <button
-          v-for="status in ['Tất cả', 'Đang xử lý', 'Đang giao', 'Hoàn thành']"
+          v-for="status in ['Tất cả', 'Chờ xác nhận', 'Đang xử lý', 'Đang giao', 'Hoàn thành']"
           :key="status"
           @click="filterStatus = status === 'Tất cả' ? null : status"
           :class="[
@@ -55,18 +55,22 @@
               </div>
 
               <div :class="['order-status', getStatusColor(order.status)]">
-                {{ {
-                  0: "Chờ xử lý",
-                  1: "Đang xử lí",
-                  2: "Hoàn thành",
-                  3: "Đã hủy"
-                }[order.status] || "Không xác định" }}
+                {{
+                  {
+                    0: 'Chờ xử lý',
+                    1: 'Đang xử lí',
+                    2: 'Hoàn thành',
+                    3: 'Đã hủy',
+                  }[order.status] || 'Không xác định'
+                }}
               </div>
             </div>
 
             <div class="order-items-box">
               <p v-for="(item, index) in order.orderItems" :key="index" class="order-item-name">
-                • {{ item.productName + " - " + item.color + " - " + item.productAttName }} (x{{ item.quantity }})
+                • {{ item.productName + ' - ' + item.color + ' - ' + item.productAttName }} (x{{
+                  item.quantity
+                }})
               </p>
             </div>
 
@@ -112,19 +116,24 @@
                 </p>
               </div>
               <div :class="['modal-status', getStatusColor(selectedOrder.type)]">
-                {{ {
-                  0: "Đơn mua",
-                  1: "Đơn sửa chữa"
-                }[selectedOrder.status] || "Không xác định" }}
+                {{
+                  {
+                    0: 'Đơn mua',
+                    1: 'Đơn sửa chữa',
+                  }[selectedOrder.status] || 'Không xác định'
+                }}
               </div>
 
               <div :class="['modal-status', getStatusColor(selectedOrder.status)]">
-                {{ {
-                  0: "Chờ xử lý",
-                  1: "Đang xử lí",
-                  2: "Hoàn thành",
-                  3: "Đã hủy"
-                }[selectedOrder.status] || "Không xác định" }}
+                {{
+                  {
+                    0: 'Chờ xử lý',
+                    1: 'Đang xử lý',
+                    2: 'Hoàn thành',
+                    3: 'Đã hủy',
+                    4: 'Chờ xác nhận',
+                  }[order.status] || 'Không xác định'
+                }}
               </div>
             </div>
 
@@ -147,11 +156,14 @@
                 <h4 class="info-title">Thông tin giao hàng</h4>
 
                 <div class="info-group">
-                  <p><strong>🚚 Dịch vụ:</strong> 
-                    {{ {
-                      0: "Mua bán",
-                      1: "Sửa chữa",
-                    }[selectedOrder.status] || "Không xác định" }}
+                  <p>
+                    <strong>🚚 Dịch vụ:</strong>
+                    {{
+                      {
+                        0: 'Mua bán',
+                        1: 'Sửa chữa',
+                      }[selectedOrder.status] || 'Không xác định'
+                    }}
                   </p>
                   <p><strong>📦 Dự kiến giao:</strong> {{ selectedOrder.updateAt }}</p>
                   <p><strong>📦 Mô tả:</strong> {{ selectedOrder.description }}</p>
@@ -166,7 +178,9 @@
               <div class="item-list">
                 <div v-for="(item, idx) in selectedOrder.orderItems" :key="idx" class="item-row">
                   <div class="item-left">
-                    <p class="item-name"> {{ item.productName + " - " + item.color + " - " + item.productAttName }}</p>
+                    <p class="item-name">
+                      {{ item.productName + ' - ' + item.color + ' - ' + item.productAttName }}
+                    </p>
                     <p class="item-qty">x{{ item.quantity }}</p>
                   </div>
 
@@ -200,6 +214,14 @@
             <!-- ACTIONS -->
             <div class="modal-actions">
               <button class="btn-primary">💬 Liên hệ hỗ trợ</button>
+
+              <button
+                v-if="selectedOrder.status === 4"
+                class="btn-primary"
+                @click="confirmOrder(selectedOrder)"
+              >
+                ✅ Xác nhận đơn
+              </button>
 
               <button class="btn-outline">🖨 In đơn hàng</button>
             </div>
@@ -265,8 +287,31 @@ const orders = ref([
     subtotal: 33490000,
     shipping: 0,
     total: 33490000,
-  }
+  },
 ])
+
+const confirmOrder = (order) => {
+  order.status = 1 // chuyển sang "Đang xử lý"
+
+  // Gọi backend nếu cần
+  // const token = localStorage.getItem('token')
+  // axios
+  //   .patch(
+  //     `http://localhost:8080/bej3/cart/confirm-order/${order.id}`,
+  //     {},
+  //     {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     },
+  //   )
+  //   .then(() => {
+  //     alert('Đơn hàng đã được xác nhận!')
+  //     selectedOrder.value = null
+  //   })
+  //   .catch((err) => {
+  //     console.error(err)
+  //     alert('Xác nhận thất bại!')
+  //   })
+}
 
 const selectedOrder = ref(null)
 const filterStatus = ref(null)
@@ -294,9 +339,11 @@ const formatPrice = (price) => {
 
 const getStatusColor = (status) => {
   const colors = {
-    '0': 'bg-yellow-100 text-yellow-800',
-    '1': 'bg-blue-100 text-blue-800',
-    '2': 'bg-green-100 text-green-800',
+    0: 'bg-yellow-100 text-yellow-800', // Chờ xử lý (hiện tại)
+    1: 'bg-blue-100 text-blue-800', // Đang xử lý
+    2: 'bg-green-100 text-green-800', // Hoàn thành
+    3: 'bg-red-100 text-red-800', // Đã hủy
+    4: 'bg-orange-100 text-orange-800', // Chờ xác nhận
   }
   return colors[status] || 'bg-slate-100 text-slate-800'
 }
@@ -312,32 +359,31 @@ import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const fetchOrders = async () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token')
   if (!token) {
-    router.push("/login");
-    return;
+    router.push('/login')
+    return
   }
-  
+
   try {
-    const response = await axios.get("http://localhost:8080/bej3/cart/my-order", {
+    const response = await axios.get('http://localhost:8080/bej3/cart/my-order', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
-    
-    orders.value = response.data.result;
+    })
+
+    orders.value = response.data.result
   } catch (error) {
-    console.error("Lỗi", error);
-    alert("Failed to fetch orders!!!!");
+    console.error('Lỗi', error)
+    alert('Failed to fetch orders!!!!')
 
     if (error.response && (error.response.status === 401 || error.response.status === 500)) {
-      localStorage.removeItem("token");
-      router.push("/login");
+      localStorage.removeItem('token')
+      router.push('/login')
     }
   }
-};
+}
 onMounted(fetchOrders)
-
 </script>
 
 <style scoped>
@@ -587,12 +633,15 @@ onMounted(fetchOrders)
   border-radius: 18px;
   overflow-y: auto;
   max-height: 92vh;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-  animation: modalPop .22s ease;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  animation: modalPop 0.22s ease;
 }
 
 @keyframes modalPop {
-  from { transform: scale(.94); opacity: 0; }
+  from {
+    transform: scale(0.94);
+    opacity: 0;
+  }
 }
 
 /* CLOSE BUTTON */
@@ -607,9 +656,11 @@ onMounted(fetchOrders)
   cursor: pointer;
   background: #f1f5f9;
   font-size: 20px;
-  transition: .2s;
+  transition: 0.2s;
 }
-.modal-close:hover { background: #e2e8f0; }
+.modal-close:hover {
+  background: #e2e8f0;
+}
 
 /* CONTENT */
 .modal-content {
@@ -741,7 +792,7 @@ onMounted(fetchOrders)
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: .2s;
+  transition: 0.2s;
 }
 .btn-primary:hover {
   background: #4338ca;
@@ -774,5 +825,4 @@ onMounted(fetchOrders)
   background: #dcfce7;
   color: #166534;
 }
-
 </style>

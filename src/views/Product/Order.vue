@@ -27,7 +27,7 @@
       <table class="orders-table">
         <thead>
           <tr>
-            <th style="width: 34px;">STT</th>
+            <th style="width: 34px">STT</th>
             <th>Loại đơn</th>
             <th>Khách hàng</th>
             <th>Địa chỉ</th>
@@ -38,7 +38,7 @@
         </thead>
         <tbody>
           <template v-for="(order, index) in orders" :key="order.id">
-            <tr  class="order-row">
+            <tr class="order-row">
               <td class="order-stt">{{ index + 1 }}</td>
               <td>
                 <span :class="`badge badge-${order.type}`">
@@ -69,7 +69,7 @@
                 <button class="btn-detail" @click="openOrderDetail(order.id)">Chi tiết</button>
               </td>
             </tr>
-          </template>          
+          </template>
         </tbody>
       </table>
     </div>
@@ -80,7 +80,7 @@
       <p>Không có đơn hàng nào</p>
     </div>
 
-    <!-- Modal Detail --> 
+    <!-- Modal Detail -->
     <transition name="modal-fade">
       <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
         <div class="modal-content">
@@ -225,11 +225,12 @@
                     <option value="1">Đang xử lý</option>
                     <option value="2">Hoàn thành</option>
                     <option value="3">Hủy</option>
+                    <option value="4">Chờ xác nhận</option>
                   </select>
                 </div>
               </div>
 
-              <div class="form-row" style="grid-template-columns: 1fr 1fr;">
+              <div class="form-row" style="grid-template-columns: 1fr 1fr">
                 <div class="form-group">
                   <label>Cập nhật</label>
                   <textarea type="textarea" class="form-input" v-model="formData.newDescription" />
@@ -239,11 +240,38 @@
                   <textarea type="textarea" class="form-input" v-model="formData.description" />
                 </div> -->
               </div>
-              
+
               <div class="form-group">
-                <label>Ghi chú</label>
-                <textarea type="textarea" class="form-input" ref="noteField"
-                    @input="autoResize" v-model="formData.description" />
+                <label>Lịch sử cập nhập</label>
+                <table class="notes-table">
+                  <thead>
+                    <tr>
+                      <th>Người thực hiện</th>
+                      <th>Nội dung</th>
+                      <th>Thời gian</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(note, index) in notes" :key="index">
+                      <td>{{ note.user }}</td>
+                      <td>{{ note.content }}</td>
+                      <td>{{ formatDateTime(note.createdAt) }}</td>
+                    </tr>
+                    <tr v-if="notes.length === 0">
+                      <td colspan="3" class="text-center">Chưa có ghi chú nào</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!-- Thêm ghi chú mới -->
+                <div class="add-note">
+                  <input
+                    v-model="newNoteContent"
+                    placeholder="Nhập ghi chú mới..."
+                    class="form-input"
+                  />
+                  <button class="btn-primary" @click="addNote">Thêm ghi chú</button>
+                </div>
               </div>
 
               <!-- Items section read-only -->
@@ -290,7 +318,9 @@
               {{ isEditMode ? 'Đóng' : 'Hủy' }}
             </button>
             <button v-if="!isEditMode" class="btn-save" @click="saveOrder">Lưu đơn hàng</button>
-            <button v-else class="btn-save" @click="hanldeUpdateOrderStatus(editingOrderId)">Cập nhật trạng thái</button>
+            <button v-else class="btn-save" @click="hanldeUpdateOrderStatus(editingOrderId)">
+              Cập nhật trạng thái
+            </button>
           </div>
         </div>
       </div>
@@ -311,57 +341,85 @@ const searchQuery = ref('')
 const filterType = ref('')
 const editingOrderId = ref(null)
 
+const notes = ref([]) // danh sách ghi chú
+const newNoteContent = ref('') // nội dung ghi chú mới
+
+const formatDateTime = (dateStr) => {
+  const date = new Date(dateStr)
+  return date.toLocaleString('vi-VN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+const addNote = () => {
+  if (!newNoteContent.value.trim()) return
+
+  notes.value.push({
+    user: 'Người thao tác hiện tại', // lấy tên user đăng nhập
+    content: newNoteContent.value,
+    createdAt: new Date().toISOString(),
+  })
+  newNoteContent.value = ''
+}
+
 // ============================================================================ FETCH ORDERS =========================
-const orders = ref([ ])
+const orders = ref([])
 const fetchOrders = async () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token')
   if (!token) {
-    router.push("/login");
-    return;
+    router.push('/login')
+    return
   }
-  
+
   try {
-    const response = await axios.get("http://localhost:8080/bej3/manage/orders/get-all", {
+    const response = await axios.get('http://localhost:8080/bej3/manage/orders/get-all', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
-    
-    orders.value = response.data.result;
+    })
+
+    orders.value = response.data.result
   } catch (error) {
-    console.error("Lỗi", error);
-    alert("Failed to fetch orders!!!!");
+    console.error('Lỗi', error)
+    alert('Failed to fetch orders!!!!')
 
     if (error.response && (error.response.status === 401 || error.response.status === 500)) {
-      localStorage.removeItem("token");
-      router.push("/login");
+      localStorage.removeItem('token')
+      router.push('/login')
     }
   }
-};
+}
 onMounted(fetchOrders)
 
 const fetchOrderDetails = async (orderId) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token')
   if (!token) {
-    router.push("/login");
-    return;
+    router.push('/login')
+    return
   }
 
   try {
-    const response = await axios.get(`http://localhost:8080/bej3/manage/orders/details/${orderId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await axios.get(
+      `http://localhost:8080/bej3/manage/orders/details/${orderId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    )
 
-    return response.data.result;
+    return response.data.result
   } catch (error) {
-    console.error("Lỗi", error);
-    alert("Failed to fetch order details!!!!");
+    console.error('Lỗi', error)
+    alert('Failed to fetch order details!!!!')
   }
-};
+}
 // =======================================================================================================================
-const formData = ref({ })
+const formData = ref({})
 const openOrderDetail = async (orderId) => {
   const details = await fetchOrderDetails(orderId)
   if (!details) return
@@ -377,7 +435,7 @@ const openOrderDetail = async (orderId) => {
     addressType: details.addressType,
     status: details.status,
     description: details.description,
-    orderItems: (details.orderItems || []).map(item => ({
+    orderItems: (details.orderItems || []).map((item) => ({
       productName: item.productName,
       quantity: item.quantity,
       price: item.price,
@@ -391,11 +449,11 @@ const openOrderDetail = async (orderId) => {
 }
 //======================================================================================================================
 const hanldeUpdateOrderStatus = async (orderId) => {
-  console.log("orderId:", orderId);
-  const token = localStorage.getItem("token");
+  console.log('orderId:', orderId)
+  const token = localStorage.getItem('token')
   if (!token) {
-    router.push("/login");
-    return;
+    router.push('/login')
+    return
   }
 
   try {
@@ -403,30 +461,27 @@ const hanldeUpdateOrderStatus = async (orderId) => {
       `http://localhost:8080/bej3/manage/orders/${orderId}/status`,
       {
         status: formData.value.status,
-        note: formData.value.newDescription
+        note: formData.value.newDescription,
       },
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
-    );
-    alert("Cập nhật trạng thái đơn hàng thành công!!");
-    openOrderDetail(orderId);
-      
+      },
+    )
+    alert('Cập nhật trạng thái đơn hàng thành công!!')
+    openOrderDetail(orderId)
   } catch (error) {
-    console.error("Lỗi", error);
-    alert("Failed to update order status!!!!");
+    console.error('Lỗi', error)
+    alert('Failed to update order status!!!!')
 
     if (error.response && (error.response.status === 401 || error.response.status === 500)) {
-      localStorage.removeItem("token");
-      router.push("/login");
+      localStorage.removeItem('token')
+      router.push('/login')
     }
   }
-};
+}
 //======================================================================================================================
-
-
 
 // Computed
 const filteredOrders = computed(() => {
@@ -507,21 +562,20 @@ const updateOrderStatus = (orderId, newStatus) => {
   }
 }
 
-
-const noteField = ref(null);
+const noteField = ref(null)
 const autoResize = () => {
-  const el = noteField.value;
-  if (!el) return;
-  el.style.height = "auto";
-  el.style.height = el.scrollHeight + "px";
-};
+  const el = noteField.value
+  if (!el) return
+  el.style.height = 'auto'
+  el.style.height = el.scrollHeight + 'px'
+}
 watch(
   () => formData.value.description,
   async () => {
-    await nextTick();     // đợi DOM update xong
-    autoResize();         // resize theo data mới
-  }
-);
+    await nextTick() // đợi DOM update xong
+    autoResize() // resize theo data mới
+  },
+)
 </script>
 
 <style scoped>
@@ -1265,5 +1319,86 @@ watch(
   text-align: right;
   font-weight: 600;
   color: var(--accent);
+}
+
+/* ---------------------- */
+/* NOTES TABLE STYLE      */
+/* ---------------------- */
+
+.notes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.notes-table th,
+.notes-table td {
+  padding: 12px 8px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+  font-size: 14px;
+}
+
+.notes-table th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.notes-table td {
+  color: #334155;
+}
+
+.notes-table tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+/* Center text if no notes */
+.notes-table td.text-center {
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* ---------------------- */
+/* ADD NOTE SECTION       */
+/* ---------------------- */
+
+.add-note {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.add-note .form-input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.add-note .form-input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* ADD NOTE BUTTON */
+.add-note .btn-primary {
+  padding: 10px 16px;
+  background-color: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-note .btn-primary:hover {
+  background-color: #4338ca;
 }
 </style>
