@@ -48,7 +48,7 @@
               <td class="customer-name">{{ order.userName }}</td>
               <td class="address-type">
                 <span :class="`addr-badge addr-${order.type}`">
-                  {{ order.addressType === '1' ? 'Khách hàng' : 'Cửa hàng' }}
+                  {{ order.addressType === '1' ? 'Khách hàng' : 'Khách hàng' }}
                 </span>
               </td>
               <td class="total-price">{{ formatPrice(order.totalPrice) }}</td>
@@ -400,10 +400,10 @@ const hanldeUpdateOrderStatus = async (orderId) => {
 
   try {
     await axios.put(
-      `http://localhost:8080/bej3/manage/orders/update-order-status/${orderId}`,
+      `http://localhost:8080/bej3/manage/orders/${orderId}/status`,
       {
         status: formData.value.status,
-        description: formData.value.newDescription
+        note: formData.value.newDescription
       },
       {
         headers: {

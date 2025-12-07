@@ -91,7 +91,7 @@ const handleFetchUserProfile = async () => {
 
     try{
         const response = await axios.get(
-            `http://localhost:8080/bej3/manage/users/${props.employeeId}`,
+            `http://localhost:8080/bej3/users/manage/${props.employeeId}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`

@@ -31,49 +31,49 @@ const navbarItems = ref([
   {
     id: 2, icon: 'fas fa-cube', label: 'Hàng hóa', dropdown: [
       { label: 'Danh mục', icon: 'fas fa-table-list', link: '/admin/product/list' },
-      { label: 'Thiết lập giá', icon: 'fas fa-tags', link: 'price_book.html' },
-      { label: 'Kiểm kho', icon: 'fas fa-clipboard-check', link: 'stock_takes.html' }
+      // { label: 'Thiết lập giá', icon: 'fas fa-tags', link: 'price_book.html' },
+      // { label: 'Kiểm kho', icon: 'fas fa-clipboard-check', link: 'stock_takes.html' }
     ]
   },
   {
     id: 3, icon: 'fas fa-exchange', label: 'Giao dịch', dropdown: [
       { label: 'Đơn hàng', icon: 'fas fa-inbox', link: '/admin/product/order' },
-      { label: 'Hóa đơn', icon: 'fas fa-file-invoice-dollar', link: '' },
-      { label: 'Vận đơn', icon: 'fas fa-file-edit', link: '' },
-      { label: 'Trả hàng', icon: 'fas fa-reply-all', link: '' },
-      { label: 'Nhập hàng', icon: 'fas fa-cart-flatbed', link: '' },
-      { label: 'Xuất hủy', icon: 'fas fa-hand-holding-dollar', link: '' }
+      // { label: 'Hóa đơn', icon: 'fas fa-file-invoice-dollar', link: '' },
+      // { label: 'Vận đơn', icon: 'fas fa-file-edit', link: '' },
+      // { label: 'Trả hàng', icon: 'fas fa-reply-all', link: '' },
+      // { label: 'Nhập hàng', icon: 'fas fa-cart-flatbed', link: '' },
+      // { label: 'Xuất hủy', icon: 'fas fa-hand-holding-dollar', link: '' }
     ]
   },
   {
     id: 4, icon: 'fas fa-user-group', label: 'Nhân viên', dropdown: [
       { label: 'Nhân viên', icon: 'fas fa-user-friends', link: '/admin/employee' },
-      { label: 'Chấm công', icon: 'fas fa-calendar-alt', link: '' },
-      { label: 'Bảng tính lương', icon: 'fas fa-coins', link: '' },
-      { label: 'Lịch làm việc', icon: 'fas fa-sack-dollar', link: '' },
-      { label: 'Thiết lập chung', icon: 'fas fa-cog', link: '' }
+      // { label: 'Chấm công', icon: 'fas fa-calendar-alt', link: '' },
+      // { label: 'Bảng tính lương', icon: 'fas fa-coins', link: '' },
+      // { label: 'Lịch làm việc', icon: 'fas fa-sack-dollar', link: '' },
+      // { label: 'Thiết lập chung', icon: 'fas fa-cog', link: '' }
     ]
   },
-  {
-    id: 5, icon: 'fas fa-user-tie', label: 'Đối tác', dropdown: [
-      { label: 'Khách hàng', icon: 'fas fa-user-alt', link: '' },
-      { label: 'Nhà cung cấp', icon: 'fas fa-users-line', link: '' },
-      { label: 'Đối tác giao hàng', icon: 'fas fa-people-carry-box', link: '' }
-    ]
-  },
-  {
-    id: 6, icon: 'fas fa-chart-simple', label: 'Báo cáo', dropdown: [
-      { label: 'Cuối ngày', icon: 'fas fa-chart-pie', link: '' },
-      { label: 'Bán hàng', icon: 'fas fa-paste', link: '' },
-      { label: 'Đặt hàng', icon: 'fas fa-inbox', link: '' },
-      { label: 'Hàng hóa', icon: 'fas fa-cube', link: '' },
-      { label: 'Khách hàng', icon: 'fas fa-user-alt', link: '' },
-      { label: 'Nhà cung cấp', icon: 'fas fa-users-line', link: '' },
-      { label: 'Nhân viên', icon: 'fas fa-id-badge', link: '' },
-      { label: 'Kênh bán hàng', icon: 'fab fa-slideshare', link: '' },
-      { label: 'Tài chính', icon: 'fas fa-chart-line', link: '' }
-    ]
-  },
+  // {
+  //   id: 5, icon: 'fas fa-user-tie', label: 'Đối tác', dropdown: [
+  //     { label: 'Khách hàng', icon: 'fas fa-user-alt', link: '' },
+  //     { label: 'Nhà cung cấp', icon: 'fas fa-users-line', link: '' },
+  //     { label: 'Đối tác giao hàng', icon: 'fas fa-people-carry-box', link: '' }
+  //   ]
+  // },
+  // {
+  //   id: 6, icon: 'fas fa-chart-simple', label: 'Báo cáo', dropdown: [
+  //     { label: 'Cuối ngày', icon: 'fas fa-chart-pie', link: '' },
+  //     { label: 'Bán hàng', icon: 'fas fa-paste', link: '' },
+  //     { label: 'Đặt hàng', icon: 'fas fa-inbox', link: '' },
+  //     { label: 'Hàng hóa', icon: 'fas fa-cube', link: '' },
+  //     { label: 'Khách hàng', icon: 'fas fa-user-alt', link: '' },
+  //     { label: 'Nhà cung cấp', icon: 'fas fa-users-line', link: '' },
+  //     { label: 'Nhân viên', icon: 'fas fa-id-badge', link: '' },
+  //     { label: 'Kênh bán hàng', icon: 'fab fa-slideshare', link: '' },
+  //     { label: 'Tài chính', icon: 'fas fa-chart-line', link: '' }
+  //   ]
+  // },
   { id: 7, icon: 'fas fa-basket-shopping', label: 'Bán hàng', link: '' }
 ]);
 

@@ -254,7 +254,7 @@ const fetchEmployeeData = async () => {
         return;
     }
     try {
-        const response = await axios.get(`http://localhost:8080/bej3/manage/users`, {
+        const response = await axios.get(`http://localhost:8080/bej3/users/manage`, {
             headers: {
                 Authorization: `Bearer ${token}` // Gửi token trong header
             }

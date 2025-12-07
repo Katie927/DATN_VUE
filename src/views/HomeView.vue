@@ -65,15 +65,13 @@
                         </a>
                       </div>
                     </div>
-                    <div 
-                      v-for="(product, index) in productData" 
-                      :key="index" 
+                    <div  v-for="(product, index) in productData"  :key="index" 
                       class="pj16-item" 
-                      :style="{
-                        gridRow: 'span 1',
-                        gridColumn: 'span 1',
-                        padding: '12px 12px 12px 12px'
-                      }">
+                        :style="{
+                          gridRow: 'span 1',
+                          gridColumn: 'span 1',
+                          padding: '12px 12px 12px 12px'
+                        }">
                       <div class="pj16-item-info" v-if="product">
                         <div class="img">
                           <div class="img-info">
@@ -98,10 +96,10 @@
                         </h3>
                         <div class="item-gap8px">
                           <div class="price price-last">
-                            <!-- <span style="text-decoration: line-through;" v-if="product.originalPrice"> -->
+                            <span style="text-decoration: line-through;" v-if="product.originalPrice">
                               <s>{{ product.variant.finalPrice == product.variant.originalPrice ? product.variant.finalPrice.toLocaleString('vi-VN') + " ₫" : "" }}</s>
                               
-                            <!-- </span> -->
+                            </span>
                             <span v-if="product.discount">- {{ product.discount }}%</span>
                           </div>
                           <div class="price">
@@ -110,6 +108,7 @@
                         </div>
                       </div>
                     </div>
+                    
                   </div>
 
                   <!--  -->
@@ -182,7 +181,7 @@
     try {
       const response = await axios.get('http://localhost:8080/bej3/home');
       // console.log("Response Data:", response.data);
-      productData.value = response.data.result;
+      productData.value = response.data.result.products;
       // console.log("Product Data in Vue:", productData.value);
     } catch (error) {
       console.error('Error: ', error);

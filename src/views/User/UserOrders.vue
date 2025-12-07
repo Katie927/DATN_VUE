@@ -48,24 +48,32 @@
             <div class="order-top">
               <div>
                 <h3 class="order-number">{{ order.orderNumber }}</h3>
-                <p class="order-date">{{ formatDate(order.date) }}</p>
+                <p class="order-date">{{ formatDate(order.orderAt) }}</p>
+              </div>
+              <div :class="['modal-status', getStatusColor(order.type)]">
+                {{ order.type === 0 ? 'Mua bán' : 'Sửa chữa' }}
               </div>
 
               <div :class="['order-status', getStatusColor(order.status)]">
-                {{ order.status }}
+                {{ {
+                  0: "Chờ xử lý",
+                  1: "Đang xử lí",
+                  2: "Hoàn thành",
+                  3: "Đã hủy"
+                }[order.status] || "Không xác định" }}
               </div>
             </div>
 
             <div class="order-items-box">
-              <p v-for="(item, index) in order.items" :key="index" class="order-item-name">
-                • {{ item.name }} (x{{ item.quantity }})
+              <p v-for="(item, index) in order.orderItems" :key="index" class="order-item-name">
+                • {{ item.productName + " - " + item.color + " - " + item.productAttName }} (x{{ item.quantity }})
               </p>
             </div>
 
             <div class="order-bottom">
               <div>
                 <p class="order-total-label">Tổng tiền</p>
-                <p class="order-total">{{ formatPrice(order.total) }}</p>
+                <p class="order-total">{{ formatPrice(order.totalPrice) }}</p>
               </div>
 
               <div class="order-detail-btn">
@@ -100,12 +108,23 @@
                 <h2 class="modal-title">{{ selectedOrder.orderNumber }}</h2>
                 <p class="modal-date">
                   <i class="icon">🕒</i>
-                  {{ formatDate(selectedOrder.date) }}
+                  {{ formatDate(selectedOrder.orderAt) }}
                 </p>
+              </div>
+              <div :class="['modal-status', getStatusColor(selectedOrder.type)]">
+                {{ {
+                  0: "Đơn mua",
+                  1: "Đơn sửa chữa"
+                }[selectedOrder.status] || "Không xác định" }}
               </div>
 
               <div :class="['modal-status', getStatusColor(selectedOrder.status)]">
-                {{ selectedOrder.status }}
+                {{ {
+                  0: "Chờ xử lý",
+                  1: "Đang xử lí",
+                  2: "Hoàn thành",
+                  3: "Đã hủy"
+                }[selectedOrder.status] || "Không xác định" }}
               </div>
             </div>
 
@@ -116,9 +135,9 @@
                 <h4 class="info-title">Thông tin khách hàng</h4>
 
                 <div class="info-group">
-                  <p><strong>👤 Khách hàng:</strong> {{ selectedOrder.customer }}</p>
+                  <p><strong>👤 Khách hàng:</strong> {{ selectedOrder.userName }}</p>
                   <p><strong>📧 Email:</strong> {{ selectedOrder.email }}</p>
-                  <p><strong>📱 Số điện thoại:</strong> {{ selectedOrder.phone }}</p>
+                  <p><strong>📱 Số điện thoại:</strong> {{ selectedOrder.phoneNumber }}</p>
                   <p><strong>📍 Địa chỉ:</strong> {{ selectedOrder.address }}</p>
                 </div>
               </div>
@@ -128,8 +147,14 @@
                 <h4 class="info-title">Thông tin giao hàng</h4>
 
                 <div class="info-group">
-                  <p><strong>🚚 Dịch vụ:</strong> {{ selectedOrder.serviceType }}</p>
-                  <p><strong>📦 Dự kiến giao:</strong> {{ selectedOrder.estimatedDelivery }}</p>
+                  <p><strong>🚚 Dịch vụ:</strong> 
+                    {{ {
+                      0: "Mua bán",
+                      1: "Sửa chữa",
+                    }[selectedOrder.status] || "Không xác định" }}
+                  </p>
+                  <p><strong>📦 Dự kiến giao:</strong> {{ selectedOrder.updateAt }}</p>
+                  <p><strong>📦 Mô tả:</strong> {{ selectedOrder.description }}</p>
                 </div>
               </div>
             </div>
@@ -139,9 +164,9 @@
               <h4 class="info-title">Chi tiết sản phẩm</h4>
 
               <div class="item-list">
-                <div v-for="(item, idx) in selectedOrder.items" :key="idx" class="item-row">
+                <div v-for="(item, idx) in selectedOrder.orderItems" :key="idx" class="item-row">
                   <div class="item-left">
-                    <p class="item-name">{{ item.name }}</p>
+                    <p class="item-name"> {{ item.productName + " - " + item.color + " - " + item.productAttName }}</p>
                     <p class="item-qty">x{{ item.quantity }}</p>
                   </div>
 
@@ -156,18 +181,18 @@
             <div class="summary-box">
               <div class="summary-row">
                 <span>Tạm tính</span>
-                <b>{{ formatPrice(selectedOrder.subtotal) }}</b>
+                <b>{{ formatPrice(selectedOrder.totalPrice) }}</b>
               </div>
 
               <div class="summary-row">
                 <span>Phí vận chuyển</span>
-                <b>{{ formatPrice(selectedOrder.shipping) }}</b>
+                <b>{{ formatPrice(selectedOrder.totalPrice) }}</b>
               </div>
 
               <div class="summary-total">
                 <span>Tổng cộng</span>
                 <p class="summary-total-value">
-                  {{ formatPrice(selectedOrder.total) }}
+                  {{ formatPrice(selectedOrder.totalPrice) }}
                 </p>
               </div>
             </div>
@@ -195,13 +220,13 @@ const orders = ref([
     orderNumber: '#ĐH001234',
     date: '2025-12-05',
     status: 'Hoàn thành',
-    customer: 'Nguyễn Văn A',
+    userName: 'Nguyễn Văn A',
     email: 'nguyenvana@email.com',
-    phone: '0912345678',
+    phoneNumber: '0912345678',
     address: '123 Đường Lê Lợi, TP. HCM',
     serviceType: 'Bán hàng',
     estimatedDelivery: 'Đã giao ngày 05/12/2025',
-    items: [{ name: 'iPhone 15 Pro Max', quantity: 1, price: 28990000 }],
+    orderItems: [{ productName: 'iPhone 15 Pro Max', quantity: 1, price: 28990000 }],
     subtotal: 28990000,
     shipping: 0,
     total: 28990000,
@@ -240,45 +265,7 @@ const orders = ref([
     subtotal: 33490000,
     shipping: 0,
     total: 33490000,
-  },
-  {
-    id: 4,
-    orderNumber: '#ĐH001237',
-    date: '2025-11-28',
-    status: 'Hoàn thành',
-    customer: 'Phạm Minh D',
-    email: 'phamminhd@email.com',
-    phone: '0922334455',
-    address: '321 Đường Cách Mạng Tháng 8, TP. HCM',
-    serviceType: 'Sửa chữa',
-    estimatedDelivery: 'Đã giao ngày 30/11/2025',
-    items: [
-      { name: 'Thay màn hình Samsung A53', quantity: 1, price: 2490000 },
-      { name: 'Dịch vụ lau rửa', quantity: 1, price: 150000 },
-    ],
-    subtotal: 2640000,
-    shipping: 0,
-    total: 2640000,
-  },
-  {
-    id: 5,
-    orderNumber: '#ĐH001238',
-    date: '2025-11-25',
-    status: 'Hoàn thành',
-    customer: 'Đặng Kim E',
-    email: 'dangkime@email.com',
-    phone: '0933445566',
-    address: '654 Đường Trần Hưng Đạo, Hà Nội',
-    serviceType: 'Bán hàng',
-    estimatedDelivery: 'Đã giao ngày 27/11/2025',
-    items: [
-      { name: 'Xiaomi 14 Ultra', quantity: 1, price: 18990000 },
-      { name: 'Ốp lưng bảo vệ', quantity: 1, price: 199000 },
-    ],
-    subtotal: 19189000,
-    shipping: 50000,
-    total: 19239000,
-  },
+  }
 ])
 
 const selectedOrder = ref(null)
@@ -307,9 +294,9 @@ const formatPrice = (price) => {
 
 const getStatusColor = (status) => {
   const colors = {
-    'Đang xử lý': 'bg-yellow-100 text-yellow-800',
-    'Đang giao': 'bg-blue-100 text-blue-800',
-    'Hoàn thành': 'bg-green-100 text-green-800',
+    '0': 'bg-yellow-100 text-yellow-800',
+    '1': 'bg-blue-100 text-blue-800',
+    '2': 'bg-green-100 text-green-800',
   }
   return colors[status] || 'bg-slate-100 text-slate-800'
 }
@@ -317,6 +304,40 @@ const getStatusColor = (status) => {
 const selectOrder = (order) => {
   selectedOrder.value = order
 }
+
+// ==============================================
+// Fetch product data from backend
+import axios from 'axios'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const fetchOrders = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+  
+  try {
+    const response = await axios.get("http://localhost:8080/bej3/cart/my-order", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    
+    orders.value = response.data.result;
+  } catch (error) {
+    console.error("Lỗi", error);
+    alert("Failed to fetch orders!!!!");
+
+    if (error.response && (error.response.status === 401 || error.response.status === 500)) {
+      localStorage.removeItem("token");
+      router.push("/login");
+    }
+  }
+};
+onMounted(fetchOrders)
+
 </script>
 
 <style scoped>
@@ -544,7 +565,7 @@ const selectOrder = (order) => {
 .modal {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;

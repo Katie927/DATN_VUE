@@ -17,7 +17,7 @@
       <div class="logo-search-user">
         <div class="logo">
           <router-link to="/">
-            <img src="@/assets/img/logo.svg" alt="" />
+            <img style="height: 70px;" src="@/assets/img/logo2.png" alt="" />
           </router-link>
         </div>
         <div class="search">
@@ -46,6 +46,10 @@
           </div>
         </div>
         <div class="quick-for-user">
+          <router-link to="/user/booking" class="shop-location">
+                    <i class="icon-location"></i>
+                    <span>Đặt lịch sửa chữa</span>
+          </router-link>
           <router-link
             :to="userIsLoggedIn ? '/user/profile/my-info' : '/login'"
             class="member-login"
