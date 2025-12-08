@@ -113,12 +113,12 @@ const notifications = ref([])
 
 /* 🟢 1. GỌI API LẤY THÔNG BÁO (THÊM LOG DEBUG) */
 const fetchNotifications = async () => {
-  const url = 'http://localhost:8080/bej3/api/notifications/my-history'
+  const url = 'http://localhost:8080/bej3/api/notifications/my-notifications'
 
   console.log('🚀 Bắt đầu gọi API:', url)
 
   try {
-    const res = await axios.get('http://localhost:8080/bej3/api/notifications/my-history', {
+    const res = await axios.get('http://localhost:8080/bej3/api/notifications/my-notifications', {
       withCredentials: true,
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
