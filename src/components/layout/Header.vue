@@ -17,9 +17,10 @@
       <div class="logo-search-user">
         <div class="logo">
           <router-link to="/">
-            <img style="height: 70px;" src="@/assets/img/logo2.png" alt="" />
+            <img class="logo-img" src="@/assets/img/logo2.png" alt="" />
           </router-link>
         </div>
+
         <div class="search">
           <div class="search-box">
             <form action="/tim-kiem" method="get">
@@ -47,8 +48,8 @@
         </div>
         <div class="quick-for-user">
           <router-link to="/user/booking" class="shop-location">
-                    <i class="icon-location"></i>
-                    <span>Đặt lịch sửa chữa</span>
+            <i class="icon-location"></i>
+            <span>Đặt lịch sửa chữa</span>
           </router-link>
           <router-link
             :to="userIsLoggedIn ? '/user/profile/my-info' : '/login'"
@@ -124,3 +125,17 @@ const displayName = computed(() =>
   userIsLoggedIn.value ? localStorage.getItem('name') || 'Người dùng' : 'Tài khoản',
 )
 </script>
+
+<style scoped>
+.logo {
+  width: 100%;
+}
+
+.logo-img {
+  width: 100%;
+  height: 110px;
+  object-fit: contain;
+  margin-top: -30px;
+  margin-left: 10px;
+}
+</style>
