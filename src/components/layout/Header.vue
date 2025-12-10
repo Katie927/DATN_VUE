@@ -72,7 +72,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import axios from 'axios'
+import { userBus } from './userBus' 
 import '@/assets/styles/header-style.css'
 import '@/assets/styles/style.css'
 import '@/assets/slick/slick.css'
@@ -109,6 +111,30 @@ const handleScroll = () => {
   lastScrollPosition.value = currentScroll
 }
 
+const currentUser = ref({})
+const userIsLoggedIn = computed(() => !!localStorage.getItem('token'))
+const displayName = computed(() => {
+  return userIsLoggedIn.value ? currentUser.value.fullName || 'Người dùng' : 'Tài khoản'
+})
+
+const fetchUserProfile = async () => {
+  const token = localStorage.getItem("token")
+  if (!token) return
+
+  try {
+    const resp = await axios.get("http://localhost:8080/bej3/users/profile/my-info", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    currentUser.value = resp.data.result
+  } catch (_) {
+    localStorage.removeItem("token")
+  }
+}
+onMounted(fetchUserProfile)
+watch(() => userBus.refreshProfile.value, () => {
+  fetchUserProfile()
+})
+
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
 })
@@ -117,13 +143,6 @@ onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
 
-const userIsLoggedIn = computed(() => {
-  return !!localStorage.getItem('token')
-})
-
-const displayName = computed(() =>
-  userIsLoggedIn.value ? localStorage.getItem('name') || 'Người dùng' : 'Tài khoản',
-)
 </script>
 
 <style scoped>

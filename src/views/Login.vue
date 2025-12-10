@@ -85,6 +85,7 @@
     import "@/assets/styles/style.css";
     import router from "@/router";
     import axios from "axios";
+    import { userBus } from "@/components/layout/userBus";
 
     import { ref, watch } from "vue";
 
@@ -112,6 +113,7 @@
             localStorage.setItem("token", token);
             router.push("user/profile/my-info")
           }
+          userBus.refreshProfile.value++
         }
         
       } catch (error) {
@@ -136,7 +138,7 @@
         errors.value.email = "Email không hợp lệ.";
       }
 
-      if (signUpData.value.password.length < 6) {
+      if (signUpData.value.password.length < 5) {
         errors.value.password = "Mật khẩu phải có ít nhất 6 ký tự.";
       }
 

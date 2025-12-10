@@ -135,87 +135,6 @@
                 </button> -->
 
                 <div class="hide-show-information" id="hideShowInformation">
-                  <!-- Work information -->
-                  <div class="information-group work-information">
-                    <div class="information-title">
-                      <span class="info-heading info-heading-add-employee">Thông tin công việc</span>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Ngày bắt đầu làm việc</label>
-                      <div class="form-wrap">
-                        <input id="firstDay" class="form-control" type="datetime-local" />
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Phòng ban</label>
-                      <div class="form-wrap">
-                        <input id="employeeDepartment" class="form-control" type="text" placeholder="Chọn phòng ban" />
-                        <div class="group-icon-add-new">
-                          <i
-                          href="#"
-                          class="show-hide-icon fas fa-solid fa-sort-down"
-                          id="hideAddDepartmentFormEmployee"
-                        ></i>
-                        <a
-                          href="#"
-                          class="add-department-icon btn-icon add-group-product fas fa-solid fa-plus"
-                          title="Thêm phòng ban mới"
-                          id="addNewDepartmentFormAddEmployee"
-                        ></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Chức danh</label>
-                      <div class="form-wrap">
-                        <input id="employeePosition" class="form-control" type="text" v-model="form.roles" />
-                        <!-- <div class="group-icon-add-new">
-                          <i
-                          href="#"
-                          class="show-hide-icon fas fa-solid fa-sort-down"
-                          id="hideAddPositionFormEmployee"
-                        ></i>
-                        <a
-                          href="#"
-                          class="add-position-icon btn-icon add-group-product fas fa-solid fa-plus"
-                          title="Thêm chức danh mới"
-                          id="addNewPositionFormAddEmployee"
-                        ></a>
-                        </div> -->
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Tài khoản đăng nhập</label>
-                      <div class="form-wrap">
-                        <input id="accountNumber" class="form-control" type="text" placeholder="Chọn tài khoản" />
-                        <div class="group-icon-add-new">
-                          <i
-                          href="#"
-                          class="show-hide-icon fas fa-solid fa-sort-down"
-                          id="hideAddAccountFormEmployee"
-                        ></i>
-                        <a
-                          href="#"
-                          class="add-account-icon btn-icon add-group-product fas fa-solid fa-plus"
-                          title="Thêm tài khoản mới"
-                          id="addNewAccountFormAddEmployee"
-                        ></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Ghi chú</label>
-                      <div class="form-wrap">
-                        <input id="employeeNote" class="form-control" type="text" />
-                        <i class="note-pen fas fa-solid fa-pen"></i>
-                      </div>
-                    </div>
-                  </div>
 
                   <!-- Personal information -->
                   <div class="information-group">
@@ -239,7 +158,7 @@
                       </div>
                     </div>
 
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                       <label for="employeeGender" class="form-label">Giới tính</label>
                       <input id="employeeGender" type="text">
                       <div class="form-wrap" id="formWrapGender">
@@ -248,7 +167,7 @@
                         <input type="radio" id="employeeFemale" name="gender" class="" value="Nữ" />
                         <label for="employeeFemale">Nữ</label>
                       </div>
-                    </div>
+                    </div> -->
                   </div>
                   <!-- Contact info -->
                   <div class="information-group">

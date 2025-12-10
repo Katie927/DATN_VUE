@@ -2,7 +2,7 @@
     <header :class="{ hidden: isHidden }">
         <HeaderComponent @update-isHidden="updateIsHidden"/>
     </header>
-    <main>
+    <main style="margin-top: 147px;">
         <router-view />
     </main>
 </template>

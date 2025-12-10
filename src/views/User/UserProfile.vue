@@ -15,13 +15,19 @@
                     <div class="form-controls">
                         <label for="">Điện thoại</label>
                         <div class="controls">
-                            <input type="text" id="phoneNumber" v-model="userData.phoneNumber">
+                            <input type="text" id="phoneNumber" v-model="userData.phoneNumber" readonly="true">
                         </div>
                     </div>
                     <div class="form-controls">
                         <label for="">Email</label>
                         <div class="controls">
-                            <input type="text" id="email" v-model="userData.email" readonly="true">
+                            <input type="text" id="email" v-model="userData.email">
+                        </div>
+                    </div>
+                    <div class="form-controls">
+                        <label for="">Địa chỉ</label>
+                        <div class="controls">
+                            <input type="text" id="address" v-model="userData.address">
                         </div>
                     </div>
                     <div class="form-controls">
@@ -33,7 +39,7 @@
                     <div class="form-controls">
                         <label for="">Mật khẩu mới</label>
                         <div class="controls">
-                            <input type="text" >
+                            <input type="text" id="password" v-model="userData.password">
                         </div>
                     </div>
                     <div class="form-controls">
@@ -66,7 +72,9 @@
         fullName: '',
         email: '',
         phoneNumber: '',
-        dob: ''
+        dob: '',
+        address: '',
+        password: ''
     });
     const fetchUserProfile = async () => {
         const token = localStorage.getItem("token"); // Lấy token từ localStorage
@@ -83,7 +91,18 @@
                 }
             });
 
-            userData.value = response.data.result; // Gán dữ liệu user
+            const data = response.data.result;
+
+            userData.value = {
+                fullName: data.fullName || '',
+                email: data.email || '',
+                phoneNumber: data.phoneNumber || '',
+                dob: data.dob || '',
+                address: data.address || '',
+                password: ''   
+            };
+
+            // userData.value = response.data.result; // Gán dữ liệu user
         } catch (error) {
             console.error('Lỗi:', error);
 
@@ -103,16 +122,18 @@
             router.push("/login");
             return;
         }
-
         try {
-            const response = await axios.put("http://localhost:8080/bej3/users/profile/my-info/update", userData.value, {
+            console.log("Payload FE gửi:", JSON.stringify(userData.value));
+            await axios.put("http://localhost:8080/bej3/users/profile/my-info/update", 
+            userData.value, 
+            {
                 headers: { 
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"
                  }
             });
 
-            console.log("Cập nhật thành công!", response.data);
+            // console.log("Cập nhật thành công!", response.data);
             alert("Cập nhật thông tin thành công!");
         } catch (error) {
             console.error("Lỗi khi cập nhật:", error);
