@@ -59,7 +59,7 @@
               </div>
             </div>
 
-            <button @click="removeProduct(i)" class="btn-remove">🗑️</button>
+            <button @click="removeCartItem(product.id)" class="btn-remove">🗑️</button>
           </div>
         </div>
 
@@ -224,6 +224,34 @@ const handlePlaceOrder = async () => {
     alert('Không thể đặt hàng!')
   }
 }
+
+
+// ============================================== remove item ===========================
+const removeCartItem = async (cartItemId) => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    router.push('/login')
+    return
+  }
+
+  try {
+    await axios.delete(`http://localhost:8080/bej3/cart/remove/${cartItemId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    handleFetchCart()
+  } catch (error) {
+    console.error('Lỗi', error)
+    alert('Failed to fetch orders!!!!')
+
+    if (error.response && (error.response.status === 401 || error.response.status === 500)) {
+      localStorage.removeItem('token')
+      router.push('/login')
+    }
+  }
+}
+// ============================================= ==============================================
 
 const formatPrice = (v) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v)

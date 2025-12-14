@@ -91,7 +91,8 @@
                                     <img :src="variant.detailImages?.[0]?.url" title="Samsung Galaxy S25 Ultra - 12GB/256GB Đen" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Đen">
                                 <div class="color-price">
                                     <span>{{ variant.color }}</span>
-                                    <p>28,990,000 ₫ </p>                                            
+                                    <!-- <p>{{ attr?.finalPrice
+                                        ?.toLocaleString('vi-VN') }} ₫ </p>                                             -->
                                 </div>
                             </div>
                         </div>
@@ -99,7 +100,7 @@
                     <div class="box-order product-action">
 
                         <div class="box-order-btn">
-                            <a title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" href="javascript:;" class="add-buy order-btn btnQuickOrder inventory"><strong>MUA NGAY</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
+                            <a @click="handleBuyNow" title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" href="javascript:;" class="add-buy order-btn btnQuickOrder inventory"><strong>MUA NGAY</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
                             <a @click="handleAddToCart" title="Thêm giỏ hàng" data-authorize="True" href="javascript:;" class="add-buy add-cart inventory">
                                 <i class="icon-Cart1SolidOn"></i>
                                 <label>Thêm giỏ hàng </label>
@@ -133,6 +134,7 @@
     import "swiper/css";
     import "swiper/css/navigation";
     import "swiper/css/thumbs";
+    import router from "@/router";
     
 
     const route = useRoute();
@@ -194,11 +196,8 @@
         try{
             // console.log("id: "+productId)
             await axios.post(
-                `http://localhost:8080/bej3/cart/add/${attrId}`,
-                {},
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
+                `http://localhost:8080/bej3/cart/add/${attrId}`, {},
+                { headers: { Authorization: `Bearer ${token}` }, }
             );
             alert("Thêm vào giỏ hàng thành công!");
         } catch (error) {
@@ -207,6 +206,32 @@
         }
     };
 // ==================================== add to cart ====================================
+
+
+// ==================================== buy now ====================================
+    const handleBuyNow = async () => {
+        const attrId = productDetails.value?.variants?.[selectedVariantIndex.value]?.attributes?.[selectedAttributeIndex.value]?.id;
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("Token không tồn tại!");
+            router.push("/login"); // Chuyển hướng về trang login
+            return;
+        }
+        try{
+            await axios.post(
+                `http://localhost:8080/bej3/cart/add/${attrId}`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            router.push("/user/cart");
+        } catch (error) {
+            console.error("Lỗi", error);
+            alert("Thêm không thành công!");
+        }
+    };
+// ==================================== buy now ====================================
 
 
 

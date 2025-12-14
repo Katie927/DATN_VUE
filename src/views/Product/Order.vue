@@ -11,10 +11,10 @@
         />
         <span class="search-icon">🔍</span>
       </div>
-      <select v-model="filterType" class="filter-select">
-        <option value="">Tất cả loại đơn</option>
-        <option value="buy">Mua bán</option>
-        <option value="repair">Sửa chữa</option>
+      <select v-model.number="formData.type" class="filter-select">
+        <!-- <option :value="">Tất cả loại đơn</option> -->
+        <option :value="0">Mua bán</option>
+        <option :value="1">Sửa chữa</option>
       </select>
       <button class="add-order-btn" @click="openNewOrderForm">
         <span class="plus-icon">+</span>
@@ -94,9 +94,9 @@
             <template v-if="!isEditMode">
               <div class="form-group">
                 <label>Loại đơn hàng</label>
-                <select v-model="formData.type" class="form-input">
-                  <option value="0">Mua bán điện thoại</option>
-                  <option value="1">Sửa chữa điện thoại</option>
+                <select :v-model="formData.type" class="form-input">
+                  <option :value="0">Mua bán điện thoại</option>
+                  <option :value="1">Sửa chữa điện thoại</option>
                 </select>
               </div>
 
@@ -154,7 +154,7 @@
                     <input
                       v-model="item.name"
                       type="text"
-                      :placeholder="formData.type === 'buy' ? 'Tên điện thoại' : 'Tên linh kiện'"
+                      :placeholder="formData.type === '0' ? 'Tên điện thoại' : 'Tên linh kiện'"
                       class="item-input"
                     />
                     <div class="quantity-price">
@@ -193,7 +193,11 @@
             <template v-else>
               <div class="info-group">
                 <label>Loại đơn</label>
-                <div class="info-value">{{ formData.type === '0' ? 'Mua bán' : 'Sửa chữa' }}</div>
+                <div class="info-value">{{ { 
+                    0: 'Mua bán', 
+                    1: 'Sửa chữa' 
+                  }[formData.type] || 'Không xác định' }}
+                </div>
               </div>
 
               <div class="form-row">
@@ -228,6 +232,12 @@
                     <option value="4">Chờ xác nhận</option>
                   </select>
                 </div>
+                <div class="info-group">
+                  <label>Mô tả</label>
+                  <div class="info-value">
+                    {{ formData.description }}
+                  </div>
+                </div>
               </div>
 
               <div class="form-row" style="grid-template-columns: 1fr 1fr">
@@ -242,7 +252,7 @@
               </div>
 
               <div class="form-group">
-                <label>Lịch sử cập nhập</label>
+                <label>Lịch sử cập nhật</label>
                 <table class="notes-table">
                   <thead>
                     <tr>
@@ -252,10 +262,10 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(note, index) in notes" :key="index">
-                      <td>{{ note.user }}</td>
-                      <td>{{ note.content }}</td>
-                      <td>{{ formatDateTime(note.createdAt) }}</td>
+                    <tr v-for="(note, index) in formData.orderNotes" :key="index">
+                      <td>{{ note.userName }}</td>
+                      <td>{{ note.note }}</td>
+                      <td>{{ formatDateTime(note.updateTime) }}</td>
                     </tr>
                     <tr v-if="notes.length === 0">
                       <td colspan="3" class="text-center">Chưa có ghi chú nào</td>
@@ -276,33 +286,95 @@
 
               <!-- Items section read-only -->
               <div class="items-section">
-                <h3 class="items-title">
-                  {{ formData.type === 'buy' ? 'Danh sách điện thoại' : 'Danh sách linh kiện' }}
-                </h3>
+                <div class="items-header">
+                  <h3>
+                    Danh sách sản phẩm
+                  </h3>
+                  <button v-if="formData.type === 1" class="btn-add-item" @click="addItem">+ Thêm</button>
+                </div>
+                <template v-if="formData.type===0">
+                  <table class="items-detail-table">
+                    <thead>
+                      <tr>
+                        <th>Sản phẩm</th>
+                        <th>Màu</th>
+                        <th>Phiên bản</th>
+                        <th>Đơn giá</th>
+                        <th>Số lượng</th>
+                        <th>Thành tiền</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(item, index) in formData.orderItems" :key="index">
+                        <td>{{ item.productName }}</td>
+                        <td>{{ item.color }}</td>
+                        <td>{{ item.productAttName }}</td>
+                        <td>{{ formatPrice(item.price) }}</td>
+                        <td class="qty-cell">{{ item.quantity }}</td>
+                        <td class="total-cell">{{ formatPrice(item.quantity * item.price) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </template>
+                <template v-else>
+                  <div class="quantity-price">
+                    <input v-model="newItem.productName"
+                      type="text" placeholder="Tên sản phẩm"
+                      class="item-input small" />
+                      <ul v-if="showSuggest && products.length" class="bej-suggest-list">
+                        <li v-for="p in products" :key="p.id"
+                          @click="selectProduct(p)" class="bej-suggest-item"
+                        >
+                          {{ p.name }}
+                        </li>
+                      </ul>
+                    <select v-model="selectedVariantIndex" class="item-input small">
+                      <option disabled value="">-- Chọn phiên bản --</option>
+                      <option v-for="(variant, index) in productDetails.variants"
+                        :key="variant.id" :value="index"
+                      >
+                        {{ variant.color }}
+                      </option>
+                    </select>
+                    <select v-model="newItem.attrId" class="item-input small"
+                      :disabled="selectedVariantIndex === null"
+                    >
+                      <option disabled value="">-- Chọn phiên bản --</option>
+                      <option v-for="attr in productDetails?.variants?.[selectedVariantIndex]?.attributes || []"
+                        :key="attr.id" :value="attr.id"
+                      >
+                        {{ attr.name }}
+                      </option>
+                    </select>
+                    <input v-model.number="newItem.quantity"
+                      type="text"  placeholder="Số lượng"
+                      class="item-input small" />
 
-                <table class="items-detail-table">
-                  <thead>
-                    <tr>
-                      <th>Sản phẩm</th>
-                      <th>Màu</th>
-                      <th>Phiên bản</th>
-                      <th>Đơn giá</th>
-                      <th>Số lượng</th>
-                      <th>Thành tiền</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(item, index) in formData.orderItems" :key="index">
-                      <td>{{ item.productName }}</td>
-                      <td>{{ item.color }}</td>
-                      <td>{{ item.productAttName }}</td>
-                      <td>{{ formatPrice(item.price) }}</td>
-                      <td class="qty-cell">{{ item.quantity }}</td>
-                      <td class="total-cell">{{ formatPrice(item.quantity * item.price) }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                    <span class="item-total">
+                      {{ formatPrice(newItem.quantity * newItem.unitPrice) }}
+                    </span>
 
+                    <button class="btn-add-item" @click="addItem(formData.id)">＋</button>
+                  </div>
+                  <table class="items-detail-table">
+                    <thead>
+                      <tr>
+                        <th>Sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Phiên bản</th>
+                        <th>Đơn giá</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(item, index) in formData.orderItems" :key="index">
+                        <td>{{ item.productName }}</td>
+                        <td>{{ item.color }}</td>
+                        <td>{{ item.productAttName }}</td>
+                        <td>{{ formatPrice(item.price) }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </template> 
                 <div class="items-summary">
                   <div class="summary-row">
                     <span>Tổng cộng:</span>
@@ -333,6 +405,7 @@ import axios from 'axios'
 import router from '@/router'
 import { ref, computed, watch, onMounted } from 'vue'
 import { nextTick } from 'vue'
+import debounce from 'lodash/debounce'
 
 // State
 const showModal = ref(false)
@@ -345,13 +418,16 @@ const notes = ref([]) // danh sách ghi chú
 const newNoteContent = ref('') // nội dung ghi chú mới
 
 const formatDateTime = (dateStr) => {
-  const date = new Date(dateStr)
-  return date.toLocaleString('vi-VN', {
+  if (!dateStr) return ''
+
+  return new Date(dateStr).toLocaleString('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
+    hour12: false
   })
 }
 
@@ -428,6 +504,7 @@ const openOrderDetail = async (orderId) => {
   editingOrderId.value = orderId
 
   formData.value = {
+    id: details.id,
     type: details.type,
     userName: details.userName,
     phoneNumber: details.phoneNumber,
@@ -442,9 +519,14 @@ const openOrderDetail = async (orderId) => {
       productAttName: item.productAttName,
       color: item.color,
     })),
+    orderNotes: (details.orderNotes || []).map((note) => ({
+      userName: note.userName,
+      note: note.note,
+      updateTime: note.updateTime,
+    })),
     totalPrice: details.totalPrice,
   }
-
+  // console.log('formData:', formData.value.type)
   showModal.value = true
 }
 //======================================================================================================================
@@ -516,7 +598,7 @@ const openNewOrderForm = () => {
   isEditMode.value = false
   editingOrderId.value = null
   formData.value = {
-    type: 'buy',
+    type: '',
     customerName: '',
     phone: '',
     address: '',
@@ -530,10 +612,8 @@ const openNewOrderForm = () => {
 
 const closeModal = () => {
   showModal.value = false
-}
-
-const addItem = () => {
-  formData.value.items.push({ name: '', quantity: 1, unitPrice: 0 })
+  products.value = []
+    showSuggest.value = false
 }
 
 const removeItem = (index) => {
@@ -576,8 +656,112 @@ watch(
     autoResize() // resize theo data mới
   },
 )
+
+const newItem = ref({
+  productName: '',
+  productVariant: '',
+  productAttName: '',
+  attrId: '',
+  quantity: '1',
+})
+const addItem = async (orderId) => {
+    const token = localStorage.getItem("token");
+  if (!token) return router.push("/login");
+  const payload = {
+    items: [
+      {
+        productAttId: newItem.value.attrId,
+        quantity: Number(newItem.value.quantity),
+      },
+    ],
+  }
+  try {
+    await axios.put(
+      `http://localhost:8080/bej3/manage/orders/${orderId}/items`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+    alert("Cập nhật đơn thành công!");
+    openOrderDetail(orderId);
+    newItem.value = {
+      productName: '',
+      productVariant: '',
+      productAttName: '',
+      attrId: '',
+      quantity: '1',
+    };
+    selectedVariantIndex.value = null;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật đơn hàng:", error.message);
+    if (error.response) {
+      console.error("Chi tiết:", error.response.data);
+      if ([401, 403].includes(error.response.status)) {
+        localStorage.removeItem("token");
+        router.push("/login");
+      }
+    }
+    alert("Cập nhật đơn hàng thất bại!");
+  }
+}
+
+// find product
+const products = ref([])
+const showSuggest = ref(false)
+const searchProduct = debounce(async (keyword) => {
+  if (!keyword || keyword.trim().length < 2) {
+    products.value = []
+    showSuggest.value = false
+    return
+  }
+  const res = await axios.get(
+    'http://localhost:8080/bej3/home/products/search',
+    {
+      params: { name: keyword },
+    }
+  )
+  products.value = res.data.result || []
+  showSuggest.value = true
+}, 400)
+watch(
+  () => newItem.value.productName,
+  (val) => {
+    searchProduct(val)
+  }
+)
+
+const productDetails = ref({});
+const selectProduct = async (product) => {
+  newItem.value.productName = product.name
+  showSuggest.value = false
+  const productId = product.id;
+  const response = await axios.get(`http://localhost:8080/bej3/home/product/${productId}`)
+            productDetails.value = response.data.result;
+}
+
+const selectedVariantIndex = ref(null)
+const selectedAttributeIndex = ref(null)
+const selectedVariant = computed(() =>
+  productDetails?.variants?.[selectedVariantIndex.value] ?? null
+)
+const selectedAttribute = computed(() =>
+  selectedVariant.value && selectedAttributeIndex.value !== null
+    ? selectedVariant.value.attributes[selectedAttributeIndex.value]
+    : null
+)
+watch(selectedVariantIndex, () => {
+  // console.log('selectedVariantIndex changed:', selectedVariantIndex.value)
+  selectedAttributeIndex.value = null
+})
 </script>
 
+
+
+//====================================================================================================================== STYLE ========================
 <style scoped>
 * {
   margin: 0;
@@ -1057,11 +1241,12 @@ watch(
   border-color: var(--accent);
 }
 
-.item-input.small {
+/* .item-input.small {
   width: 80px;
-}
+} */
 
 .quantity-price {
+  position: relative;
   display: flex;
   gap: 8px;
   align-items: center;
@@ -1400,5 +1585,46 @@ watch(
 
 .add-note .btn-primary:hover {
   background-color: #4338ca;
+}
+
+.bej-suggest-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+
+  max-height: 220px;
+  margin: 4px 0 0;
+  padding: 4px 0;
+
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  overflow-y: auto;
+  z-index: 9999;
+
+  list-style: none;
+}
+
+/* Item */
+.bej-suggest-item {
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  transition: background 0.15s ease;
+}
+
+/* Hover */
+.bej-suggest-item:hover {
+  background: #f5f7fa;
 }
 </style>

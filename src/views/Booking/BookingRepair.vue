@@ -249,7 +249,6 @@ const handlePlaceOrder = async () => {
       address: form.value.address,
       email: form.value.email,
       phoneNumber: form.value.phoneNumber,
-      type: 1,
       items: []
     };
 

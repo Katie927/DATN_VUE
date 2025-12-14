@@ -132,7 +132,7 @@
                     2: 'Hoàn thành',
                     3: 'Đã hủy',
                     4: 'Chờ xác nhận',
-                  }[order.status] || 'Không xác định'
+                  }[selectedOrder.status] || 'Không xác định'
                 }}
               </div>
             </div>
@@ -236,59 +236,7 @@
 import { ref, computed } from 'vue'
 
 // Mock data
-const orders = ref([
-  {
-    id: 1,
-    orderNumber: '#ĐH001234',
-    date: '2025-12-05',
-    status: 'Hoàn thành',
-    userName: 'Nguyễn Văn A',
-    email: 'nguyenvana@email.com',
-    phoneNumber: '0912345678',
-    address: '123 Đường Lê Lợi, TP. HCM',
-    serviceType: 'Bán hàng',
-    estimatedDelivery: 'Đã giao ngày 05/12/2025',
-    orderItems: [{ productName: 'iPhone 15 Pro Max', quantity: 1, price: 28990000 }],
-    subtotal: 28990000,
-    shipping: 0,
-    total: 28990000,
-  },
-  {
-    id: 2,
-    orderNumber: '#ĐH001235',
-    date: '2025-12-03',
-    status: 'Đang giao',
-    customer: 'Trần Thị B',
-    email: 'tranthib@email.com',
-    phone: '0987654321',
-    address: '456 Đường Nguyễn Huệ, Hà Nội',
-    serviceType: 'Sửa chữa',
-    estimatedDelivery: 'Dự kiến 08/12/2025',
-    items: [{ name: 'Thay pin iPhone 14', quantity: 1, price: 890000 }],
-    subtotal: 890000,
-    shipping: 50000,
-    total: 940000,
-  },
-  {
-    id: 3,
-    orderNumber: '#ĐH001236',
-    date: '2025-12-02',
-    status: 'Đang xử lý',
-    customer: 'Lê Văn C',
-    email: 'levanc@email.com',
-    phone: '0911223344',
-    address: '789 Đường Tôn Đức Thắng, TP. HCM',
-    serviceType: 'Bán hàng',
-    estimatedDelivery: 'Dự kiến 09/12/2025',
-    items: [
-      { name: 'Samsung Galaxy S24 Ultra', quantity: 1, price: 32990000 },
-      { name: 'Cáp sạc nhanh USB-C', quantity: 2, price: 250000 },
-    ],
-    subtotal: 33490000,
-    shipping: 0,
-    total: 33490000,
-  },
-])
+const orders = ref([ ])
 
 const confirmOrder = (order) => {
   order.status = 1 // chuyển sang "Đang xử lý"
@@ -384,6 +332,7 @@ const fetchOrders = async () => {
   }
 }
 onMounted(fetchOrders)
+
 </script>
 
 <style scoped>
