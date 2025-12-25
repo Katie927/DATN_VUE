@@ -17,9 +17,9 @@
             <a href="#"  :class="{ active: isEInfoForm }"  @click.prevent="isEInfoForm = true">
                 Thông tin
             </a>
-            <a href="#"  :class="{ active: !isEInfoForm }"  @click.prevent="isEInfoForm = false">
+            <!-- <a href="#"  :class="{ active: !isEInfoForm }"  @click.prevent="isEInfoForm = false">
                 Thiết lập lương
-            </a>
+            </a> -->
         </div>
 
         <!-- form content -->
@@ -54,7 +54,7 @@
                 <!-- Initialization information -->
                 <div class="information-group">
                   <div class="information-title">
-                    <span class="info-heading info-heading-add-employee">Thông tin khởi tạo</span>
+                    <span class="info-heading info-heading-add-employee">Thông tin cá nhân</span>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Mã nhân viên</label>
@@ -73,56 +73,30 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Số điện thoại</label>
+                      <label class="form-label">Ngày sinh</label>
+                      <div class="form-wrap">
+                        <input id="dateOfBirth" class="form-control" type="date" 
+                                v-model="form.dob"/>
+                      </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Vai trò</label>
                     <div class="form-wrap">
-                      <input id="phoneNumber" class="form-control" type="tel" placeholder="0123-456-789"
-                        pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required maxlength="10"
-                        v-model="form.phoneNumber"/>
+                      <!-- <div class="select-salary-branch"> -->
+                        <input id="salaryBranch" class="form-control"  v-model="form.roles">
+                        <!-- <i id="salaryBranchSortDownIcon" class="salary-branch-icon fas fa-solid fa-sort-down"></i> -->
+                      <!-- </div> -->
                     </div>
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">Chức vụ</label>
+                    <label class="form-label">Cập nhật vai trò</label>
                     <div class="form-wrap">
-                      <div class="select-salary-branch">
-                        <input id="salaryBranch" class="form-control" role="listbox" v-model="form.roles">
-                        <i id="salaryBranchSortDownIcon" class="salary-branch-icon fas fa-solid fa-sort-down"></i>
-                      </div>
-                      <div id="branchListId" class="form-list branch-list-items">
-                        <ul id="branchItemsId" class="form-items">
-                          <!-- <div class="select-salary-branch-search">
-                            <input class="form-control" id="searchSalaryBranch">
-                            <i id="searchSalaryBranchIcon" class="fas fa-solid fa-search"></i>
-                          </div> -->
-                            <!-- 
-                          <li class="form-item">
-                            <span class="item-name branch-name"></span>Chi nhánh trung tâm
-                            <i class="fas fa-solid fa-check"></i>
-                          </li> -->
-
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label class="form-label">Chi nhánh làm việc</label>
-                    <div class="form-wrap">
-                      <input id="workingBranch" class="form-control" value="Chi nhánh trung tâm" />
-                      <div id="locationListId" class="form-list location-list-items">
-                        <!-- <ul class="form-items">
-                          <li class="form-item">
-                            <span class="item-name location-name">Chi nhánh trung tâm</span>
-                            <i class="fas fa-solid fa-check"></i>
-                          </li>
-
-                          <li class="form-item">
-                            <span class="item-name location-name">Địa điểm kinh doanh</span>
-                            <i class="fas fa-solid fa-check"></i>
-                          </li>
-                        </ul> -->
-                      </div>
-
+                      <!-- <div class="select-salary-branch"> -->
+                        <input id="salaryBranch" class="form-control"  v-model="form.roles">
+                        <!-- <i id="salaryBranchSortDownIcon" class="salary-branch-icon fas fa-solid fa-sort-down"></i> -->
+                      <!-- </div> -->
                     </div>
                   </div>
 
@@ -139,7 +113,7 @@
                   <!-- Personal information -->
                   <div class="information-group">
                     <div class="information-title">
-                      <span class="info-heading info-heading-add-employee">Thông tin cá nhân</span>
+                      <span class="info-heading info-heading-add-employee">Thông tin liên hệ</span>
                     </div>
 
                     <div class="form-group">
@@ -151,10 +125,32 @@
                     </div>
 
                     <div class="form-group">
-                      <label class="form-label">Ngày sinh</label>
+                      <label class="form-label">Số điện thoại</label>
                       <div class="form-wrap">
-                        <input id="dateOfBirth" class="form-control" type="date" 
-                                v-model="form.dob"/>
+                        <input id="phoneNumber" class="form-control" type="tel" placeholder="0123-456-789"
+                          pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required maxlength="10"
+                          v-model="form.phoneNumber"/>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Email</label>
+                      <div class="form-wrap">
+                        <input id="employeeEmail" class="form-control" type="email" v-model="form.email" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Facebook</label>
+                      <div class="form-wrap">
+                        <input id="employeeFacebook" class="form-control" type="text" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">Địa chỉ</label>
+                      <div class="form-wrap">
+                        <input id="employeeAddress" class="form-control" type="text" v-model="form.address"/>
                       </div>
                     </div>
 
@@ -171,45 +167,7 @@
                   </div>
                   <!-- Contact info -->
                   <div class="information-group">
-                    <div class="information-title">
-                      <span class="info-heading info-heading-add-employee">Thông tin liên hệ</span>
-                    </div>
 
-
-                    <div class="form-group">
-                      <label class="form-label">Địa chỉ</label>
-                      <div class="form-wrap">
-                        <input id="employeeAddress" class="form-control" type="text" v-model="form.address"/>
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Khu vực</label>
-                      <div class="form-wrap">
-                        <input id="employeeArea" class="form-control" type="text" placeholder="Chọn Tỉnh/TP - Quận/Huyện" />
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Email</label>
-                      <div class="form-wrap">
-                        <input id="employeeEmail" class="form-control" type="email" v-model="form.email" />
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Phường xã</label>
-                      <div class="form-wrap">
-                        <input id="communeWard" class="form-control" type="text" placeholder="Chọn Phường/Xã" />
-                      </div>
-                    </div>
-
-                    <div class="form-group">
-                      <label class="form-label">Facebook</label>
-                      <div class="form-wrap">
-                        <input id="employeeFacebook" class="form-control" type="text" />
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -221,10 +179,10 @@
               <i class="btn-success-icon fas fa-solid fa-floppy-disk"></i>
               <span>Lưu</span>
             </button>
-            <button class="btn btn-default btn-default-bottom" id="cancelAddEmployee">
+            <!-- <button class="btn btn-default btn-default-bottom" id="cancelAddEmployee">
               <i class="btn-success-icon fas fa-solid fa-ban"></i>
               <span>Bỏ qua</span>
-            </button>
+            </button> -->
             
           </div>
         </div>
@@ -610,7 +568,7 @@ const handleUpdateUserProfile = async () => {
 
   try {
     await axios.put(
-      `http://localhost:8080/bej3/manage/users/update/${form.id}`,
+      `http://localhost:8080/bej3/users/manage/update/${form.id}`,
       form, 
       {
         headers: {

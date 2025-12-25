@@ -5,11 +5,15 @@
             <div class="nav-full">
                 <nav>
                     <ul class="root">
-                        <li v-for="item in userSidebar" :key="item.path">
-                            <router-link :class="{ isActive: $route.path === item.path }" :to="item.path">
-                                <i :class="item.icon"></i>
-                                <span>{{ item.label }}</span>
-                            </router-link>
+                        <li v-for="item in visibleSidebar" :key="item.path">
+                          <router-link
+                            :to="item.path"
+                            class="sidebar-link"
+                            active-class="isActive"
+                          >
+                            <i :class="item.icon"></i>
+                            <span>{{ item.label }}</span>
+                          </router-link>
                         </li>
                         <li @click="handleLogout"> <a href="">
                                 <i class="icon-LogOutSolidOff"></i><span>Đăng xuất</span>
@@ -29,14 +33,14 @@
 <script setup>
 
     import "@/assets/styles/login-style.css";
-    import { ref } from "vue";
+    import { computed, ref } from "vue";
     import router from "@/router";
     import axios from "axios";
 
     const userSidebar = ref([
-        { path: "/user/promotion", icon: "icon-MenuSolidOff", label: "Tổng quan" },
+        { path: "/user/promotion", icon: "icon-MenuSolidOff", label: "Tổng quan"},
         { path: "/user/order", icon: "icon-BoxSolidOff", label: "Đơn hàng" },
-        { path: "/user/history", icon: "icon-MoonSolidOff", label: "Lịch sử mua hàng" },
+        { path: "/admin/product/list", icon: "icon-MoonSolidOff", label: "ADMIN", roles: ["ROLE_ADMIN"] },
         { path: "/user/profile/my-info", icon: "icon-ShieldSolidOff", label: "Thông tin cá nhân" },
     ])
 
@@ -82,5 +86,30 @@ const handleLogout = async () => {
     router.push("/login");
   }
 };
+
+import { jwtDecode } from "jwt-decode"
+
+function getScopesFromToken() {
+  const token = localStorage.getItem("token")
+  if (!token) return []
+
+  try {
+    const decoded = jwtDecode(token)
+    return decoded.scope?.split(" ") ?? []
+  } catch {
+    return []
+  }
+}
+const scopes = ref(getScopesFromToken())
+const roles = computed(() =>
+  scopes.value.filter(s => s.startsWith("ROLE_"))
+)
+const visibleSidebar = computed(() =>
+  userSidebar.value.filter(item =>
+    !item.roles ||
+    item.roles.some(r => roles.value.includes(r))
+  )
+)
+
 
 </script>

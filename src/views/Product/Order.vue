@@ -11,15 +11,11 @@
         />
         <span class="search-icon">🔍</span>
       </div>
-      <select v-model.number="formData.type" class="filter-select">
+      <select v-model.number="formData.type" class="filter-select" @change="fetchOrdersByType(formData.type)">
         <!-- <option :value="">Tất cả loại đơn</option> -->
         <option :value="0">Mua bán</option>
         <option :value="1">Sửa chữa</option>
       </select>
-      <button class="add-order-btn" @click="openNewOrderForm">
-        <span class="plus-icon">+</span>
-        Thêm đơn hàng
-      </button>
     </div>
 
     <!-- Orders Table -->
@@ -59,10 +55,12 @@
                   class="status-select"
                   :class="`status-${order.status}`"
                 >
-                  <option value="0">Chờ xử lý</option>
-                  <option value="1">Đang xử lý</option>
-                  <option value="2">Hoàn thành</option>
-                  <option value="3">Hủy</option>
+                    <option value="0">Chờ xử lý</option>
+                    <option value="1">Chờ xác nhận</option>
+                    <option value="2">Đã xác nhận</option>
+                    <option value="3">Đang xử lý</option>
+                    <option value="4">Hủy</option>
+                    <option value="5">Hoàn thành</option>
                 </select>
               </td>
               <td class="action-cell">
@@ -92,101 +90,7 @@
           <div class="modal-body">
             <!-- Form fields only for new orders -->
             <template v-if="!isEditMode">
-              <div class="form-group">
-                <label>Loại đơn hàng</label>
-                <select :v-model="formData.type" class="form-input">
-                  <option :value="0">Mua bán điện thoại</option>
-                  <option :value="1">Sửa chữa điện thoại</option>
-                </select>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Tên khách hàng</label>
-                  <input
-                    v-model="formData.customerName"
-                    type="text"
-                    placeholder="Nhập tên khách hàng"
-                    class="form-input"
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Số điện thoại</label>
-                  <input
-                    v-model="formData.phone"
-                    type="tel"
-                    placeholder="Nhập số điện thoại"
-                    class="form-input"
-                  />
-                </div>
-              </div>
-
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Địa chỉ</label>
-                  <input
-                    v-model="formData.address"
-                    type="text"
-                    placeholder="Nhập địa chỉ"
-                    class="form-input"
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Loại địa chỉ</label>
-                  <select v-model="formData.addressType" class="form-input">
-                    <option value="1">Địa chỉ khách hàng</option>
-                    <option value="2">Cửa hàng</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Items section for new orders -->
-              <div class="items-section">
-                <div class="items-header">
-                  <h3>
-                    {{ formData.type === '0' ? 'Danh sách điện thoại' : 'Danh sách linh kiện' }}
-                  </h3>
-                  <button class="btn-add-item" @click="addItem">+ Thêm</button>
-                </div>
-
-                <div class="items-list">
-                  <div v-for="(item, index) in formData.items" :key="index" class="item-row">
-                    <input
-                      v-model="item.name"
-                      type="text"
-                      :placeholder="formData.type === '0' ? 'Tên điện thoại' : 'Tên linh kiện'"
-                      class="item-input"
-                    />
-                    <div class="quantity-price">
-                      <input
-                        v-model.number="item.quantity"
-                        type="number"
-                        min="1"
-                        placeholder="SL"
-                        class="item-input small"
-                      />
-                      <input
-                        v-model.number="item.unitPrice"
-                        type="number"
-                        min="0"
-                        placeholder="Đơn giá"
-                        class="item-input small"
-                      />
-                      <span class="item-total">{{
-                        formatPrice(item.quantity * item.unitPrice)
-                      }}</span>
-                      <button class="btn-remove-item" @click="removeItem(index)">✕</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="items-summary">
-                  <div class="summary-row">
-                    <span>Tổng cộng:</span>
-                    <span class="summary-value">{{ formatPrice(formData.totalPrice) }}</span>
-                  </div>
-                </div>
-              </div>
+              
             </template>
 
             <!-- Edit mode: only show editable fields -->
@@ -226,10 +130,11 @@
                   <label>Trạng thái</label>
                   <select v-model="formData.status" class="form-input">
                     <option value="0">Chờ xử lý</option>
-                    <option value="1">Đang xử lý</option>
-                    <option value="2">Hoàn thành</option>
-                    <option value="3">Hủy</option>
-                    <option value="4">Chờ xác nhận</option>
+                    <option value="1">Chờ xác nhận</option>
+                    <option value="2">Đã xác nhận</option>
+                    <option value="3">Đang xử lý</option>
+                    <option value="4">Hủy</option>
+                    <option value="5">Hoàn thành</option>
                   </select>
                 </div>
                 <div class="info-group">
@@ -242,7 +147,7 @@
 
               <div class="form-row" style="grid-template-columns: 1fr 1fr">
                 <div class="form-group">
-                  <label>Cập nhật</label>
+                  <label>Cập nhật ghi chú</label>
                   <textarea type="textarea" class="form-input" v-model="formData.newDescription" />
                 </div>
                 <!-- <div class="form-group">
@@ -368,7 +273,7 @@
                     <tbody>
                       <tr v-for="(item, index) in formData.orderItems" :key="index">
                         <td>{{ item.productName }}</td>
-                        <td>{{ item.color }}</td>
+                        <td>{{ item.quantity }}</td>
                         <td>{{ item.productAttName }}</td>
                         <td>{{ formatPrice(item.price) }}</td>
                       </tr>
@@ -574,17 +479,30 @@ const filteredOrders = computed(() => {
   })
 })
 
-// Watch for items changes to update total
-// watch(
-//   () => formData.value.items,
-//   () => {
-//     formData.value.totalPrice = formData.value.items.reduce(
-//       (sum, item) => sum + (item.quantity * item.unitPrice || 0),
-//       0,
-//     )
-//   },
-//   { deep: true },
-// )
+// =======================================================================================================================
+const fetchOrdersByType = async (type) => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    router.push('/login')
+    return
+  }
+  try {
+    const response = await axios.get(`http://localhost:8080/bej3/manage/orders/get-by-type?type=${type}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    orders.value = response.data.result
+  } catch (error) {
+    console.error('Lỗi', error)
+    alert('Failed to fetch orders!!!!')
+    if (error.response && (error.response.status === 401 || error.response.status === 500)) {
+      localStorage.removeItem('token')
+      router.push('/login')
+    }
+  }
+}
+// =======================================================================================================================
 
 // Methods
 const formatPrice = (price) => {

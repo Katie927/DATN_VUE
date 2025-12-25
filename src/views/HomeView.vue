@@ -6,8 +6,8 @@
         <nav>
           <h2>Danh mục</h2>
           <ul class="root">
-            <li v-for="(item, index) in categories" :key="index">
-              <a href="">
+            <li v-for="(item, index) in categories" :key="index" @click="goToCategory(item.categoryId)">
+              <a href="" @click.prevent >
                 <label for=""><img :src="item.imgSrc" :alt="item.name"></label>
                 <span>{{ item.name }}</span>
               </a>
@@ -136,17 +136,18 @@
   import "swiper/css/pagination";
   import { Navigation, Pagination } from "swiper/modules";
   import axios from "axios";
+  import { useRouter } from "vue-router";
 
 
   const images = import.meta.glob('/src/assets/img/side-bar-img/*', { eager: true });
   // console.log(images)
   const categories = ref([
-    { name: "Điện thoại", imgSrc: '/src/assets/img/side-bar-img/mobile.png' },
-    { name: "Apple", imgSrc: '/src/assets/img/side-bar-img/apple.png' },
-    { name: "Laptop", imgSrc: '/src/assets/img/side-bar-img/laptop.png' },
-    { name: "Tablet", imgSrc: images['/src/assets/img/side-bar-img/tablet.png']?.default },
-    { name: "Đồng hồ", imgSrc: images['/src/assets/img/side-bar-img/dong-ho.png']?.default },
-    { name: "Phụ kiện", imgSrc: images['/src/assets/img/side-bar-img/phu-kien.png']?.default }
+    { name: "Điện thoại", imgSrc: '/src/assets/img/side-bar-img/mobile.png', categoryId: 10 }, 
+    { name: "Sửa chữa", imgSrc: '/src/assets/img/side-bar-img/logo-sua-chua.png', categoryId: 24 },
+    { name: "Laptop", imgSrc: '/src/assets/img/side-bar-img/laptop.png', categoryId: 11 },
+    { name: "Tablet", imgSrc: '/src/assets/img/side-bar-img/tablet.png', categoryId: 12 },
+    { name: "Đồng hồ", imgSrc: '/src/assets/img/side-bar-img/dong-ho.png', categoryId: 13},
+    { name: "Phụ kiện", imgSrc: '/src/assets/img/side-bar-img/phu-kien.png', categoryId: 14 }
   ]);
 
   const sliderImages = ref([
@@ -180,9 +181,7 @@
   const fetchProductData = async () => {
     try {
       const response = await axios.get('http://localhost:8080/bej3/home');
-      // console.log("Response Data:", response.data);
       productData.value = response.data.result.products;
-      // console.log("Product Data in Vue:", productData.value);
     } catch (error) {
       console.error('Error: ', error);
     }
@@ -190,6 +189,15 @@
   onMounted(fetchProductData);
 
   // const thumbsSwiper = ref(null);
+  const router = useRouter()
+  const goToCategory = (categoryId) => {
+    router.push({
+      path: '/search',
+      query: {
+        categoryId
+      }
+    })
+  }
   
   
 </script>

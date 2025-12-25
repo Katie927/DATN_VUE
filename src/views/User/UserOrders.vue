@@ -58,9 +58,11 @@
                 {{
                   {
                     0: 'Chờ xử lý',
-                    1: 'Đang xử lí',
-                    2: 'Hoàn thành',
-                    3: 'Đã hủy',
+                    1: 'Chờ xác nhận',
+                    2: 'Đã xác nhận',
+                    3: 'Đang xử lý',
+                    4: 'Đã hủy',
+                    5: 'Hoàn thành',
                   }[order.status] || 'Không xác định'
                 }}
               </div>
@@ -128,10 +130,11 @@
                 {{
                   {
                     0: 'Chờ xử lý',
-                    1: 'Đang xử lý',
-                    2: 'Hoàn thành',
-                    3: 'Đã hủy',
-                    4: 'Chờ xác nhận',
+                    1: 'Chờ xác nhận',
+                    2: 'Đã xác nhận',
+                    3: 'Đang xử lý',
+                    4: 'Đã hủy',
+                    5: 'Hoàn thành',
                   }[selectedOrder.status] || 'Không xác định'
                 }}
               </div>
@@ -216,14 +219,14 @@
               <button class="btn-primary">💬 Liên hệ hỗ trợ</button>
 
               <button
-                v-if="selectedOrder.status === 4"
+                v-if="selectedOrder.status === 1"
                 class="btn-primary"
-                @click="confirmOrder(selectedOrder)"
+                @click="confirmOrder(selectedOrder.id)"
               >
                 ✅ Xác nhận đơn
               </button>
 
-              <button class="btn-outline">🖨 In đơn hàng</button>
+              <button class="btn-outline">🖨 Xác nhận đơn</button>
             </div>
           </div>
         </div>
@@ -237,29 +240,6 @@ import { ref, computed } from 'vue'
 
 // Mock data
 const orders = ref([ ])
-
-const confirmOrder = (order) => {
-  order.status = 1 // chuyển sang "Đang xử lý"
-
-  // Gọi backend nếu cần
-  // const token = localStorage.getItem('token')
-  // axios
-  //   .patch(
-  //     `http://localhost:8080/bej3/cart/confirm-order/${order.id}`,
-  //     {},
-  //     {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     },
-  //   )
-  //   .then(() => {
-  //     alert('Đơn hàng đã được xác nhận!')
-  //     selectedOrder.value = null
-  //   })
-  //   .catch((err) => {
-  //     console.error(err)
-  //     alert('Xác nhận thất bại!')
-  //   })
-}
 
 const selectedOrder = ref(null)
 const filterStatus = ref(null)
@@ -305,6 +285,7 @@ const selectOrder = (order) => {
 import axios from 'axios'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import router from '@/router'
 
 const fetchOrders = async () => {
   const token = localStorage.getItem('token')
@@ -333,6 +314,32 @@ const fetchOrders = async () => {
 }
 onMounted(fetchOrders)
 
+
+const confirmOrder = async (orderId) => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    router.push('/login')
+    return
+  }
+
+  try {
+    await axios.put(`http://localhost:8080/bej3/orders/repair-order/${orderId}/confirm`,null , {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    alert('Order confirmed successfully!')
+    fetchOrders();
+  } catch (error) {
+    console.error('Lỗi', error)
+    alert('Failed to confirm orders!!!!')
+
+    if (error.response && (error.response.status === 401 || error.response.status === 500)) {
+      localStorage.removeItem('token')
+      router.push('/login')
+    }
+  }
+}
 </script>
 
 <style scoped>

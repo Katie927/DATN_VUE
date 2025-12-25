@@ -1,23 +1,27 @@
 <template>
 <div class="kv-product">
     <div class="kv-container">
-        <div class="kv-product-main-body">
-            <div class="kv-product-main-left">
+        <div class="kv-product-main-left">
                 <!-- Header -->
-                <div class="em-left-header">
+            <div class="em-left-header">
+                <h1 class="em-left-heading">Nhân viên</h1>
+            </div>
+        </div>
+        <div class="kv-product-main-body">
+            <!-- <div class="kv-product-main-left"> -->
+                <!-- Header -->
+                <!-- <div class="em-left-header">
                     <h1 class="em-left-heading">Nhân viên</h1>
-                </div>
+                </div> -->
 
                 <!-- Loại hàng -->
-                <div class="em-left-content content-product-type">
+                <!-- <div class="em-left-content content-product-type">
                     <div class="em-left-content-title">
                         <h3 class="em-left-content-heading">Vai trò</h3>
                     </div>
                     <div class="product-type-group-check">
-                        <label
-                        v-for="(item, index) in productTypes"
-                        :key="index"
-                        class="container-check-box check-box-menu-type"
+                        <label v-for="(item, index) in productTypes"
+                            :key="index" class="container-check-box check-box-menu-type"
                         >
                         {{ item.label }}
                             <input
@@ -27,10 +31,10 @@
                             <span class="checkmark"></span>
                         </label>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Nhóm hàng -->
-                <div class="em-left-content content-product-group">
+                <!-- <div class="em-left-content content-product-group">
                     <div class="em-left-content-title">
                         <h3 class="em-left-content-heading">Chức vụ</h3>
                     </div>
@@ -56,12 +60,12 @@
                         </ul>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <!-- <aside class="em-left-pageside">
                     <label for="numberOfRecordsProduct">Số bản ghi</label>
                     <select name="Số bản ghi: " id="numberOfRecord"></select>
                 </aside> -->
-            </div>
+            <!-- </div> -->
 
             <div class="kv-product-main-right">
                 <div class="product-right-header">
@@ -69,8 +73,7 @@
                     <div class="header-filter-search">
                         <div class="input-group input-group-search-product-code" id="groupInputSearchProductCode">
                             <i class="input-group-icon fas fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                                <input type="text" name="" id="searchCodeName" class="form-control" placeholder="Tìm theo mã, Tên nhân viên">
-                            <i class="input-group-icon fas fa-solid fa-caret-down" aria-hidden="true"></i>
+                            <input type="text" name="" id="searchCodeName" class="form-control" placeholder="Tìm theo mã, Tên nhân viên">
                         </div>
 
                         <div class="choosed-items" style="display: none;">
@@ -177,7 +180,7 @@
                                 <th class="product-name" for="containerCheckBoxProductName">Mã nhân viên</th>
                                 <th class="product-name" for="containerCheckBoxProductName">Tên nhân viên</th>
                                 <th class="product-type" for="containerCheckBoxProductType">Số điện thoại</th>
-                                <th class="selling-price" for="containerCheckBoxSellingPrice">CCCD/CMND</th>
+                                <th class="selling-price" for="containerCheckBoxSellingPrice">Email</th>
                                 <th class="cost-price" for="containerCheckBoxCostPrice">Ngày sinh</th>
                                 <th class="trademark" for="containerCheckBoxTrademark">Địa chỉ</th>
                                 <th class="inventory" for="containerCheckBoxInventory">Email</th>
@@ -200,7 +203,7 @@
                                     <td class="product-name">{{ employee.id }}</td>
                                     <td class="product-type">{{ employee.fullName }}</td>
                                     <td class="selling-price">{{ employee.phoneNumber }}</td>
-                                    <td class="cost-price">{{ employee.phoneNumber }}</td>
+                                    <td class="cost-price">{{ employee.email }}</td>
                                     <td class="trademark">{{ employee.dob }}</td>
                                     <td class="inventory">{{ employee.address }}</td>
                                     <td class="inventory">{{ employee.email }}</td>
@@ -241,8 +244,7 @@ const router = useRouter();
 const showEmpployeeAdd = ref(false)
 
 const productTypes = ref([
-  { label: 'Staff', checked: true },
-  { label: 'Manager', checked: true }
+  { label: 'Nhân viên', checked: true }
 ])
 
 const employeeData = ref([])
@@ -254,7 +256,7 @@ const fetchEmployeeData = async () => {
         return;
     }
     try {
-        const response = await axios.get(`http://localhost:8080/bej3/users/manage`, {
+        const response = await axios.get(`http://localhost:8080/bej3/manage/users/search/role?roles=ADMIN&roles=EMPLOYEE_MANAGER&roles=SHOP_MANAGER`, {
             headers: {
                 Authorization: `Bearer ${token}` // Gửi token trong header
             }

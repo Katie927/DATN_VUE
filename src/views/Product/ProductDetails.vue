@@ -91,8 +91,8 @@
                                     <img :src="variant.detailImages?.[0]?.url" title="Samsung Galaxy S25 Ultra - 12GB/256GB Đen" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Đen">
                                 <div class="color-price">
                                     <span>{{ variant.color }}</span>
-                                    <!-- <p>{{ attr?.finalPrice
-                                        ?.toLocaleString('vi-VN') }} ₫ </p>                                             -->
+                                    <p>{{ variant?.attributes?.[0]?.finalPrice
+                                        ?.toLocaleString('vi-VN') }} ₫ </p>                              
                                 </div>
                             </div>
                         </div>

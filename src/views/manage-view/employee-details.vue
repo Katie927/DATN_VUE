@@ -26,11 +26,10 @@
                       <div class="identification-item"><span class="identification-item-name">Mã nhân viên:</span><span class="identification-item-code">{{ employeeDetails.id }}</span></div>
                       <div class="identification-item"><span class="identification-item-name">Họ tên:</span><span class="identification-item-code">{{ employeeDetails.fullName  }}</span></div>
                       <div class="identification-item"><span class="identification-item-name">Ngày sinh:</span><span class="identification-item-code">{{ employeeDetails.dob  }}</span></div>
-                      <div class="identification-item"><span class="identification-item-name">Giới tính:</span><span class="identification-item-code">{{ employeeDetails.fullName  }}</span></div>
                       <div class="identification-item"><span class="identification-item-name">Số CMND/CCCD:</span><span class="identification-item-code">{{ employeeDetails.name }}</span></div>
-                      <div class="identification-item"><span class="identification-item-name">Phòng ban:</span><span class="identification-item-code">{{   }}</span></div>
+                      <!-- <div class="identification-item"><span class="identification-item-name">Phòng ban:</span><span class="identification-item-code">{{   }}</span></div>
                       <div class="identification-item"><span class="identification-item-name">Chức danh:</span><span class="identification-item-code">{{   }}</span></div>
-                      <div class="identification-item"><span class="identification-item-name">Vị trí:</span><span class="identification-item-code"></span></div>
+                      <div class="identification-item"><span class="identification-item-name">Vị trí:</span><span class="identification-item-code"></span></div> -->
                     </div>
                   </div>
 
@@ -39,8 +38,6 @@
                       <div class="identification-item"><span class="identification-item-name">Ngày bắt đầu làm việc:</span><span class="identification-item-code">{{   }}</span></div>
                       <div class="identification-item"><span class="identification-item-name">Số điện thoại:</span><span class="identification-item-code">{{ employeeDetails.phoneNumber }}</span></div>
                       <div class="identification-item"><span class="identification-item-name">Email:</span><span class="identification-item-code">{{ employeeDetails.email }}</span></div>
-                      <div class="identification-item"><span class="identification-item-name"></span><span class="identification-item-code">{{   }}</span></div>
-                      <div class="identification-item"><span class="identification-item-name">Giá bán:</span><span class="identification-item-code">{{   }}</span></div>
                       <div class="identification-item"><span class="identification-item-name">Địa chỉ:</span><span class="identification-item-code">{{ employeeDetails.address }}</span></div>
                       <div class="identification-item"><span class="identification-item-name">Trạng thái:</span><span class="identification-item-code"></span></div>
                     </div>
@@ -59,8 +56,8 @@
 
             <div class="add-edit-product">
               <button class="btn btn-success btn-edit-product" @click="handleEdit">Cập nhật</button>
-              <button class="btn btn-red btn-lock-product" @click=" ">Lịch làm việc</button>
-              <button class="btn btn-red btn-remove-product" @click=" ">Xóa</button>
+              <!-- <button class="btn btn-red btn-lock-product" @click=" ">Lịch làm việc</button> -->
+              <button class="btn btn-red btn-remove-product" @click=" ">Tạo đơn hàng</button>
               <button class="btn btn-more btn-more-product">...</button>
             </div>
           </div>
@@ -91,7 +88,7 @@ const handleFetchUserProfile = async () => {
 
     try{
         const response = await axios.get(
-            `http://localhost:8080/bej3/users/manage/${props.employeeId}`,
+            `http://localhost:8080/bej3/manage/users/${props.employeeId}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`

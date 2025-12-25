@@ -2,9 +2,9 @@
   <section class="kv-navbar kv-navbar-main">
     <div class="kv-container kv-navbar-container">
       <ul class="kv-navbar-items">
-        <li v-for="item in navbarItems" :key="item.id" class="kv-navbar-item">
-          <i :class="`kv-navbar-item-icon ${item.icon}`"></i>
-          <p class="kv-navbar-item-content">{{ item.label }}</p>
+        <li v-for="item in navbarItems" :key="item.id" class="kv-navbar-item" @click="go(item.link)">
+            <i :class="`kv-navbar-item-icon ${item.icon}`"></i>
+            <p class="kv-navbar-item-content">{{ item.label }}</p>
           <ul v-if="item.dropdown" class="kv-dropdown-list scope">
             <li v-for="(dropdownItem, index) in item.dropdown" :key="index" class="scope">
               <a :href="dropdownItem.link" class="kv-dropdown-link">
@@ -27,7 +27,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { ref } from 'vue';
 
 const navbarItems = ref([
-  { id: 1, icon: 'fas fa-eye', label: 'Tổng quan', link: '' },
+  { id: 1, icon: 'fas fa-eye', label: 'Tổng quan', link: '/admin/statistics' },
   {
     id: 2, icon: 'fas fa-cube', label: 'Hàng hóa', dropdown: [
       { label: 'Danh mục', icon: 'fas fa-table-list', link: '/admin/product/list' },
@@ -41,26 +41,25 @@ const navbarItems = ref([
       // { label: 'Hóa đơn', icon: 'fas fa-file-invoice-dollar', link: '' },
       // { label: 'Vận đơn', icon: 'fas fa-file-edit', link: '' },
       // { label: 'Trả hàng', icon: 'fas fa-reply-all', link: '' },
-      // { label: 'Nhập hàng', icon: 'fas fa-cart-flatbed', link: '' },
+      // { label: 'Nhập hàng', icon: 'fas fa-cart-flatbed', link: '' },//
       // { label: 'Xuất hủy', icon: 'fas fa-hand-holding-dollar', link: '' }
     ]
   },
   {
-    id: 4, icon: 'fas fa-user-group', label: 'Nhân viên', dropdown: [
+    id: 4, icon: 'fas fa-user-group', label: 'Người dùng', dropdown: [
       { label: 'Nhân viên', icon: 'fas fa-user-friends', link: '/admin/employee' },
-      // { label: 'Chấm công', icon: 'fas fa-calendar-alt', link: '' },
+      { label: 'Khách hàng', icon: 'fas fa-calendar-alt', link: '/admin/customer' },
       // { label: 'Bảng tính lương', icon: 'fas fa-coins', link: '' },
       // { label: 'Lịch làm việc', icon: 'fas fa-sack-dollar', link: '' },
       // { label: 'Thiết lập chung', icon: 'fas fa-cog', link: '' }
     ]
   },
-  // {
-  //   id: 5, icon: 'fas fa-user-tie', label: 'Đối tác', dropdown: [
-  //     { label: 'Khách hàng', icon: 'fas fa-user-alt', link: '' },
-  //     { label: 'Nhà cung cấp', icon: 'fas fa-users-line', link: '' },
-  //     { label: 'Đối tác giao hàng', icon: 'fas fa-people-carry-box', link: '' }
-  //   ]
-  // },
+  //  {
+  //    id: 5, icon: 'fas fa-user-tie', label: 'Đối tác', dropdown: [
+  //      { label: 'Khách hàng', icon: 'fas fa-user-alt', link: '' },
+  //      { label: 'Đối tác giao hàng', icon: 'fas fa-people-carry-box', link: '' }
+  //    ]
+  //  },
   // {
   //   id: 6, icon: 'fas fa-chart-simple', label: 'Báo cáo', dropdown: [
   //     { label: 'Cuối ngày', icon: 'fas fa-chart-pie', link: '' },
@@ -74,8 +73,16 @@ const navbarItems = ref([
   //     { label: 'Tài chính', icon: 'fas fa-chart-line', link: '' }
   //   ]
   // },
-  { id: 7, icon: 'fas fa-basket-shopping', label: 'Bán hàng', link: '' }
+  { id: 7, icon: 'fas fa-basket-shopping', label: 'Bán hàng', link: '/' }
 ]);
+
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const go = (link) => {
+  if (link) router.push(link)
+}
 
 </script>
 

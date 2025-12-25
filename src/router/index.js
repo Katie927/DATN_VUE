@@ -22,6 +22,9 @@ import Order from '@/views/Product/Order.vue'
 import Arange from '@/views/employee/Arange.vue'
 import Statistics from '@/views/manage-view/statistics.vue'
 import ManagerSlideImage from '@/views/manage-view/manager-slide-image.vue'
+import Search from '@/views/User/Search.vue'
+import ListUser from '@/views/manage-view/list-customer.vue'
+import ListCustomer from '@/views/manage-view/list-customer.vue'
 
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
@@ -45,6 +48,7 @@ const customerRoutes = [
         ],
       },
       { path: '/product-detail/:productId', component: ProductDetails },
+      { path: '/search', component: Search },
     ],
   },
 ]
@@ -65,6 +69,7 @@ const adminRoutes = [
       { path: 'product/order', component: Order },
       { path: 'employee/arange', component: Arange },
       { path: 'statistics', component: Statistics },
+      { path: 'customer', component: ListCustomer },
       { path: 'manager/images', component: ManagerSlideImage },
     ],
   },

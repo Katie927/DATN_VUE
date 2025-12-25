@@ -6,7 +6,7 @@
         <div class="slick-list slide-deal-item draggeble">
           <a href="" class="deal-header">
             <i class="icon-ChangeSolidOff"></i>
-            <span>Thu cũ giá cao toàn bộ sản phẩm</span>
+            <span>Sửa chữa</span>
           </a>
         </div>
         <button class="slick-next slick arrow"></button>
@@ -23,14 +23,9 @@
 
         <div class="search">
           <div class="search-box">
-            <form action="/tim-kiem" method="get">
+            <form @submit.prevent="submitSearch">
               <div class="search-bg">
-                <input
-                  type="text"
-                  name="kwd"
-                  id="kwd"
-                  placeholder="Hôm nay bạn muốn tìm kiếm gì?"
-                />
+                <input type="text"  v-model="keyword" placeholder="Hôm nay bạn muốn tìm kiếm gì?" />
                 <button type="submit">
                   <i class="icon-SearchSolidOff"></i>
                   <span>Tìm kiếm</span>
@@ -43,7 +38,7 @@
             <a href="">Galaxy S25</a>
             <a href="">Iphone 16</a>
             <a href="">Galaxy S23 Ultra</a>
-            <a href="">Oppo Find X8</a>
+            <a href="">Oppo Find X9</a>
           </div>
         </div>
         <div class="quick-for-user">
@@ -74,6 +69,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 import { userBus } from './userBus' 
 import '@/assets/styles/header-style.css'
 import '@/assets/styles/style.css'
@@ -142,6 +138,20 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
+
+
+// ===============================================================
+const keyword = ref('')
+const router = useRouter()
+
+const submitSearch = () => {
+  if (!keyword.value.trim()) return
+
+  router.push({
+    path: '/search',
+    query: { kw: keyword.value }
+  })
+}
 
 </script>
 

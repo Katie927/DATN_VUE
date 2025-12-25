@@ -20,14 +20,15 @@
     flex: 1 1 17%;
     margin-top: 15px;
     margin-right: 18px;
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
 }
 
 .em-left-heading {
     font-size: 20px;
     line-height: 22px;
     height: 54px;
-    padding-bottom: 16px;
+    padding-bottom: 0;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
 }

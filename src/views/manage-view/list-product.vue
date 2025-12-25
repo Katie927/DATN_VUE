@@ -116,8 +116,8 @@
                                     </ul>
                                     
                                 </li>
-                                
-                                <li class="header-filter-button-item">
+                            
+                                <!-- <li class="header-filter-button-item">
                                     <button class="btn-success" id="" data-action="importFile">
                                     <i class="btn-icon fas fa-solid fa-file-import" aria-hidden="true"></i>
                                     <span>Import</span>
@@ -129,7 +129,7 @@
                                     <i class="btn-icon fas fa-solid fa-file-export" aria-hidden="true"></i>
                                     <span>Xuất file</span>
                                     </button>
-                                </li>
+                                </li> -->
 
                                 <li class="header-filter-button-item">
                                     <button class="btn-success k-link">
