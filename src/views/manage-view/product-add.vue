@@ -323,61 +323,6 @@
           </div>
 
           <!-- detail product -->
-          <div class="detail-product">
-            <!-- detail product container -->
-            <div class="detail-product-container">
-              <div class="detail-group detail-group-form-product">
-                <!-- detail inventory levels -->
-                <div class="form-group form-detail-inventory-add-product">
-                  <h3 class="form-title form-title-inventory">
-                    <span class="form-span form-span-inventory">Định mức tồn</span>
-                  </h3>
-                  <div class="form-wrapper form-wrapper-detail-inventory">
-                    <div class="form-wrap form-wrap-product-detail-inventory">
-                      <label class="form-label form-label-wrap-detail-inventory">
-                        Ít nhất
-                      </label>
-                      <div class="form-label-icon form-label-icon-inventory">
-                        <input type="text"  class="form-control form-control-inventory-levels-detail"   placeholder="0"
-                          v-model="form.minInventory"
-                        />
-                      </div>
-                    </div>
-
-                    <div class="form-wrap form-wrap-product-detail-inventory">
-                      <label class="form-label form-label-wrap-detail-inventory">
-                        Nhiều nhất
-                      </label>
-                      <div class="form-label-icon form-label-icon-inventory">
-                        <input type="text" class="form-control form-control-inventory-levels-detail"
-                          placeholder="999,999,999" v-model="form.maxInventory"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- detail description -->
-                <div class="form-group form-detail-description-add-product">
-                  <h3 class="form-title form-title-description">
-                    <span class="form-span form-span-description">Mô tả</span>
-                  </h3>
-                  <div class="form-wrapper form-wrapper-detail-description">
-                    <div class="form-wrap form-wrap-product-detail-description">
-                      <div class="form-label-icon form-label-icon-description">
-                        <textarea
-                          class="product-desc form-input"
-                          v-model="form.description"
-                        ></textarea>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- detail notes -->
-                
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- add product bottom -->

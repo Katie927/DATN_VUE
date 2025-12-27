@@ -65,14 +65,15 @@
           <h3 class="chart-title">Doanh Thu Theo Tuần</h3>
           <div class="simple-chart">
             <div class="chart-bars">
-              <!-- <div
+              <div
                 class="bar-wrapper"
-                v-for="(bar, index) in currentMonthData.chartData"
-                :key="index"
+                v-for="bar in normalizedMonthlyRevenues"
+                :key="bar.month"
               >
+                <span class="bar-label">{{ bar.revenue }}</span>
                 <div class="bar" :style="{ height: bar.height + '%' }"></div>
-                <span class="bar-label">{{ bar.day }}</span>
-              </div> -->
+                <span class="bar-label">{{ bar.month }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -240,6 +241,7 @@ const repairPercent = computed(() => 100 - salesPercent.value)
 const currentMonthData = ref([])
 const currentMonthTopProducts = ref([])
 const currentMonthTopRepairServices = ref([])
+const monthlyChartData = ref({})
 const selectedMonth = ref(new Date().getMonth() + 1)
 const selectedYear = ref(new Date().getFullYear())
 const selectedWeek = ref(dayjs().week())
@@ -257,7 +259,7 @@ const fetchStatisticsData = async () => {
     const headers = {
       Authorization: `Bearer ${token}`,
     }
-    const [monthResponse, monthTopProducts, monthTopRepairServices] = await Promise.all([
+    const [monthResponse, monthTopProducts, monthTopRepairServices, monthlyChartResponse] = await Promise.all([
       axios.get(
         'http://localhost:8080/bej3/manage/orders/revenue-statistics',
         { params, headers }
@@ -270,10 +272,15 @@ const fetchStatisticsData = async () => {
         'http://localhost:8080/bej3/manage/orders/top-repair-services',
         { params, headers }
       ),
+      axios.get(
+        'http://localhost:8080/bej3/manage/orders/revenue-statistics?year=' + selectedYear.value,
+        { headers }
+      ),
     ])
     currentMonthData.value = monthResponse.data.result
     currentMonthTopProducts.value = monthTopProducts.data.result.products
     currentMonthTopRepairServices.value = monthTopRepairServices.data.result.services
+    monthlyChartData.value = monthlyChartResponse.data.result
 
   } catch (error) {
     console.error(error)
@@ -287,6 +294,17 @@ watch(
   { immediate: true }
 )
 // ===========================================================================================================
+const normalizedMonthlyRevenues = computed(() => {
+  const list = monthlyChartData.value.monthlyRevenues
+  if (!list || !list.length) return []
+
+  const maxRevenue = Math.max(...list.map(i => Number(i.revenue)))
+
+  return list.map(item => ({
+    ...item,
+    height: (Number(item.revenue) / maxRevenue) * 100
+  }))
+})
 
 // const monthsData = {
 //   '09-2024': {

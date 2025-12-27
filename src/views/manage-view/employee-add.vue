@@ -568,7 +568,7 @@ const handleUpdateUserProfile = async () => {
 
   try {
     await axios.put(
-      `http://localhost:8080/bej3/users/manage/update/${form.id}`,
+      `http://localhost:8080/bej3/manage/users/update/${form.id}`,
       form, 
       {
         headers: {

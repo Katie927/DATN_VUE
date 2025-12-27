@@ -38,23 +38,13 @@
                         </div>
                         <div class="product-group-list">
                             <div class="product-group-icon-input">
-                            <i class="product-group-search-icon fas fa-search" aria-hidden="true"></i>
-                            <input id="productGroupListSearch" type="search"
-                                class="form-control hide-show-product-group" placeholder="Tìm kiếm nhóm hàng"
-                                v-model="searchKeyword"
-                            />
+                                <i class="product-group-search-icon fas fa-search" aria-hidden="true"></i>
+                                <input id="productGroupListSearch" type="search"
+                                    class="form-control hide-show-product-group" placeholder="Tìm kiếm nhóm hàng"
+                                    v-model="searchKeyword"
+                                />
                             </div>
 
-                            <div class="product-group-list-items">
-                            <ul class="form-items">
-                                <li v-for="(group, index) in filteredProductGroups"  :key="index"
-                                class="form-item"
-                                >
-                                <span class="item-name product-group-name">{{ group }}</span>
-                                <i class="fas fa-pen" aria-hidden="true"></i>
-                                </li>
-                            </ul>
-                            </div>
                         </div>
                     </div>
                     <!-- <aside class="em-left-pageside">
@@ -70,8 +60,8 @@
                         <div class="header-filter-search">
                             <div class="input-group input-group-search-product-code" id="groupInputSearchProductCode">
                                 <i class="input-group-icon fas fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                                    <input type="text" name="" id="searchCodeName" class="form-control" placeholder="Tìm theo mã, Tên hàng">
-                                <i class="input-group-icon fas fa-solid fa-caret-down" aria-hidden="true"></i>
+                                    <input type="text" name="" id="searchCodeName" class="form-control" placeholder="Tìm theo mã, Tên hàng"
+                                        v-model="keyWord" @keyup.enter="handleSearchProduct">
                             </div>
 
                             <div class="choosed-items" style="display: none;">
@@ -356,6 +346,36 @@ watch(showProductAdd, (val) => {
 const handleEditProduct = (product) => {
     selectedProduct.value = { ...product };  // clone product
     showProductAdd.value = true;
+};
+
+//==============================================================   search product ==   ================================
+const keyWord = ref("");
+const handleSearchProduct = () => {
+  if (!keyWord.value.trim()) return;
+  searchProduct(keyWord.value);
+};
+const searchProduct = async (keyWord) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        console.error("Token không tồn tại!");
+        router.push("/login"); 
+        return;
+    }
+    try {
+        const response = await axios.get(`http://localhost:8080/bej3/home/products/search`, {
+            params: { name: keyWord },
+            headers: {
+                Authorization: `Bearer ${token}` 
+            }
+        });
+        productData.value = [response.data.result];
+    } catch (error) {
+        console.error('Lỗi:', error);
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+            localStorage.removeItem("token"); 
+            router.push("/login"); 
+        }
+    }
 };
 
 </script>

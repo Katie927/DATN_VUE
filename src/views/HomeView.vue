@@ -55,7 +55,7 @@
                   <div id="pageHolder" class="v5-grid-items item-4" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
                     <div class="pj16-item" style="grid-row: span 1; grid-column: span 2; padding: 0; justify-content:center; background: rgba(238, 255, 247, 1);">
                       <div class="item-img-video-gif">
-                        <a title="Gaming REDMAGIC 10 PRO 12GB/256GB" href="https://hoanghamobile.com/dien-thoai/redmagic-10-pro-16gb-512gb" data-id="0" class="" style="width: 100%;">
+                        <a title="Gaming REDMAGIC 10 PRO 12GB/256GB" href="http://localhost:5173/product-detail/402b3525-d82d-41fb-99ce-a3f3478857e2" data-id="0" class="" style="width: 100%;">
                           <i class="icon-PlayCircleSolidOn" id="play-icon-0" style="position: absolute; bottom: 12px; left: 12px; font-size: 40px; opacity: 0.5; display: none;"></i>
                           <img alt="Gaming REDMAGIC 10 PRO 12GB/256GB" src="https://cdn.hoanghamobile.com/Uploads/2024/12/25/r…;trim.threshold=0;trim.percentpadding=0;width=480" id="product-img-0" data-id="0" style="width: 100%; display: none;">
                           <video id="video-player-0" data-id="0" data-src="https://cdn.hoanghamobile.com/FetchVideo?src=/Uploads/2024/12/25/rm-10-pro-desktop.mp4" type="video/mp4" class="embed-responsive-item auto-play" style="background-color: black; width: 100%; pointer-events: none; display: block;" muted="muted" autoplay="autoplay" loop="loop" playsinline="playsinline" src="https://cdn.hoanghamobile.com/FetchVideo?src=/Uploads/2024/12/25/rm-10-pro-desktop.mp4">

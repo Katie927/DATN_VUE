@@ -12,7 +12,7 @@
                         <Swiper :loop="true" :navigation="true" :thumbs="{ swiper: thumbsSwiper }"
                             :modules="[Navigation, Thumbs]" class="main-slider"
                         >
-                            <template v-if="isIntroImages === 1">
+                            <template v-if="isIntroImages === 1 && productDetails?.introImages?.length > 0">
                                 <SwiperSlide 
                                     v-for="(image, index) in productDetails?.introImages ?? []" 
                                     :key="'intro-' + index"
@@ -32,7 +32,7 @@
 
                         <!-- Danh sách màu sắc (thumbnail) -->
                         <div class="color-selector">
-                            <div class="color-item" :class="{ active: isIntroImages === 1 }"
+                            <div class="color-item" :class="{ active: isIntroImages === 1 }" v-if="productDetails?.introImages?.length > 0"
                                 @click="isIntroImages = 1"
                             >
                                 <img src="@/assets/icon/star.svg" class="color-thumb" alt="">
