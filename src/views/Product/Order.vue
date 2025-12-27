@@ -172,20 +172,18 @@
                       <td>{{ note.note }}</td>
                       <td>{{ formatDateTime(note.updateTime) }}</td>
                     </tr>
-                    <tr v-if="notes.length === 0">
+                    <tr v-if="formData.orderNotes.length === 0">
                       <td colspan="3" class="text-center">Chưa có ghi chú nào</td>
                     </tr>
                   </tbody>
                 </table>
 
                 <!-- Thêm ghi chú mới -->
-                <div class="add-note">
-                  <input
-                    v-model="newNoteContent"
-                    placeholder="Nhập ghi chú mới..."
-                    class="form-input"
-                  />
-                  <button class="btn-primary" @click="addNote">Thêm ghi chú</button>
+                <div class="modal-footer">
+                  <button v-if="!isEditMode" class="btn-save" @click="saveOrder">Lưu đơn hàng</button>
+                  <button v-else class="btn-save" @click="hanldeUpdateOrderStatus(editingOrderId)">
+                    Cập nhật trạng thái
+                  </button>
                 </div>
               </div>
 
@@ -195,7 +193,6 @@
                   <h3>
                     Danh sách sản phẩm
                   </h3>
-                  <button v-if="formData.type === 1" class="btn-add-item" @click="addItem">+ Thêm</button>
                 </div>
                 <template v-if="formData.type===0">
                   <table class="items-detail-table">
@@ -233,7 +230,9 @@
                           {{ p.name }}
                         </li>
                       </ul>
-                    <select v-model="selectedVariantIndex" class="item-input small">
+                    <select v-model.number="selectedVariantIndex" class="item-input small"
+                      :disabled="selectedVariantIndex === null"
+                    >
                       <option disabled value="">-- Chọn phiên bản --</option>
                       <option v-for="(variant, index) in productDetails.variants"
                         :key="variant.id" :value="index"
@@ -242,11 +241,13 @@
                       </option>
                     </select>
                     <select v-model="newItem.attrId" class="item-input small"
-                      :disabled="selectedVariantIndex === null"
+                      v-if="productDetails?.variants?.[selectedVariantIndex]?.attributes?.length"
                     >
-                      <option disabled value="">-- Chọn phiên bản --</option>
-                      <option v-for="attr in productDetails?.variants?.[selectedVariantIndex]?.attributes || []"
-                        :key="attr.id" :value="attr.id"
+                      <option disabled value="newItem.attrId">-- Tùy chọn --</option>
+                      <option
+                        v-for="attr in productDetails?.variants?.[selectedVariantIndex]?.attributes"
+                        :key="attr.id"
+                        :value="attr.id"
                       >
                         {{ attr.name }}
                       </option>
@@ -255,9 +256,9 @@
                       type="text"  placeholder="Số lượng"
                       class="item-input small" />
 
-                    <span class="item-total">
+                    <!-- <span class="item-total">
                       {{ formatPrice(newItem.quantity * newItem.unitPrice) }}
-                    </span>
+                    </span> -->
 
                     <button class="btn-add-item" @click="addItem(formData.id)">＋</button>
                   </div>
@@ -266,6 +267,7 @@
                       <tr>
                         <th>Sản phẩm</th>
                         <th>Số lượng</th>
+                        <th>Tùy chọn</th>
                         <th>Phiên bản</th>
                         <th>Đơn giá</th>
                       </tr>
@@ -274,6 +276,7 @@
                       <tr v-for="(item, index) in formData.orderItems" :key="index">
                         <td>{{ item.productName }}</td>
                         <td>{{ item.quantity }}</td>
+                        <td>{{ item.color }}</td>
                         <td>{{ item.productAttName }}</td>
                         <td>{{ formatPrice(item.price) }}</td>
                       </tr>
@@ -293,10 +296,6 @@
           <div class="modal-footer">
             <button class="btn-cancel" @click="closeModal">
               {{ isEditMode ? 'Đóng' : 'Hủy' }}
-            </button>
-            <button v-if="!isEditMode" class="btn-save" @click="saveOrder">Lưu đơn hàng</button>
-            <button v-else class="btn-save" @click="hanldeUpdateOrderStatus(editingOrderId)">
-              Cập nhật trạng thái
             </button>
           </div>
         </div>
@@ -652,28 +651,41 @@ watch(
   }
 )
 
+const selectedVariantIndex = ref(null)
+const selectedAttributeIndex = ref(null)
 const productDetails = ref({});
 const selectProduct = async (product) => {
   newItem.value.productName = product.name
   showSuggest.value = false
-  const productId = product.id;
-  const response = await axios.get(`http://localhost:8080/bej3/home/product/${productId}`)
-            productDetails.value = response.data.result;
-}
+  productDetails.value = null
+  selectedVariantIndex.value = null
+  newItem.value.attrId = ''
 
-const selectedVariantIndex = ref(null)
-const selectedAttributeIndex = ref(null)
-const selectedVariant = computed(() =>
-  productDetails?.variants?.[selectedVariantIndex.value] ?? null
-)
-const selectedAttribute = computed(() =>
-  selectedVariant.value && selectedAttributeIndex.value !== null
-    ? selectedVariant.value.attributes[selectedAttributeIndex.value]
-    : null
-)
-watch(selectedVariantIndex, () => {
-  // console.log('selectedVariantIndex changed:', selectedVariantIndex.value)
-  selectedAttributeIndex.value = null
+  const res = await axios.get(
+    `http://localhost:8080/bej3/home/product/${product.id}`
+  )
+
+  const data = res.data.result
+  productDetails.value = data
+
+  if (data?.variants?.length) {
+    selectedVariantIndex.value = 0
+
+    const attrs = data.variants[0].attributes || []
+    if (attrs.length) {
+      newItem.value.attrId = attrs[0].id   
+    }
+  }
+}
+watch(selectedVariantIndex, (newIndex) => {
+  const attrs =
+    productDetails.value?.variants?.[newIndex]?.attributes || []
+
+  if (attrs.length > 0) {
+    newItem.value.attrId = attrs[0].id  
+  } else {
+    newItem.value.attrId = ''
+  }
 })
 </script>
 
