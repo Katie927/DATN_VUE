@@ -11,7 +11,11 @@
         />
         <span class="search-icon">🔍</span>
       </div>
-      <select v-model.number="formData.type" class="filter-select" @change="fetchOrdersByType(formData.type)">
+      <select
+        v-model.number="formData.type"
+        class="filter-select"
+        @change="fetchOrdersByType(formData.type)"
+      >
         <!-- <option :value="">Tất cả loại đơn</option> -->
         <option :value="0">Mua bán</option>
         <option :value="1">Sửa chữa</option>
@@ -55,12 +59,12 @@
                   class="status-select"
                   :class="`status-${order.status}`"
                 >
-                    <option value="0">Chờ xử lý</option>
-                    <option value="1">Chờ xác nhận</option>
-                    <option value="2">Đã xác nhận</option>
-                    <option value="3">Đang xử lý</option>
-                    <option value="4">Hủy</option>
-                    <option value="5">Hoàn thành</option>
+                  <option value="0">Chờ xử lý</option>
+                  <option value="1">Chờ xác nhận</option>
+                  <option value="2">Đã xác nhận</option>
+                  <option value="3">Đang xử lý</option>
+                  <option value="4">Hủy</option>
+                  <option value="5">Hoàn thành</option>
                 </select>
               </td>
               <td class="action-cell">
@@ -89,18 +93,19 @@
 
           <div class="modal-body">
             <!-- Form fields only for new orders -->
-            <template v-if="!isEditMode">
-              
-            </template>
+            <template v-if="!isEditMode"> </template>
 
             <!-- Edit mode: only show editable fields -->
             <template v-else>
               <div class="info-group">
                 <label>Loại đơn</label>
-                <div class="info-value">{{ { 
-                    0: 'Mua bán', 
-                    1: 'Sửa chữa' 
-                  }[formData.type] || 'Không xác định' }}
+                <div class="info-value">
+                  {{
+                    {
+                      0: 'Mua bán',
+                      1: 'Sửa chữa',
+                    }[formData.type] || 'Không xác định'
+                  }}
                 </div>
               </div>
 
@@ -180,7 +185,9 @@
 
                 <!-- Thêm ghi chú mới -->
                 <div class="modal-footer">
-                  <button v-if="!isEditMode" class="btn-save" @click="saveOrder">Lưu đơn hàng</button>
+                  <button v-if="!isEditMode" class="btn-save" @click="saveOrder">
+                    Lưu đơn hàng
+                  </button>
                   <button v-else class="btn-save" @click="hanldeUpdateOrderStatus(editingOrderId)">
                     Cập nhật trạng thái
                   </button>
@@ -190,11 +197,9 @@
               <!-- Items section read-only -->
               <div class="items-section">
                 <div class="items-header">
-                  <h3>
-                    Danh sách sản phẩm
-                  </h3>
+                  <h3>Danh sách sản phẩm</h3>
                 </div>
-                <template v-if="formData.type===0">
+                <template v-if="formData.type === 0">
                   <table class="items-detail-table">
                     <thead>
                       <tr>
@@ -220,27 +225,39 @@
                 </template>
                 <template v-else>
                   <div class="quantity-price">
-                    <input v-model="newItem.productName"
-                      type="text" placeholder="Tên sản phẩm"
-                      class="item-input small" />
-                      <ul v-if="showSuggest && products.length" class="bej-suggest-list">
-                        <li v-for="p in products" :key="p.id"
-                          @click="selectProduct(p)" class="bej-suggest-item"
-                        >
-                          {{ p.name }}
-                        </li>
-                      </ul>
-                    <select v-model.number="selectedVariantIndex" class="item-input small"
+                    <input
+                      v-model="newItem.productName"
+                      type="text"
+                      placeholder="Tên sản phẩm"
+                      class="item-input small"
+                    />
+                    <ul v-if="showSuggest && products.length" class="bej-suggest-list">
+                      <li
+                        v-for="p in products"
+                        :key="p.id"
+                        @click="selectProduct(p)"
+                        class="bej-suggest-item"
+                      >
+                        {{ p.name }}
+                      </li>
+                    </ul>
+                    <select
+                      v-model.number="selectedVariantIndex"
+                      class="item-input small"
                       :disabled="selectedVariantIndex === null"
                     >
                       <option disabled value="">-- Chọn phiên bản --</option>
-                      <option v-for="(variant, index) in productDetails.variants"
-                        :key="variant.id" :value="index"
+                      <option
+                        v-for="(variant, index) in productDetails.variants"
+                        :key="variant.id"
+                        :value="index"
                       >
                         {{ variant.color }}
                       </option>
                     </select>
-                    <select v-model="newItem.attrId" class="item-input small"
+                    <select
+                      v-model="newItem.attrId"
+                      class="item-input small"
                       v-if="productDetails?.variants?.[selectedVariantIndex]?.attributes?.length"
                     >
                       <option disabled value="newItem.attrId">-- Tùy chọn --</option>
@@ -252,9 +269,12 @@
                         {{ attr.name }}
                       </option>
                     </select>
-                    <input v-model.number="newItem.quantity"
-                      type="text"  placeholder="Số lượng"
-                      class="item-input small" />
+                    <input
+                      v-model.number="newItem.quantity"
+                      type="text"
+                      placeholder="Số lượng"
+                      class="item-input small"
+                    />
 
                     <!-- <span class="item-total">
                       {{ formatPrice(newItem.quantity * newItem.unitPrice) }}
@@ -282,7 +302,7 @@
                       </tr>
                     </tbody>
                   </table>
-                </template> 
+                </template>
                 <div class="items-summary">
                   <div class="summary-row">
                     <span>Tổng cộng:</span>
@@ -310,6 +330,7 @@ import router from '@/router'
 import { ref, computed, watch, onMounted } from 'vue'
 import { nextTick } from 'vue'
 import debounce from 'lodash/debounce'
+import { useRoute } from 'vue-router'
 
 // State
 const showModal = ref(false)
@@ -317,6 +338,7 @@ const isEditMode = ref(false)
 const searchQuery = ref('')
 const filterType = ref('')
 const editingOrderId = ref(null)
+const route = useRoute()
 
 const notes = ref([]) // danh sách ghi chú
 const newNoteContent = ref('') // nội dung ghi chú mới
@@ -331,7 +353,7 @@ const formatDateTime = (dateStr) => {
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false
+    hour12: false,
   })
 }
 
@@ -373,7 +395,14 @@ const fetchOrders = async () => {
     }
   }
 }
-onMounted(fetchOrders)
+onMounted(async () => {
+  await fetchOrders()
+
+  const orderId = route.query.orderId
+  if (orderId) {
+    await openOrderDetail(orderId)
+  }
+})
 
 const fetchOrderDetails = async (orderId) => {
   const token = localStorage.getItem('token')
@@ -486,11 +515,14 @@ const fetchOrdersByType = async (type) => {
     return
   }
   try {
-    const response = await axios.get(`http://localhost:8080/bej3/manage/orders/get-by-type?type=${type}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await axios.get(
+      `http://localhost:8080/bej3/manage/orders/get-by-type?type=${type}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    })
+    )
     orders.value = response.data.result
   } catch (error) {
     console.error('Lỗi', error)
@@ -530,7 +562,7 @@ const openNewOrderForm = () => {
 const closeModal = () => {
   showModal.value = false
   products.value = []
-    showSuggest.value = false
+  showSuggest.value = false
 }
 
 const removeItem = (index) => {
@@ -582,8 +614,8 @@ const newItem = ref({
   quantity: '1',
 })
 const addItem = async (orderId) => {
-    const token = localStorage.getItem("token");
-  if (!token) return router.push("/login");
+  const token = localStorage.getItem('token')
+  if (!token) return router.push('/login')
   const payload = {
     items: [
       {
@@ -593,36 +625,32 @@ const addItem = async (orderId) => {
     ],
   }
   try {
-    await axios.put(
-      `http://localhost:8080/bej3/manage/orders/${orderId}/items`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        }
-      }
-    );
-    alert("Cập nhật đơn thành công!");
-    openOrderDetail(orderId);
+    await axios.put(`http://localhost:8080/bej3/manage/orders/${orderId}/items`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    alert('Cập nhật đơn thành công!')
+    openOrderDetail(orderId)
     newItem.value = {
       productName: '',
       productVariant: '',
       productAttName: '',
       attrId: '',
       quantity: '1',
-    };
-    selectedVariantIndex.value = null;
+    }
+    selectedVariantIndex.value = null
   } catch (error) {
-    console.error("Lỗi khi cập nhật đơn hàng:", error.message);
+    console.error('Lỗi khi cập nhật đơn hàng:', error.message)
     if (error.response) {
-      console.error("Chi tiết:", error.response.data);
+      console.error('Chi tiết:', error.response.data)
       if ([401, 403].includes(error.response.status)) {
-        localStorage.removeItem("token");
-        router.push("/login");
+        localStorage.removeItem('token')
+        router.push('/login')
       }
     }
-    alert("Cập nhật đơn hàng thất bại!");
+    alert('Cập nhật đơn hàng thất bại!')
   }
 }
 
@@ -635,12 +663,9 @@ const searchProduct = debounce(async (keyword) => {
     showSuggest.value = false
     return
   }
-  const res = await axios.get(
-    'http://localhost:8080/bej3/home/products/search',
-    {
-      params: { name: keyword },
-    }
-  )
+  const res = await axios.get('http://localhost:8080/bej3/home/products/search', {
+    params: { name: keyword },
+  })
   products.value = res.data.result || []
   showSuggest.value = true
 }, 400)
@@ -648,12 +673,12 @@ watch(
   () => newItem.value.productName,
   (val) => {
     searchProduct(val)
-  }
+  },
 )
 
 const selectedVariantIndex = ref(null)
 const selectedAttributeIndex = ref(null)
-const productDetails = ref({});
+const productDetails = ref({})
 const selectProduct = async (product) => {
   newItem.value.productName = product.name
   showSuggest.value = false
@@ -661,9 +686,7 @@ const selectProduct = async (product) => {
   selectedVariantIndex.value = null
   newItem.value.attrId = ''
 
-  const res = await axios.get(
-    `http://localhost:8080/bej3/home/product/${product.id}`
-  )
+  const res = await axios.get(`http://localhost:8080/bej3/home/product/${product.id}`)
 
   const data = res.data.result
   productDetails.value = data
@@ -673,25 +696,23 @@ const selectProduct = async (product) => {
 
     const attrs = data.variants[0].attributes || []
     if (attrs.length) {
-      newItem.value.attrId = attrs[0].id   
+      newItem.value.attrId = attrs[0].id
     }
   }
 }
 watch(selectedVariantIndex, (newIndex) => {
-  const attrs =
-    productDetails.value?.variants?.[newIndex]?.attributes || []
+  const attrs = productDetails.value?.variants?.[newIndex]?.attributes || []
 
   if (attrs.length > 0) {
-    newItem.value.attrId = attrs[0].id  
+    newItem.value.attrId = attrs[0].id
   } else {
     newItem.value.attrId = ''
   }
 })
 </script>
 
-
-
-//====================================================================================================================== STYLE ========================
+//======================================================================================================================
+STYLE ========================
 <style scoped>
 * {
   margin: 0;

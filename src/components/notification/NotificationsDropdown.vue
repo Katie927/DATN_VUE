@@ -56,6 +56,7 @@
             :key="notification.id"
             class="notification-item"
             :class="{ unread: !notification.isRead }"
+            @click="handleNotificationClick(notification)"
           >
             <div class="notification-icon">
               <span class="icon" v-html="getIcon(notification.type)"></span>
@@ -70,7 +71,7 @@
             <button
               v-if="!notification.isRead"
               class="read-btn"
-              @click="markAsRead(notification.id)"
+              @click.stop="markAsRead(notification)"
             >
               ·
             </button>
@@ -95,6 +96,7 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
+import { useRouter } from 'vue-router'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi') // dùng tiếng Việt
@@ -108,6 +110,26 @@ const tabs = [
   { label: 'Chưa đọc', value: 'unread' },
   { label: 'Tất cả', value: 'all' },
 ]
+
+const router = useRouter()
+const handleNotificationClick = async (notification) => {
+  if (!notification.isRead) {
+    await markAsRead(notification)
+  }
+
+  if (notification.type.startsWith('order') && notification.resourceId) {
+    const orderId = notification.resourceId
+    const role = localStorage.getItem('role')
+
+    router.push(
+      role === 'ADMIN'
+        ? { path: '/admin/product/order', query: { orderId } }
+        : { path: '/user/order', query: { orderId } },
+    )
+
+    isOpen.value = false
+  }
+}
 
 const notifications = ref([])
 
@@ -134,8 +156,9 @@ const fetchNotifications = async () => {
       type: n.type?.toLowerCase(),
       title: n.title,
       message: n.body,
-      isRead: n.isRead,
+      isRead: n.read, // ✅ ĐÚNG FIELD
       createdAt: new Date(n.createdAt),
+      resourceId: n.resourceId,
     }))
 
     console.log('📦 Đã parse dữ liệu:', notifications.value)
@@ -186,31 +209,52 @@ const getTimeAgo = (date) => {
   return dayjs(date).fromNow()
 }
 
-/* 🟢 Mark as read */
-const markAsRead = (id) => {
-  console.log('🖊 Mark as read:', id)
-  const n = notifications.value.find((x) => x.id === id)
-  if (n) n.isRead = true
+const markAsRead = async (notification) => {
+  try {
+    await axios.put(
+      `http://localhost:8080/bej3/api/notifications/${notification.id}/read`,
+      {},
+      { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } },
+    )
+
+    const idx = notifications.value.findIndex((n) => n.id === notification.id)
+    if (idx !== -1) {
+      notifications.value[idx].isRead = true
+    }
+  } catch (e) {
+    console.error('❌ Không thể mark as read', e)
+  }
 }
 
-/* 🟢 Mark all */
-const markAllAsRead = () => {
-  console.log('🖊 Mark ALL as read')
-  notifications.value.forEach((n) => (n.isRead = true))
+const markAllAsRead = async () => {
+  try {
+    const res = await axios.put(
+      'http://localhost:8080/bej3/api/notifications/read-all',
+      {},
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      },
+    )
+
+    const newStatus = res.data.result.newStatus
+    notifications.value.forEach((n) => {
+      n.isRead = newStatus
+    })
+  } catch (e) {
+    console.error('❌ Toggle read all failed', e)
+  }
 }
 </script>
 
 <style scoped>
 /* Variables */
-:root {
-  --color-primary: #e74c3c;
-  --color-bg: #e70f0f;
-  --color-border: #145ef1;
-  --color-text: #1f2937;
-  --color-text-light: #6b7280;
-  --color-unread-bg: #e22413;
-  --color-hover: #167de4;
-  --radius: 8px;
+:deep(:root) {
+  --color-primary: #2563eb;
+  --color-unread-bg: #eef6ff;
+  --color-hover: #e0ecff;
 }
 
 * {
@@ -467,7 +511,9 @@ const markAllAsRead = () => {
   gap: 12px;
   padding: 12px 16px;
   border-bottom: 1px solid var(--color-border);
-  transition: background 0.2s ease;
+  transition:
+    background 0.2s ease,
+    opacity 0.2s ease;
   cursor: pointer;
   position: relative;
 }
@@ -476,12 +522,28 @@ const markAllAsRead = () => {
   background: var(--color-hover);
 }
 
+/* 🔵 UNREAD */
 .notification-item.unread {
   background: var(--color-unread-bg);
+  border-left: 4px solid var(--color-primary);
 }
 
 .notification-item.unread:hover {
   background: #cef3ed;
+}
+
+.notification-item.unread .notification-title {
+  font-weight: 700;
+}
+
+.notification-item.unread .notification-icon {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* ⚪ READ */
+.notification-item:not(.unread) {
+  opacity: 0.75;
 }
 
 .notification-icon {
@@ -539,7 +601,7 @@ const markAllAsRead = () => {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .read-btn:hover {

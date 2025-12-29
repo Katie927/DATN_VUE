@@ -237,9 +237,12 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
 
 // Mock data
-const orders = ref([ ])
+const orders = ref([])
 
 const selectedOrder = ref(null)
 const filterStatus = ref(null)
@@ -257,6 +260,18 @@ const formatDate = (dateStr) => {
     day: 'numeric',
   })
 }
+
+onMounted(async () => {
+  await fetchOrders()
+
+  const orderId = route.query.orderId
+  if (orderId) {
+    const found = orders.value.find((o) => o.id == orderId)
+    if (found) {
+      selectedOrder.value = found
+    }
+  }
+})
 
 const formatPrice = (price) => {
   return new Intl.NumberFormat('vi-VN', {
@@ -314,7 +329,6 @@ const fetchOrders = async () => {
 }
 onMounted(fetchOrders)
 
-
 const confirmOrder = async (orderId) => {
   const token = localStorage.getItem('token')
   if (!token) {
@@ -323,13 +337,13 @@ const confirmOrder = async (orderId) => {
   }
 
   try {
-    await axios.put(`http://localhost:8080/bej3/orders/repair-order/${orderId}/confirm`,null , {
+    await axios.put(`http://localhost:8080/bej3/orders/repair-order/${orderId}/confirm`, null, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
     alert('Order confirmed successfully!')
-    fetchOrders();
+    fetchOrders()
   } catch (error) {
     console.error('Lỗi', error)
     alert('Failed to confirm orders!!!!')
