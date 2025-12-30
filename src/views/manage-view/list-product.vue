@@ -17,14 +17,13 @@
                         </div>
                         <div class="product-type-group-check">
                             <label
-                            v-for="(item, index) in productTypes"
-                            :key="index"
-                            class="container-check-box check-box-menu-type"
+                                v-for="item in productTypes"
+                                :key="item.id"
+                                class="container-check-box check-box-menu-type"
                             >
                             {{ item.name }}
-                                <input
-                                    type="checkbox"
-                                    v-model="item.checked"
+                                <input type="radio" name="category" v-model="selectedCategoryId" :value="item.id"
+                                    @change="handleSelectCategory"
                                 />
                                 <span class="checkmark"></span>
                             </label>
@@ -32,7 +31,7 @@
                     </div>
 
                     <!-- Nhóm hàng -->
-                    <div class="em-left-content content-product-group">
+                    <!-- <div class="em-left-content content-product-group">
                         <div class="em-left-content-title">
                             <h3 class="em-left-content-heading">Nhóm hàng</h3>
                         </div>
@@ -46,7 +45,7 @@
                             </div>
 
                         </div>
-                    </div>
+                    </div> -->
                     <!-- <aside class="em-left-pageside">
                         <label for="numberOfRecordsProduct">Số bản ghi</label>
                         <select name="Số bản ghi: " id="numberOfRecord"></select>
@@ -91,18 +90,6 @@
                                             </button>
                                             
                                         </li>
-                                        <li>
-                                            <button class="operation" id="addServiceProductButton" data-action="">
-                                                <i class="btn-icon fas fa-solid fa-plus" aria-hidden="true"></i>
-                                                <span>Thêm dịch vụ</span>
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button class="operation" id="addComboProductButton" data-action="">
-                                            <i class="btn-icon fas fa-solid fa-plus" aria-hidden="true"></i>
-                                            <span>Thêm Combo-đóng gói</span>
-                                            </button>
-                                        </li>
                                     </ul>
                                     
                                 </li>
@@ -121,7 +108,7 @@
                                     </button>
                                 </li> -->
 
-                                <li class="header-filter-button-item">
+                                <!-- <li class="header-filter-button-item">
                                     <button class="btn-success k-link">
                                         <i class="btn-icon fas fa-solid fa-list" aria-hidden="true"></i>
                                         <span></span>
@@ -183,7 +170,7 @@
                                             </div>
                                         </li>
                                     </ul>
-                                </li>
+                                </li> -->
                             </ul>
                         </div>
                     </div>
@@ -348,35 +335,36 @@ const handleEditProduct = (product) => {
     showProductAdd.value = true;
 };
 
-//==============================================================   search product ==   ================================
-const keyWord = ref("");
-const handleSearchProduct = () => {
-  if (!keyWord.value.trim()) return;
-  searchProduct(keyWord.value);
-};
-const searchProduct = async (keyWord) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        console.error("Token không tồn tại!");
-        router.push("/login"); 
-        return;
-    }
-    try {
-        const response = await axios.get(`http://localhost:8080/bej3/home/products/search`, {
-            params: { name: keyWord },
-            headers: {
-                Authorization: `Bearer ${token}` 
-            }
-        });
-        productData.value = [response.data.result];
-    } catch (error) {
-        console.error('Lỗi:', error);
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-            localStorage.removeItem("token"); 
-            router.push("/login"); 
-        }
-    }
-};
+//==============================================================   search product ==   ===========================================================
+const selectedCategoryId = ref(null)
+const keyWord = ref('')
+
+const fetchProducts = async () => {
+  const params = {}
+  if (keyWord.value?.trim()) {
+    params.name = keyWord.value.trim()
+  }
+  if (selectedCategoryId.value) {
+    params.categoryId = selectedCategoryId.value
+  }
+
+  const response = await axios.get(
+    'http://localhost:8080/bej3/home/products/search',
+    { params }
+  )
+
+  productData.value = response.data.result || []
+}
+
+const handleSelectCategory = async () => {
+  await fetchProducts()
+}
+const handleSearchProduct = async () => {
+  await fetchProducts()
+}
+
+
+
 
 </script>
 

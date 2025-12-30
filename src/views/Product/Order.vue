@@ -42,11 +42,12 @@
                 </span>
               </td>
               <td class="customer-name">{{ order.userName }}</td>
-              <td class="address-type">
+              <td class="customer-name">{{ order.address }}</td>
+              <!-- <td class="address-type">
                 <span :class="`addr-badge addr-${order.type}`">
                   {{ order.addressType === '1' ? 'Khách hàng' : 'Khách hàng' }}
                 </span>
-              </td>
+              </td> -->
               <td class="total-price">{{ formatPrice(order.totalPrice) }}</td>
               <td>
                 <select

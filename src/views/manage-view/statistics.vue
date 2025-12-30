@@ -45,16 +45,16 @@
           <div class="stat-content">
             <p class="stat-label">Sửa Chữa</p>
             <h2 class="stat-value">{{ currentMonthData.repairOrder }}</h2>
-            <p class="stat-change">{{ currentMonthData.completedRepairs }} hoàn thành</p>
+            <p class="stat-change">{{ currentMonthData.repairOrder }} hoàn thành</p>
           </div>
         </div>
 
         <div class="stat-card customers-card">
           <div class="stat-icon">👥</div>
           <div class="stat-content">
-            <p class="stat-label">Khách Hàng Mới</p>
-            <!-- <h2 class="stat-value">{{ currentMonthData.newCustomers }}</h2>
-            <p class="stat-change increase">{{ currentMonthData.customerChange }}% tăng mới</p> -->
+            <p class="stat-label">Bán hàng</p>
+            <h2 class="stat-value">{{ currentMonthData.saleOrder }}</h2>
+            <p class="stat-change">{{ currentMonthData.saleOrder }} hoàn thành</p>
           </div>
         </div>
       </section>
@@ -62,7 +62,7 @@
       <!-- Charts Section -->
       <section class="charts-section">
         <div class="chart-card">
-          <h3 class="chart-title">Doanh Thu Theo Tuần</h3>
+          <h3 class="chart-title">Doanh Thu Theo Tháng</h3>
           <div class="simple-chart">
             <div class="chart-bars">
               <div
@@ -92,11 +92,11 @@
             <div class="pie-legend">
               <div class="legend-item">
                 <span class="legend-color sales"></span>
-                <span>Bán hàng: {{ repairPercent }}%</span>
+                <span>Bán hàng: {{ salesPercent }}%</span>
               </div>
               <div class="legend-item">
                 <span class="legend-color repair"></span>
-                <span>Sửa chữa: {{ 100 - repairPercent }}%</span>
+                <span>Sửa chữa: {{ 100 - salesPercent }}%</span>
               </div>
             </div>
           </div>

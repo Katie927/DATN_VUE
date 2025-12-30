@@ -38,12 +38,19 @@
                                 <img src="@/assets/icon/star.svg" class="color-thumb" alt="">
                                 <p>Tính năng nổi bật</p>
                             </div>
-                            <div v-for="(variant, index) in productDetails?.variants ?? []"
-                                :key="index" class="color-item"
+                            <div
+                                v-for="(variant, index) in productDetails?.variants?.filter(
+                                    v => v.detailImages && v.detailImages.length > 0
+                                ) || []"
+                                :key="variant.id"
+                                class="color-item"
                                 :class="{ active: selectedVariantIndex === index && isIntroImages === 0 }"
                                 @click="selectVariant(index); isIntroImages = 0"
                             >
-                                <img :src="variant.detailImages?.[0]?.url" class="color-thumb" />
+                                <img
+                                    :src="variant.detailImages[0].url"
+                                    class="color-thumb"
+                                />
                                 <p>{{ variant.color }}</p>
                             </div>
                         </div>
@@ -57,7 +64,7 @@
                             <span class="last-price">{{ productDetails?.variants?.[selectedVariantIndex]?.attributes?.[selectedAttributeIndex]?.finalPrice
                                 ?.toLocaleString('vi-VN') }} ₫</span>
                             <br>
-                            <i style="font-size: 14px;">Máy nguyên seal chính hãng, kick hoạt bảo hành 8/2/2025 giá 26.990.000 (LH 1900 2091)</i>
+                            <i style="font-size: 14px;">{{ productDetails?.description }}</i>
                         </div>
                         
                     </div>
@@ -106,10 +113,10 @@
                                 <label>Thêm giỏ hàng </label>
                             </a>
                         </div>
-                        <div class="box-order-btn">
+                        <!-- <div class="box-order-btn">
                             <a title="TRẢ GÓP 0%" href="" class="add-buy btn-installment order-btn btnInstallment"><strong>TRẢ GÓP 0%</strong><span>Không phí - Duyệt nhanh&nbsp;10p</span></a>
                             <a title="TRẢ GÓP 0%" href="" class="add-buy btn-installment order-btn btnInstallment"><strong>TRẢ GÓP QUA THẺ</strong><span>(Visa, Mastercard, JCB)</span></a>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
