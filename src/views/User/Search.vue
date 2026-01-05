@@ -90,8 +90,8 @@ import { useRoute } from 'vue-router'
     { name: "Điện thoại", imgSrc: '/src/assets/img/side-bar-img/mobile.png', categoryId: 10 }, 
     { name: "Linh kiện", imgSrc: '/src/assets/img/side-bar-img/logo-sua-chua.png', categoryId: 24 },
     { name: "Phụ kiện", imgSrc: '/src/assets/img/side-bar-img/laptop.png', categoryId: 12 },
-    { name: "Sửa chữa", imgSrc: '/src/assets/img/side-bar-img/tablet.png', categoryId: 11 },
-    { name: "Dịch vụ", imgSrc: '/src/assets/img/side-bar-img/dong-ho.png', categoryId: 13},
+    { name: "Sửa chữa", imgSrc: '/src/assets/img/side-bar-img/tablet.png', categoryId: 33 },
+    { name: "Dịch vụ", imgSrc: '/src/assets/img/side-bar-img/dong-ho.png', categoryId: 11},
   ]);
 
 

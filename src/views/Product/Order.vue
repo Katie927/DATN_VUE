@@ -3,11 +3,8 @@
     <!-- Filters Section -->
     <div class="filters-section">
       <div class="search-box">
-        <input
-          v-model="searchQuery"
-          type="text"
-          placeholder="Tìm kiếm đơn hàng..."
-          class="search-input"
+        <input type="text" placeholder="Tìm kiếm đơn hàng..." class="search-input"
+          v-model="keyWord" @keyup.enter="fetchOrdersByPhone(keyWord)"
         />
         <span class="search-icon">🔍</span>
       </div>
@@ -20,6 +17,10 @@
         <option :value="0">Mua bán</option>
         <option :value="1">Sửa chữa</option>
       </select>
+      <button class="add-order-btn" @click="openNewOrderForm">
+        <span class="plus-icon">+</span>
+        Thêm đơn hàng
+      </button>
     </div>
 
     <!-- Orders Table -->
@@ -30,6 +31,7 @@
             <th style="width: 34px">STT</th>
             <th>Loại đơn</th>
             <th>Khách hàng</th>
+            <th>Số điện thoại</th>
             <th>Địa chỉ</th>
             <th>Tổng giá</th>
             <th>Trạng thái</th>
@@ -46,6 +48,7 @@
                 </span>
               </td>
               <td class="customer-name">{{ order.userName }}</td>
+              <td class="customer-name">{{ order.phoneNumber }}</td>
               <td class="customer-name">{{ order.address }}</td>
               <!-- <td class="address-type">
                 <span :class="`addr-badge addr-${order.type}`">
@@ -94,7 +97,141 @@
 
           <div class="modal-body">
             <!-- Form fields only for new orders -->
-            <template v-if="!isEditMode"> </template>
+            <template v-if="!isEditMode">
+              <div class="form-group">
+                <label>Loại đơn hàng</label>
+                <select v-model="newOrderForm.type" class="form-input">
+                  <option :value="0">Mua bán</option>
+                  <option :value="1">Sửa chữa</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Tên khách hàng</label>
+                  <input v-model="newOrderForm.userName" type="text" placeholder="Nhập tên khách hàng" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label>Số điện thoại</label>
+                  <input v-model="newOrderForm.phoneNumber" type="tel" placeholder="Nhập số điện thoại" class="form-input"
+                      @input="handlePhoneInput"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Địa chỉ</label>
+                  <input v-model="newOrderForm.address" type="text" placeholder="Nhập địa chỉ" class="form-input" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Mô tả</label>
+                  <input v-model="newOrderForm.description" type="text" placeholder="Nhập mô tả" class="form-input" />
+                </div>
+                <!-- <div class="form-group">
+                  <label>Loại địa chỉ</label>
+                  <select v-model="newOrderForm.addressType" class="form-input">
+                    <option value="1">Địa chỉ khách hàng</option>
+                    <option value="2">Cửa hàng</option>
+                  </select>
+                </div> -->
+              </div>
+              <!-- Items section for new orders -->
+              <div class="items-section">
+                <div class="items-header">
+                  <h3>
+                    {{ 'Danh sách sản phẩm' }}
+                  </h3>
+                  <!-- <button class="btn-add-item" @click="addItemNewOrder">+ Thêm</button> -->
+                </div>
+                <div class="items-list">
+                  <div class="quantity-price">
+                    <input
+                      v-model="newItem.productName"
+                      type="text"
+                      placeholder="Tên sản phẩm"
+                      class="item-input small"
+                    />
+                    <ul v-if="showSuggest && products.length" class="bej-suggest-list">
+                      <li
+                        v-for="p in products"
+                        :key="p.id"
+                        @click="selectProduct(p)"
+                        class="bej-suggest-item"
+                      >
+                        {{ p.name }}
+                      </li>
+                    </ul>
+                    <select
+                      v-model.number="selectedVariantIndex"
+                      class="item-input small"
+                      :disabled="selectedVariantIndex === null"
+                    >
+                      <option disabled value="">-- Chọn phiên bản --</option>
+                      <option v-for="(variant, index) in productDetails.variants" :key="variant.id" :value="index">
+                        {{ variant.color }}
+                      </option>
+                    </select>
+                    <select
+                      v-model="newItem.attrId"
+                      class="item-input small"
+                      v-if="productDetails?.variants?.[selectedVariantIndex]?.attributes?.length"
+                    >
+                      <option disabled value="newItem.attrId">-- Tùy chọn --</option>
+                      <option
+                        v-for="attr in productDetails?.variants?.[selectedVariantIndex]?.attributes"
+                        :key="attr.id"
+                        :value="attr.id"
+                      >
+                        {{ attr.name }}
+                      </option>
+                    </select>
+                    <input
+                      v-model.number="newItem.quantity"
+                      type="text"
+                      placeholder="Số lượng"
+                      class="item-input small"
+                    />
+                    <button class="btn-add-item" @click="addItemNewOrder(newItem)">＋</button>
+                  </div>
+                  <div v-for="(item, index) in newOrderForm.items" :key="index" class="item-row">
+                    <input v-model="item.productName" type="text" class="item-input" readonly="true"
+                      placeholder="Tên sản phẩm"
+                    />
+                    <input v-model="item.productVariant" type="text" class="item-input" readonly="true"
+                      placeholder="Tùy chọn"
+                    />
+                    <input v-model="item.productAttName" type="text" class="item-input" readonly="true"
+                      placeholder="Tùy chọn"
+                    />
+                    <div class="quantity-price">
+                      <input v-model.number="item.quantity" type="number" readonly="true"
+                        min="1" placeholder="SL" class="item-input small"
+                      />
+                      <input v-model.number="item.unitPrice" type="number" readonly="true"
+                        min="0" placeholder="Đơn giá" class="item-input small"
+                      />
+                      <span class="item-total">{{
+                        formatPrice(item.quantity * item.unitPrice)
+                      }}</span>
+                      <button class="btn-remove-item" @click="removeItem(index)">✕</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="items-summary">
+                  <div class="summary-row">
+                    <span>Tổng cộng:</span>
+                    <span class="summary-value">{{ formatPrice(newOrderForm.totalPrice) }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn-save" @click="hanldeCreateNewOrder">
+                  Lưu đơn hàng
+                </button>
+              </div>
+            </template>
 
             <!-- Edit mode: only show editable fields -->
             <template v-else>
@@ -248,11 +385,7 @@
                       :disabled="selectedVariantIndex === null"
                     >
                       <option disabled value="">-- Chọn phiên bản --</option>
-                      <option
-                        v-for="(variant, index) in productDetails.variants"
-                        :key="variant.id"
-                        :value="index"
-                      >
+                      <option v-for="(variant, index) in productDetails.variants" :key="variant.id" :value="index">
                         {{ variant.color }}
                       </option>
                     </select>
@@ -328,10 +461,10 @@
 <script setup>
 import axios from 'axios'
 import router from '@/router'
-import { ref, computed, watch, onMounted } from 'vue'
-import { nextTick } from 'vue'
 import debounce from 'lodash/debounce'
 import { useRoute } from 'vue-router'
+import { ref, reactive, computed, watch, onMounted, nextTick } from 'vue'
+
 
 // State
 const showModal = ref(false)
@@ -359,14 +492,14 @@ const formatDateTime = (dateStr) => {
 }
 
 const addNote = () => {
-  if (!newNoteContent.value.trim()) return
+  if (!newNoteContent.trim()) return
 
-  notes.value.push({
+  notes.push({
     user: 'Người thao tác hiện tại', // lấy tên user đăng nhập
-    content: newNoteContent.value,
+    content: newNoteContent,
     createdAt: new Date().toISOString(),
   })
-  newNoteContent.value = ''
+  newNoteContent = ''
 }
 
 // ============================================================================ FETCH ORDERS =========================
@@ -429,7 +562,20 @@ const fetchOrderDetails = async (orderId) => {
   }
 }
 // =======================================================================================================================
-const formData = ref({})
+const formData = reactive({
+  id: '',
+  type: '',
+  userName: '',
+  customerName: '',
+  phoneNumber: '',
+  address: '',
+  addressType: '',
+  status: '',
+  description: '',
+  orderItems: [],
+  orderNotes: [],
+  totalPrice: 0,
+})
 const openOrderDetail = async (orderId) => {
   const details = await fetchOrderDetails(orderId)
   if (!details) return
@@ -437,7 +583,7 @@ const openOrderDetail = async (orderId) => {
   isEditMode.value = true
   editingOrderId.value = orderId
 
-  formData.value = {
+  Object.assign(formData, {
     id: details.id,
     type: details.type,
     userName: details.userName,
@@ -446,38 +592,35 @@ const openOrderDetail = async (orderId) => {
     addressType: details.addressType,
     status: details.status,
     description: details.description,
-    orderItems: (details.orderItems || []).map((item) => ({
+    orderItems: (details.orderItems || []).map(item => ({
       productName: item.productName,
       quantity: item.quantity,
       price: item.price,
       productAttName: item.productAttName,
       color: item.color,
     })),
-    orderNotes: (details.orderNotes || []).map((note) => ({
+    orderNotes: (details.orderNotes || []).map(note => ({
       userName: note.userName,
       note: note.note,
       updateTime: note.updateTime,
     })),
     totalPrice: details.totalPrice,
-  }
-  // console.log('formData:', formData.value.type)
+  })
   showModal.value = true
 }
+
 //======================================================================================================================
 const hanldeUpdateOrderStatus = async (orderId) => {
   console.log('orderId:', orderId)
   const token = localStorage.getItem('token')
-  if (!token) {
-    router.push('/login')
-    return
-  }
+  if (!token) return router.push('/login')
 
   try {
     await axios.put(
       `http://localhost:8080/bej3/manage/orders/${orderId}/status`,
       {
-        status: formData.value.status,
-        note: formData.value.newDescription,
+        status: formData.status,
+        note: formData.newDescription,
       },
       {
         headers: {
@@ -501,9 +644,9 @@ const hanldeUpdateOrderStatus = async (orderId) => {
 
 // Computed
 const filteredOrders = computed(() => {
-  return orders.value.filter((order) => {
-    const matchesSearch = order.customerName.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchesType = !filterType.value || order.type === filterType.value
+  return orders.filter((order) => {
+    const matchesSearch = order.customerName.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesType = !filterType || order.type === filterType
     return matchesSearch && matchesType
   })
 })
@@ -534,6 +677,31 @@ const fetchOrdersByType = async (type) => {
     }
   }
 }
+const fetchOrdersByPhone = async (phone) => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    router.push('/login')
+    return
+  }
+  try {
+    const response = await axios.get(
+      `http://localhost:8080/bej3/manage/orders/search?phoneNumber=${phone}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+    orders.value = response.data.result
+  } catch (error) {
+    console.error('Lỗi', error)
+    alert('Failed to fetch orders!!!!')
+    if (error.response && (error.response.status === 401 || error.response.status === 500)) {
+      localStorage.removeItem('token')
+      router.push('/login')
+    }
+  }
+}
 // =======================================================================================================================
 
 // Methods
@@ -544,21 +712,6 @@ const formatPrice = (price) => {
   }).format(price)
 }
 
-const openNewOrderForm = () => {
-  isEditMode.value = false
-  editingOrderId.value = null
-  formData.value = {
-    type: '',
-    customerName: '',
-    phone: '',
-    address: '',
-    addressType: '1',
-    status: 'pending',
-    items: [{ name: '', quantity: 1, unitPrice: 0 }],
-    totalPrice: 0,
-  }
-  showModal.value = true
-}
 
 const closeModal = () => {
   showModal.value = false
@@ -567,7 +720,7 @@ const closeModal = () => {
 }
 
 const removeItem = (index) => {
-  formData.value.items.splice(index, 1)
+  formData.items.splice(index, 1)
 }
 
 const saveOrder = () => {
@@ -600,7 +753,7 @@ const autoResize = () => {
   el.style.height = el.scrollHeight + 'px'
 }
 watch(
-  () => formData.value.description,
+  () => formData.description,
   async () => {
     await nextTick() // đợi DOM update xong
     autoResize() // resize theo data mới
@@ -710,10 +863,137 @@ watch(selectedVariantIndex, (newIndex) => {
     newItem.value.attrId = ''
   }
 })
+
+//====================================================================================================================== search user ========================
+const newOrderForm = reactive({
+  id: '',
+  type: '',
+  userName: '',
+  customerName: '',
+  phoneNumber: '',
+  address: '',
+  addressType: '',
+  status: '',
+  description: '',
+  items: [{ 
+    productName: '',
+    productVariant: '',
+    productAttName: '',
+    attrId: '',
+    quantity: '',
+  },],
+  totalPrice: 0,
+})
+const openNewOrderForm = () => {
+  isEditMode.value = false
+  editingOrderId.value = null
+  Object.assign(newOrderForm, {
+    id: null,
+    type: '',
+    customerName: '',
+    phoneNumber: '',
+    address: '',
+    addressType: '1',
+    status: 'pending',
+    items: [],
+    orderNotes: [],
+    description: '',
+    totalPrice: 0,
+    newDescription: '',
+  })
+  showModal.value = true
+}
+const phoneTimeout = ref(null)
+const handlePhoneInput = () => {
+  clearTimeout(phoneTimeout.value)
+  if (!newOrderForm.phoneNumber || newOrderForm.phoneNumber.length < 9) {
+    newOrderForm.userName = ''
+    return
+  }
+  phoneTimeout.value = setTimeout(() => {
+    searchUserByPhone(newOrderForm.phoneNumber)
+  }, 500)
+}
+const searchUserByPhone = async (phone) => {
+  const token = localStorage.getItem('token')
+  if (!token) return
+  try {
+    const response = await axios.get(
+      'http://localhost:8080/bej3/manage/users/search',
+      {
+        params: { phoneNumber: phone },
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+    const user = response.data?.result
+    newOrderForm.userName = user ? user.fullName : ''
+    newOrderForm.userId = user ? user.id : null
+  } catch (e) {
+    console.error('Search phone error', e)
+    newOrderForm.userName = ''
+  }
+}
+const addItemNewOrder = (newItem) => {
+  console.log('newItem:', newItem)
+  console.log('productDetails:', productDetails.value)
+  const variant =
+    productDetails.value?.variants?.[selectedVariantIndex.value]
+  const attribute =
+    variant?.attributes?.find(a => a.id === newItem.attrId)
+
+  newOrderForm.items.push({
+    productName: newItem.productName,
+    productVariant: variant?.color || '',
+    productAttName: attribute?.name || '',
+    attrId: newItem.attrId,
+    quantity: newItem.quantity || 1,
+    unitPrice: attribute?.finalPrice || 0,
+  })
+}
+
+const hanldeCreateNewOrder = async () => {
+  const token = localStorage.getItem('token')
+  if (!token) return router.push('/login')
+
+  const payload = {
+    type: newOrderForm.type,
+    userId: newOrderForm.userId,
+    phoneNumber: newOrderForm.phoneNumber,
+    address: newOrderForm.address,
+    addressType: newOrderForm.addressType,
+    description: newOrderForm.description,
+    items: newOrderForm.items.map(item => ({
+      productAttId: item.attrId,
+      quantity: Number(item.quantity),
+    })),
+  }
+
+  try {
+    await axios.post('http://localhost:8080/bej3/manage/orders/create', payload, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+    alert('Tạo đơn hàng thành công!')
+    fetchOrders()
+    closeModal()
+  } catch (error) {
+    console.error('Lỗi khi tạo đơn hàng:', error.message)
+    if (error.response) {
+      console.error('Chi tiết:', error.response.data)
+      if ([401, 403].includes(error.response.status)) {
+        localStorage.removeItem('token')
+        router.push('/login')
+      }
+    }
+    alert('Tạo đơn hàng thất bại!')
+  }
+}
+
 </script>
 
-//======================================================================================================================
-STYLE ========================
+//====================================================================================================================== STYLE ========================
 <style scoped>
 * {
   margin: 0;

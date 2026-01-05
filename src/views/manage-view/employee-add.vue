@@ -94,7 +94,7 @@
                     <label class="form-label">Cập nhật vai trò</label>
                     <div class="form-wrap">
                       <!-- <div class="select-salary-branch"> -->
-                        <input id="salaryBranch" class="form-control"  v-model="form.roles">
+                        <input id="salaryBranch" class="form-control" placeholder="ADMIN,USER" v-model="rolesText">
                         <!-- <i id="salaryBranchSortDownIcon" class="salary-branch-icon fas fa-solid fa-sort-down"></i> -->
                       <!-- </div> -->
                     </div>
@@ -557,6 +557,7 @@ function resetForm() {
 }
 
 // ---------update -------------------------------------------------
+const rolesText = ref('')
 const handleUpdateUserProfile = async () => {
   const token = localStorage.getItem("token");
   if (!token) return router.push("/login");
@@ -565,6 +566,11 @@ const handleUpdateUserProfile = async () => {
     alert("Không tìm thấy ID người dùng!");
     return;
   }
+
+  form.roles = rolesText.value
+    .split(',')
+    .map(r => r.trim())
+    .filter(Boolean)
 
   try {
     await axios.put(

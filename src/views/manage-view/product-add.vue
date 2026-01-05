@@ -108,20 +108,20 @@
                   <!-- Vị trí -->
                   <div class="form-group form-group-product">
                     <label class="form-label">
-                      Vị trí
-                      <i class="parameter-type-icon fas fa-solid fa-circle-info" title="Sử dụng để ghi lại vị trí cửa hàng còn bán" aria-hidden="true"></i>
+                      Mô tả
+                      <!-- <i class="parameter-type-icon fas fa-solid fa-circle-info" title="Sử dụng để ghi lại vị trí cửa hàng còn bán" aria-hidden="true"></i> -->
                     </label>
                     <div class="form-wrap form-wrap-product">
                       <input id="productLocation"   class="form-control form-control-form-group-product"
-                        type="text"   v-model="form.location"
+                        type="text"   v-model="form.description"
                       />
-                      <div class="group-icon-add-new">
+                      <!-- <div class="group-icon-add-new">
                         <i class="show-hide-icon fas fa-solid fa-pen" id="hideAddAccountFormproduct" aria-hidden="true"></i>
                         <a href="#" class="add-account-icon btn-icon add-group-product fas fa-solid fa-plus"
                           title="Thêm vị trí mới"  id="addNewAccountFormAddProduct" aria-hidden="true"  
                           @click.prevent="addLocation"></a>
                         <span class="sr-only">Thêm vị trí mới</span>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                 </div>
@@ -369,6 +369,7 @@ const form = reactive({
   },
   status: 1,
   createDate: '',
+  descriptoin: '',
   introImages: [           // list ảnh giới thiệu
     {
       id: null,
@@ -418,6 +419,7 @@ watch(
       form.status = newVal.status ?? 1;
       form.createDate = newVal.createDate ?? null;
       form.category = newVal.category;
+      form.description = newVal.description;
       // ảnh chính
       form.image = newVal.image || null;                     // chỉ set khi user upload ảnh mới
       form.imagePreview = newVal.image || null; // preview ảnh cũ
@@ -456,6 +458,7 @@ watch(
       form.imagePreview = null;
       form.introImages = [];
       form.introImagesPreview = [];
+      form.description = '';
       form.variants = [
         {
           id: null,

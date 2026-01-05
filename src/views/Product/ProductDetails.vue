@@ -30,30 +30,43 @@
                             </template>
                         </Swiper>
 
-                        <!-- Danh sách màu sắc (thumbnail) -->
-                        <div class="color-selector">
-                            <div class="color-item" :class="{ active: isIntroImages === 1 }" v-if="productDetails?.introImages?.length > 0"
-                                @click="isIntroImages = 1"
-                            >
-                                <img src="@/assets/icon/star.svg" class="color-thumb" alt="">
-                                <p>Tính năng nổi bật</p>
+                        <!--  -->
+                        <template v-if="productDetails?.variants?.length <= 1">
+                            <div class="color-selector">    
+                                <div v-for="(image, index) in productDetails?.variants?.[0]?.detailImages ?? []" 
+                                        :key="index" class="color-item"
+                                >
+                                    <img :src="image?.url" class="color-thumb" />
+                                    <!-- <p>{{ variant.color }}</p> -->
+                                </div>
                             </div>
-                            <div
-                                v-for="(variant, index) in productDetails?.variants?.filter(
-                                    v => v.detailImages && v.detailImages.length > 0
-                                ) || []"
-                                :key="variant.id"
-                                class="color-item"
-                                :class="{ active: selectedVariantIndex === index && isIntroImages === 0 }"
-                                @click="selectVariant(index); isIntroImages = 0"
-                            >
-                                <img
-                                    :src="variant.detailImages[0].url"
-                                    class="color-thumb"
-                                />
-                                <p>{{ variant.color }}</p>
+                        </template>
+                        <template v-else>
+                            <div class="color-selector">
+                                <div class="color-item" :class="{ active: isIntroImages === 1 }" v-if="productDetails?.introImages?.length > 0"
+                                    @click="isIntroImages = 1"
+                                >
+                                    <img src="@/assets/icon/star.svg" class="color-thumb" alt="">
+                                    <p>Tính năng nổi bật</p>
+                                </div>
+                                <div
+                                    v-for="(variant, index) in productDetails?.variants?.filter(
+                                        v => v.detailImages && v.detailImages.length > 0
+                                    ) || []"
+                                    :key="variant.id"
+                                    class="color-item"
+                                    :class="{ active: selectedVariantIndex === index && isIntroImages === 0 }"
+                                    @click="selectVariant(index); isIntroImages = 0"
+                                >
+                                    <img
+                                        :src="variant.detailImages[0].url"
+                                        class="color-thumb"
+                                    />
+                                    <p>{{ variant.color }}</p>
+                                </div>
                             </div>
-                        </div>
+                        </template>
+                        
                     </div>
                 </div>
                 <div class="detail-info-right">
@@ -86,33 +99,61 @@
                             </div>
                         </div>
                     </div>
-                    <div class="box-product-option color">
-                        <strong class="label">
-                            Lựa chọn màu
-                        </strong>
-                        <div class="list-option" id="option-color">
-                            <div v-for="(variant, index) in productDetails?.variants ?? []" :key="index"
-                                class="item-option btn-active" :class="{ selected: selectedVariantIndex === index }"
-                                @click="selectVariant(index), isIntroImages = 0"
-                            >
-                                    <img :src="variant.detailImages?.[0]?.url" title="Samsung Galaxy S25 Ultra - 12GB/256GB Đen" alt="Samsung Galaxy S25 Ultra - 12GB/256GB Đen">
-                                <div class="color-price">
-                                    <span>{{ variant.color }}</span>
-                                    <p>{{ variant?.attributes?.[0]?.finalPrice
-                                        ?.toLocaleString('vi-VN') }} ₫ </p>                              
-                                </div>
+                    <template v-if="productDetails?.variants?.length > 1">
+                        <div class="box-product-option color">
+                            <strong class="label">
+                                Lựa chọn màu
+                            </strong>
+                            <div class="list-option" id="option-color">
+                                <template v-for="(variant, index) in productDetails?.variants ?? []" :key="index">
+                                    <template v-if="variant.detailImages?.length > 0">
+                                        <div 
+                                            class="item-option btn-active" :class="{ selected: selectedVariantIndex === index }"
+                                            @click="selectVariant(index), isIntroImages = 0"
+                                        >
+                                            
+                                                <img :src="variant.detailImages?.[0]?.url">
+                                                <div class="color-price">
+                                                    <span>{{ variant.color }}</span>
+                                                    <p>{{ variant?.attributes?.[0]?.finalPrice
+                                                        ?.toLocaleString('vi-VN') }} ₫ </p>                              
+                                                </div>
+                                        </div>
+                                    </template>
+                                </template>
                             </div>
                         </div>
-                    </div>
+                    </template>
+                    
                     <div class="box-order product-action">
-
-                        <div class="box-order-btn">
-                            <a @click="handleBuyNow" title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" href="javascript:;" class="add-buy order-btn btnQuickOrder inventory"><strong>MUA NGAY</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
-                            <a @click="handleAddToCart" title="Thêm giỏ hàng" data-authorize="True" href="javascript:;" class="add-buy add-cart inventory">
-                                <i class="icon-Cart1SolidOn"></i>
-                                <label>Thêm giỏ hàng </label>
-                            </a>
-                        </div>
+                        <template v-if="productDetails?.categoryId === 10 || productDetails?.categoryId === 12">
+                            <div class="box-order-btn">
+                                <a @click="handleBuyNow" title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" href="javascript:;" class="add-buy order-btn btnQuickOrder inventory"><strong>MUA NGAY</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
+                                <a @click="handleAddToCart" title="Thêm giỏ hàng" data-authorize="True" href="javascript:;" class="add-buy add-cart inventory">
+                                    <i class="icon-Cart1SolidOn"></i>
+                                    <label>Thêm giỏ hàng </label>
+                                </a>
+                            </div>
+                        </template>
+                        <template v-else-if="productDetails?.categoryId === 24">
+                            <div class="box-order-btn">
+                                <a @click="handleBuyNow" title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" href="javascript:;" class="add-buy order-btn btnQuickOrder inventory"><strong>ĐẶT LỊCH SỬA CHỮA</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
+                                <a @click="handleAddToCart" title="Thêm giỏ hàng" data-authorize="True" href="javascript:;" class="add-buy add-cart inventory">
+                                    <i class="icon-Cart1SolidOn"></i>
+                                    <label>Thêm giỏ hàng </label>
+                                </a>
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="box-order-btn">
+                                <a @click="handleBuyNow" title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" href="http://localhost:5173/user/booking" class="add-buy order-btn btnQuickOrder inventory"><strong>ĐẶT LỊCH SỬA CHỮA</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
+                                <!-- <a @click="handleAddToCart" title="Thêm giỏ hàng" data-authorize="True" href="javascript:;" class="add-buy add-cart inventory">
+                                    <i class="icon-Cart1SolidOn"></i>
+                                    <label>Thêm giỏ hàng </label>
+                                </a> -->
+                            </div>
+                        </template>
+                        
                         <!-- <div class="box-order-btn">
                             <a title="TRẢ GÓP 0%" href="" class="add-buy btn-installment order-btn btnInstallment"><strong>TRẢ GÓP 0%</strong><span>Không phí - Duyệt nhanh&nbsp;10p</span></a>
                             <a title="TRẢ GÓP 0%" href="" class="add-buy btn-installment order-btn btnInstallment"><strong>TRẢ GÓP QUA THẺ</strong><span>(Visa, Mastercard, JCB)</span></a>
