@@ -3,7 +3,7 @@
     <!-- Filters Section -->
     <div class="filters-section">
       <div class="search-box">
-        <input type="text" placeholder="Tìm kiếm đơn hàng..." class="search-input"
+        <input type="text" placeholder="Tìm kiếm đơn hàng (số điện thoại trong đơn)..." class="search-input"
           v-model="keyWord" @keyup.enter="fetchOrdersByPhone(keyWord)"
         />
         <span class="search-icon">🔍</span>

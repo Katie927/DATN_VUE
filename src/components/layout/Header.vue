@@ -33,13 +33,13 @@
               </div>
             </form>
           </div>
-          <div class="search-sugget">
+          <!-- <div class="search-sugget">
             <strong>Từ khóa xu hướng</strong>
             <a href="">Galaxy S25</a>
             <a href="">Iphone 16</a>
             <a href="">Galaxy S23 Ultra</a>
             <a href="">Oppo Find X9</a>
-          </div>
+          </div> -->
         </div>
         <div class="quick-for-user">
           <router-link to="/user/booking" class="shop-location">
@@ -58,7 +58,7 @@
 
           <router-link to="/user/cart" class="cart text-link">
             <i class="icon-CartSolidOff"></i>
-            <label for="" id="cart-total" class="cart-counter">0</label>
+            <label for="" id="cart-total" class="cart-counter">{{ cartItems.length }}</label>
           </router-link>
         </div>
       </div>
@@ -153,6 +153,28 @@ const submitSearch = () => {
   })
 }
 
+
+const cartItems = ref([])
+const hasProducts = ref(false)
+const handleFetchCart = async () => {
+  const token = localStorage.getItem('token')
+  if (!token) return
+  try {
+    const [cartResponse] = await Promise.all([
+      axios.get('http://localhost:8080/bej3/cart/view', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+    ])
+    cartItems.value = cartResponse.data.result
+    hasProducts.value = cartItems.value.length
+  } catch (error) {
+    console.error('Lỗi khi tải giỏ hàng:', error)
+    alert('Không thể tải giỏ hàng!')
+  }
+}
+onMounted(() => {
+  handleFetchCart()
+})
 </script>
 
 <style scoped>

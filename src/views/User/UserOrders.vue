@@ -165,10 +165,10 @@
                       {
                         0: 'Mua bán',
                         1: 'Sửa chữa',
-                      }[selectedOrder.status] || 'Không xác định'
+                      }[selectedOrder.type] || 'Không xác định'
                     }}
                   </p>
-                  <p><strong>📦 Dự kiến giao:</strong> {{ selectedOrder.updateAt }}</p>
+                  <!-- <p><strong>📦 Dự kiến giao:</strong> {{ selectedOrder.updateAt }}</p> -->
                   <p><strong>📦 Mô tả:</strong> {{ selectedOrder.description }}</p>
                 </div>
               </div>
@@ -216,7 +216,7 @@
 
             <!-- ACTIONS -->
             <div class="modal-actions">
-              <button class="btn-primary">💬 Liên hệ hỗ trợ</button>
+              <!-- <button class="btn-primary">💬 Liên hệ hỗ trợ</button> -->
 
               <button
                 v-if="selectedOrder.status === 1"
@@ -225,8 +225,7 @@
               >
                 ✅ Xác nhận đơn
               </button>
-
-              <button class="btn-outline">🖨 Xác nhận đơn</button>
+              <!-- <button class="btn-outline">🖨 Xác nhận đơn</button> -->
             </div>
           </div>
         </div>
@@ -335,7 +334,6 @@ const confirmOrder = async (orderId) => {
     router.push('/login')
     return
   }
-
   try {
     await axios.put(`http://localhost:8080/bej3/orders/repair-order/${orderId}/confirm`, null, {
       headers: {

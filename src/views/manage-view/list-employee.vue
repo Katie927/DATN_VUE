@@ -89,7 +89,7 @@
                     <div class="header-filter-buttons">
                         <ul class="header-filter-button-items">
 
-                            <li class="header-filter-button-item" id="addMoreProductButton">
+                            <!-- <li class="header-filter-button-item" id="addMoreProductButton">
                                 <button class="btn-success">
                                     <i class="btn-icon fas fa-solid fa-plus" aria-hidden="true"></i>
                                     <span>Thêm mới</span>
@@ -150,7 +150,7 @@
                                         </div>
                                     </li>
                                 </ul>
-                            </li>
+                            </li> -->
                         </ul>
                     </div>
                 </div>

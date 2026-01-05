@@ -38,7 +38,7 @@
     import axios from "axios";
 
     const userSidebar = ref([
-        { path: "/user/promotion", icon: "icon-MenuSolidOff", label: "Tổng quan"},
+        // { path: "/user/promotion", icon: "icon-MenuSolidOff", label: "Tổng quan"},
         { path: "/user/order", icon: "icon-BoxSolidOff", label: "Đơn hàng" },
         { path: "/admin/product/list", icon: "icon-MoonSolidOff", label: "ADMIN", roles: ["ROLE_ADMIN"] },
         { path: "/user/profile/my-info", icon: "icon-ShieldSolidOff", label: "Thông tin cá nhân" },

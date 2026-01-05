@@ -137,7 +137,7 @@
                         </template>
                         <template v-else-if="productDetails?.categoryId === 24">
                             <div class="box-order-btn">
-                                <a @click="handleBuyNow" title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" href="javascript:;" class="add-buy order-btn btnQuickOrder inventory"><strong>ĐẶT LỊCH SỬA CHỮA</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
+                                <a @click="handleBuyNow" title="MUA NGAY" data-returnurl="/dien-thoai/samsung-galaxy-s25?buy=1" href="http://localhost:5173/user/booking" class="add-buy order-btn btnQuickOrder inventory"><strong>ĐẶT LỊCH SỬA CHỮA</strong><span>(Giao tận nhà hoặc nhận tại cửa hàng)</span></a>
                                 <a @click="handleAddToCart" title="Thêm giỏ hàng" data-authorize="True" href="javascript:;" class="add-buy add-cart inventory">
                                     <i class="icon-Cart1SolidOn"></i>
                                     <label>Thêm giỏ hàng </label>
