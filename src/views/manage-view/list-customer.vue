@@ -35,7 +35,7 @@
                     <table class="employee-table-list">
                         <thead class="table-header">
                             <tr class="table-row-header">
-                                <th id="cellCheckAll">
+                                <!-- <th id="cellCheckAll">
                                     <label class="container-check-box">
                                         <input
                                         class="check-all"
@@ -45,7 +45,7 @@
                                         />
                                         <span class="checkmark"></span>
                                     </label>
-                                </th>
+                                </th> -->
                                 <th class="cell-img" for="containerCheckBoxCellImgProduct">
                                     <a href="#" class="k-link"></a>
                                 </th>
@@ -65,12 +65,12 @@
                         <tbody>
                             <template v-for="customer in customerData" :key="customer.id">
                                 <tr class="kv-table-row" @click="toggleDetail(customer.id)">
-                                    <td class="cell-check">
+                                    <!-- <td class="cell-check">
                                         <label class="container-check-box">
                                             <input type="checkbox" :value="customer.id" />
                                             <span class="checkmark"></span>
                                         </label>
-                                    </td>
+                                    </td> -->
                                     <td class="cell-img">
                                         <img :src="customer.image" alt="img" style="width: 30px" />
                                     </td>

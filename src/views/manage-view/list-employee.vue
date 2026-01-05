@@ -68,8 +68,7 @@
             <!-- </div> -->
 
             <div class="kv-product-main-right">
-                <div class="product-right-header">
-                    <!-- header filter search -->
+                <!-- <div class="product-right-header">
                     <div class="header-filter-search">
                         <div class="input-group input-group-search-product-code" id="groupInputSearchProductCode">
                             <i class="input-group-icon fas fa-solid fa-magnifying-glass" aria-hidden="true"></i>
@@ -84,12 +83,10 @@
                             <i class="btn-icon fas fa-solid fa-times" id="btnIconCloseProduct" aria-hidden="true"></i>
                         </div>
                     </div>
-
-                    <!-- header filter buttons -->
                     <div class="header-filter-buttons">
                         <ul class="header-filter-button-items">
 
-                            <!-- <li class="header-filter-button-item" id="addMoreProductButton">
+                            <li class="header-filter-button-item" id="addMoreProductButton">
                                 <button class="btn-success">
                                     <i class="btn-icon fas fa-solid fa-plus" aria-hidden="true"></i>
                                     <span>Thêm mới</span>
@@ -150,17 +147,17 @@
                                         </div>
                                     </li>
                                 </ul>
-                            </li> -->
+                            </li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- product table -->
                 <div class="table-container">
                     <table class="employee-table-list">
                         <thead class="table-header">
                             <tr class="table-row-header">
-                                <th id="cellCheckAll">
+                                <!-- <th id="cellCheckAll">
                                     <label class="container-check-box">
                                         <input
                                         class="check-all"
@@ -170,7 +167,7 @@
                                         />
                                         <span class="checkmark"></span>
                                     </label>
-                                </th>
+                                </th> -->
                                 <th class="cell-img" for="containerCheckBoxCellImgProduct">
                                     <a href="#" class="k-link"></a>
                                 </th>
@@ -190,12 +187,12 @@
                         <tbody>
                             <template v-for="employee in employeeData" :key="employee.id">
                                 <tr class="kv-table-row" @click="toggleDetail(employee.id)">
-                                    <td class="cell-check">
+                                    <!-- <td class="cell-check">
                                         <label class="container-check-box">
                                             <input type="checkbox" :value="employee.id" />
                                             <span class="checkmark"></span>
                                         </label>
-                                    </td>
+                                    </td> -->
                                     <td class="cell-img">
                                         <img :src="employee.image" alt="img" style="width: 30px" />
                                     </td>

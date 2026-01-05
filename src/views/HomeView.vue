@@ -97,13 +97,13 @@
                         <div class="item-gap8px">
                           <div class="price price-last">
                             <span style="text-decoration: line-through;" v-if="product.originalPrice">
-                              <s>{{ product.variant.finalPrice == product.variant.originalPrice ? product.variant.finalPrice.toLocaleString('vi-VN') + " ₫" : "" }}</s>
+                              <s>{{ product.finalPrice == product.originalPrice ? product.finalPrice.toLocaleString('vi-VN') + " ₫" : "" }}</s>
                               
                             </span>
                             <span v-if="product.discount">- {{ product.discount }}%</span>
                           </div>
                           <div class="price">
-                            <strong>{{ product.variant.finalPrice > 0 ? product.variant.finalPrice.toLocaleString('vi-VN') + " ₫" : "Liên hệ" }}</strong>
+                            <strong>{{ product.finalPrice > 0 ? product.finalPrice.toLocaleString('vi-VN') + " ₫" : "Liên hệ" }}</strong>
                           </div>
                         </div>
                       </div>

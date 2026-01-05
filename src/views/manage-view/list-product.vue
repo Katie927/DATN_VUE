@@ -180,7 +180,7 @@
                         <table class="employee-table-list">
                             <thead class="table-header">
                                 <tr class="table-row-header">
-                                    <th id="cellCheckAll">
+                                    <!-- <th id="cellCheckAll">
                                         <label class="container-check-box">
                                             <input
                                             class="check-all"
@@ -190,7 +190,7 @@
                                             />
                                             <span class="checkmark"></span>
                                         </label>
-                                    </th>
+                                    </th> -->
                                     <th class="cell-img" for="containerCheckBoxCellImgProduct">
                                         <a href="#" class="k-link"></a>
                                     </th>
@@ -203,7 +203,7 @@
                                     <th class="product-type" for="containerCheckBoxProductType">Giá vốn</th> -->
                                     <th class="selling-price" for="containerCheckBoxSellingPrice">Giá bán</th>
                                 
-                                    <th class="cost-price" for="containerCheckBoxCostPrice">Thương hiệu</th>
+                                    <th class="cost-price" for="containerCheckBoxCostPrice">Ngày tạo</th>
                                     <th class="trademark" for="containerCheckBoxTrademark">Đã bán</th>
                                     <th class="inventory" for="containerCheckBoxInventory">Tồn kho</th>
                                     <th class="inventory" for="containerCheckBoxInventory">Trạng thái</th>
@@ -213,12 +213,12 @@
                             <tbody>
                                 <template v-for="(product, index) in productData" :key="product.id">
                                     <tr class="kv-table-row" @click="toggleDetail(product.id)" >
-                                        <td class="cell-check">
+                                        <!-- <td class="cell-check">
                                             <label class="container-check-box">
                                                 <input type="checkbox" :value="product.id" />
                                                 <span class="checkmark"></span>
                                             </label>
-                                        </td>
+                                        </td> -->
                                         <td class="cell-img">
                                             <img :src="product.image" alt="img" style="width: 43px" />
                                         </td>
@@ -226,12 +226,15 @@
                                         <!-- <td class="inventory">{{ product.color }}</td> -->
                                         <!-- <td class="product-type">{{ product.name }}</td>
                                         <td class="selling-price">{{ product.originalPrice.toLocaleString('vi-VN') }}</td> -->
-                                        <td class="cost-price">{{ product.variant.finalPrice.toLocaleString('vi-VN') }}</td>
-                                        <td class="cost-price">{{ product.name }}</td>
+                                        <td class="cost-price">{{ product.finalPrice.toLocaleString('vi-VN') }}</td>
+                                        <td class="cost-price">{{ product.createDate }}</td>
                                         <!-- <td class="trademark">{{ product.name }}</td> -->
-                                        <td class="inventory">{{ product.name }}</td>
-                                        <td class="inventory">{{ product.status }}</td>
-                                        <td class="inventory">{{ product.status }}</td>
+                                        <td class="inventory">{{ product.soldQuantity }}</td>
+                                        <td class="inventory">{{ product.stockQuantity }}</td>
+                                        <td class="inventory">{{ {
+                                                                    0: 'Dừng',
+                                                                    1: 'Đang bán',
+                                                                }[product.status]  }}</td>
                                     </tr>
                                     <tr v-if="expandedId === product.id">
                                         <td colspan="9" class="cell-detail p-0">
