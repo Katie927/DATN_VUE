@@ -27,9 +27,9 @@
                   v-model="loginData.password">
           </div>
 
-          <div class="password-forget">
+          <!-- <div class="password-forget">
             <a href="">Quên mật khẩu</a>
-          </div>
+          </div> -->
           <div class="login-button">
             <button type="submit">Đăng nhập</button>
           </div>

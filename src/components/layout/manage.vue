@@ -16,6 +16,7 @@
         </li>
       </ul>
     </div>
+    <!-- <NotificationsDropdown /> -->
   </section>
 </template>
 
@@ -23,6 +24,7 @@
 
 import '@/assets/styles/admin-css/kv-style.css'; 
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import NotificationsDropdown from '@/components/notification/NotificationsDropdown.vue'
 
 import { ref } from 'vue';
 

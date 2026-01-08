@@ -56,7 +56,17 @@
                 </span>
               </td> -->
               <td class="total-price">{{ formatPrice(order.totalPrice) }}</td>
-              <td>
+              <td class="customer-name">{{
+                    {
+                      0: 'Chờ xử lý',
+                      1: 'Chờ xác nhận',
+                      2: 'Đã xác nhận',
+                      3: 'Đang xử lý',
+                      4: 'Hủy',
+                      5: 'Hoàn thành',
+                    }[order.status] || 'Không xác định'
+                  }}</td>
+              <!-- <td>
                 <select
                   :value="order.status"
                   @change="updateOrderStatus(order.id, $event.target.value)"
@@ -70,7 +80,7 @@
                   <option value="4">Hủy</option>
                   <option value="5">Hoàn thành</option>
                 </select>
-              </td>
+              </td> -->
               <td class="action-cell">
                 <button class="btn-detail" @click="openOrderDetail(order.id)">Chi tiết</button>
               </td>

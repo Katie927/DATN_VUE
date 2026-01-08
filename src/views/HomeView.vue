@@ -152,7 +152,7 @@
   const sliderImages = ref([
     {
       url: "/src/assets/img/main-slider-img/16e-dat-truoc-ngay-1200x375.png",
-      link: "",
+      link: "http://localhost:5173/product-detail/09ca25bb-aa47-4562-b1dc-7635d3058b6d",
     },
     {
       url: "/src/assets/img/main-slider-img/pre-oder-xiaomi-web1200.png",

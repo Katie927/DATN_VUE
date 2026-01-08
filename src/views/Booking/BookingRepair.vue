@@ -151,7 +151,7 @@
 
 <script setup>
 import axios from 'axios'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const currentStep = ref(1)
 const confirmationCode = ref('')
@@ -206,8 +206,8 @@ const validateErrorDescription = (desc) => {
   if (!desc || desc.trim() === '') {
     return 'Vui lòng mô tả lỗi'
   }
-  if (desc.trim().length < 10) {
-    return 'Mô tả lỗi phải có ít nhất 10 ký tự'
+  if (desc.trim().length < 7) {
+    return 'Mô tả lỗi phải có ít nhất 17 ký tự'
   }
   return ''
 }
@@ -288,6 +288,45 @@ const resetForm = () => {
   currentStep.value = 1
   confirmationCode.value = ''
 }
+
+    const fetchUserProfile = async () => {
+        const token = localStorage.getItem("token"); // Lấy token từ localStorage
+        if (!token) {
+            console.error("Token không tồn tại!");
+            router.push("/login"); // Chuyển hướng về trang login
+            return;
+        }
+
+        try {
+            const response = await axios.get(`http://localhost:8080/bej3/users/profile/my-info`, {
+                headers: {
+                    Authorization: `Bearer ${token}` // Gửi token trong header
+                }
+            });
+
+            const data = response.data.result;
+
+            form.value = {
+                fullName: data.fullName || '',
+                email: data.email || '',
+                phoneNumber: data.phoneNumber || '',
+                dob: data.dob || '',
+                address: data.address || '',
+                password: ''   
+            };
+
+            // userData.value = response.data.result; // Gán dữ liệu user
+        } catch (error) {
+            console.error('Lỗi:', error);
+
+            // Nếu lỗi 401 (Unauthorized) hoặc 403 (Forbidden), chuyển hướng về trang login
+            if (error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 500)) {
+                localStorage.removeItem("token"); // Xóa token cũ
+                router.push("/login"); // Chuyển hướng về trang đăng nhập
+            }
+        }
+    };
+    onMounted(fetchUserProfile);
 </script>
 
 <style scoped>

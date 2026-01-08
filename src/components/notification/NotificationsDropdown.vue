@@ -228,7 +228,7 @@ const markAsRead = async (notification) => {
 
 const markAllAsRead = async () => {
   try {
-    const res = await axios.put(
+    await axios.put(
       'http://localhost:8080/bej3/api/notifications/read-all',
       {},
       {
@@ -239,10 +239,12 @@ const markAllAsRead = async () => {
       },
     )
 
-    const newStatus = res.data.result.newStatus
+    // ✅ FE tự set chuẩn
     notifications.value.forEach((n) => {
-      n.isRead = newStatus
+      n.isRead = true
     })
+
+    activeTab.value = 'all'
   } catch (e) {
     console.error('❌ Toggle read all failed', e)
   }

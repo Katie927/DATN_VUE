@@ -141,7 +141,7 @@
       </section>
 
       <!-- Recent Transactions -->
-      <section class="transactions-section">
+      <!-- <section class="transactions-section">
         <h3 class="section-title">Giao Dịch Gần Đây</h3>
         <div class="table-wrapper">
           <table class="transactions-table">
@@ -175,7 +175,7 @@
             </tbody>
           </table>
         </div>
-      </section>
+      </section> -->
     </main>
   </div>
 </template>

@@ -93,7 +93,7 @@
             <span v-if="errors.email" class="error-text">{{ errors.email }}</span>
           </div>
 
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label>Hình thức nhận hàng *</label>
             <select v-model="form.deliveryMethod" class="form-input">
               <option value="">-- Chọn hình thức --</option>
@@ -101,9 +101,9 @@
               <option value="store">Nhận tại cửa hàng</option>
             </select>
             <span v-if="errors.deliveryMethod" class="error-text">{{ errors.deliveryMethod }}</span>
-          </div>
+          </div> -->
 
-          <div v-if="form.deliveryMethod === 'home'" class="form-group">
+          <div  class="form-group">
             <label>Địa chỉ nhận hàng *</label>
             <textarea v-model.trim="form.address" class="form-input" rows="3"></textarea>
             <span v-if="errors.address" class="error-text">{{ errors.address }}</span>

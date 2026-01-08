@@ -59,7 +59,7 @@
                         <div class="header-filter-search">
                             <div class="input-group input-group-search-product-code" id="groupInputSearchProductCode">
                                 <i class="input-group-icon fas fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                                    <input type="text" name="" id="searchCodeName" class="form-control" placeholder="Tìm theo mã, Tên hàng"
+                                    <input type="text" name="" id="searchCodeName" class="form-control" placeholder="Tìm theo Tên hàng"
                                         v-model="keyWord" @keyup.enter="handleSearchProduct">
                             </div>
 
