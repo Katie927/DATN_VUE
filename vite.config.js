@@ -15,4 +15,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  define: {
+    // Polyfill global cho sockjs-client (Node.js global object không có trong browser)
+    global: 'globalThis',
+  },
+  optimizeDeps: {
+    include: ['sockjs-client', '@stomp/stompjs'],
+  },
 })

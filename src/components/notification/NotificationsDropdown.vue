@@ -91,12 +91,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
 import { useRouter } from 'vue-router'
+import { useWebSocketNotifications } from '@/composables/useWebSocket'
+import { userBus } from '@/components/layout/userBus'
 
 dayjs.extend(relativeTime)
 dayjs.locale('vi') // dùng tiếng Việt
@@ -135,15 +137,24 @@ const notifications = ref([])
 
 /* 🟢 1. GỌI API LẤY THÔNG BÁO (THÊM LOG DEBUG) */
 const fetchNotifications = async () => {
+  const token = localStorage.getItem('token')
+  
+  // Kiểm tra token trước khi gọi API
+  if (!token) {
+    console.warn('⚠️ No token found, skipping notification fetch')
+    return
+  }
+
   const url = 'http://localhost:8080/bej3/api/notifications/my-notifications'
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/bej3'
 
   console.log('🚀 Bắt đầu gọi API:', url)
 
   try {
-    const res = await axios.get('http://localhost:8080/bej3/api/notifications/my-notifications', {
+    const res = await axios.get(`${baseUrl}/api/notifications/my-notifications`, {
       withCredentials: true,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
       },
     })
 
@@ -174,9 +185,83 @@ const fetchNotifications = async () => {
   }
 }
 
+// WebSocket integration
+const handleWebSocketNotification = (notification) => {
+  console.log('📨 WebSocket notification received:', notification)
+  
+  // Thêm notification mới vào đầu danh sách
+  const newNotification = {
+    id: notification.id?.toString() || Date.now().toString(),
+    type: notification.type?.toLowerCase() || 'general',
+    title: notification.title,
+    message: notification.body,
+    isRead: false,
+    createdAt: new Date(notification.timestamp || Date.now()),
+    resourceId: notification.metadata?.orderId || notification.metadata?.resourceId
+  }
+  
+  // Kiểm tra xem notification đã tồn tại chưa (tránh duplicate)
+  const exists = notifications.value.some(n => n.id === newNotification.id)
+  if (!exists) {
+    notifications.value.unshift(newNotification)
+    console.log('✅ Added new notification from WebSocket')
+  }
+}
+
+// Setup WebSocket
+const { connect: connectWebSocket, disconnect: disconnectWebSocket } = useWebSocketNotifications(handleWebSocketNotification)
+
+// Hàm để init notifications và WebSocket
+const initNotifications = () => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    console.log('✅ Token found, initializing notifications...')
+    fetchNotifications()
+    console.log('🔌 Connecting WebSocket for notifications...')
+    connectWebSocket()
+  } else {
+    console.warn('⚠️ No token found, skipping notification fetch and WebSocket connection')
+  }
+}
+
 onMounted(() => {
-  console.log('⚡ onMounted() đã chạy!')
-  fetchNotifications()
+  console.log('⚡ NotificationsDropdown onMounted() đã chạy!')
+  
+  // Thử init ngay lập tức
+  initNotifications()
+  
+  // Listen for custom event (fallback)
+  window.addEventListener('websocket-notification', (event) => {
+    handleWebSocketNotification(event.detail)
+  })
+})
+
+// Watch token changes để tự động fetch/connect khi user login
+watch(() => localStorage.getItem('token'), (newToken, oldToken) => {
+  if (newToken && !oldToken) {
+    // User vừa login - init notifications và WebSocket
+    console.log('🔐 Token detected - User logged in, initializing notifications...')
+    initNotifications()
+  } else if (!newToken && oldToken) {
+    // User vừa logout - disconnect và clear notifications
+    console.log('🔐 Token removed - User logged out, disconnecting...')
+    disconnectWebSocket()
+    notifications.value = []
+  }
+}, { immediate: false })
+
+// Watch userBus để refresh khi profile được update (sau login)
+watch(() => userBus.refreshProfile.value, () => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    console.log('🔄 Profile refreshed, re-initializing notifications...')
+    initNotifications()
+  }
+})
+
+onUnmounted(() => {
+  disconnectWebSocket()
+  window.removeEventListener('websocket-notification', handleWebSocketNotification)
 })
 
 /* 🟢 Computed */
@@ -210,11 +295,19 @@ const getTimeAgo = (date) => {
 }
 
 const markAsRead = async (notification) => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    console.warn('⚠️ No token found, cannot mark as read')
+    return
+  }
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/bej3'
+  
   try {
     await axios.put(
-      `http://localhost:8080/bej3/api/notifications/${notification.id}/read`,
+      `${baseUrl}/api/notifications/${notification.id}/read`,
       {},
-      { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } },
+      { headers: { Authorization: `Bearer ${token}` } },
     )
 
     const idx = notifications.value.findIndex((n) => n.id === notification.id)
@@ -227,14 +320,22 @@ const markAsRead = async (notification) => {
 }
 
 const markAllAsRead = async () => {
+  const token = localStorage.getItem('token')
+  if (!token) {
+    console.warn('⚠️ No token found, cannot mark all as read')
+    return
+  }
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/bej3'
+
   try {
     await axios.put(
-      'http://localhost:8080/bej3/api/notifications/read-all',
+      `${baseUrl}/api/notifications/read-all`,
       {},
       {
         withCredentials: true,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${token}`,
         },
       },
     )
